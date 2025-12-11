@@ -64,7 +64,7 @@
       text-align: center;
     }
 
-    /* Drag / Tap Tiles */
+    /* Tiles */
     .tiles-container {
       display: flex;
       flex-wrap: wrap;
@@ -102,16 +102,20 @@
     }
 
     .blend-bar {
-      margin-top: 12px;
-      padding: 12px;
+      margin-top: 16px;
+      padding: 16px 8px 10px;
       min-height: 60px;
       border-radius: 12px;
       border: 2px dashed #ff9ad9;
+      background: #fff0fb;
+      position: relative;
+      overflow: hidden;
+    }
+    .blend-letters {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      background: #fff0fb;
+      gap: 10px;
     }
     .blend-letter {
       font-size: 26px;
@@ -123,6 +127,19 @@
     .blend-letter.active {
       background: #ffe6fd;
       box-shadow: 0 0 12px #ff80df;
+    }
+
+    /* Pink reading tracker line */
+    #tracker-line {
+      position: absolute;
+      bottom: 4px;
+      width: 30px;
+      height: 3px;
+      background: #ff0080; /* bright hot-pink */
+      border-radius: 999px;
+      display: none;
+      pointer-events: none;
+      box-shadow: 0 0 8px #ff0080;
     }
 
     .controls-row {
@@ -185,13 +202,13 @@
       <button id="btn-type-fast">Fast Blend</button>
     </div>
     <div id="output"></div>
-    <p class="small-label">Uses UK synthetic phonics: s, a, t, p, i, n, etc.</p>
+    <p class="small-label">Uses UK synthetic phonics sounds (s, a, t, p, i, n…)</p>
   </div>
 
   <!-- TILE GAME PANEL -->
   <div id="panel-drag" class="panel hidden">
     <h2>Tile Sound Game</h2>
-    <p>Tap tiles to hear sounds. Slide your finger along the bar to blend.</p>
+    <p>Kiki can tap tiles to hear the sounds, then slide her finger under the word to blend it.</p>
 
     <!-- Level / word selection -->
     <label for="levelSelect"><strong>Choose level:</strong></label>
@@ -202,7 +219,7 @@
 
     <div class="controls-row" style="margin-top:8px;">
       <button id="btn-new-word">New Word</button>
-      <button id="btn-clear-bar">Clear Bar</button>
+      <button id="btn-reset-bar">Reset Word</button>
     </div>
 
     <div id="drag-word-display"></div>
@@ -212,11 +229,12 @@
       <!-- Filled by JS -->
     </div>
 
-    <!-- Blending bar -->
+    <!-- Blending bar with tracker line -->
     <div class="blend-bar" id="blend-bar">
-      <span class="small-label">Tap tiles, then slide your finger across here</span>
+      <div class="blend-letters" id="blend-letters"></div>
+      <div id="tracker-line"></div>
     </div>
-    <p class="hint">Glow will follow her finger & sounds will play in order.</p>
+    <p class="hint">She just slides her finger under the letters – the pink line and sounds will follow.</p>
 
     <div class="controls-row">
       <button id="btn-drag-slow">Slow Blend</button>
@@ -224,7 +242,7 @@
     </div>
 
     <div class="stars" id="stars-display">⭐ Stars: <span id="stars-count">0</span></div>
-    <p class="small-label">Kiki gets a star when she blends the full word!</p>
+    <p class="small-label">She earns a star when she slides under the whole word correctly.</p>
   </div>
 
   <script>
@@ -302,7 +320,6 @@
       speechSynthesis.cancel();
       let delay = 0;
       const baseDelay = slow ? 600 : 250;
-
       const soundParts = parts.map(p => toPhonicsSound(p));
 
       soundParts.forEach(sound => {
@@ -382,10 +399,12 @@
     // -------------------------
     const levelSelect = document.getElementById("levelSelect");
     const btnNewWord = document.getElementById("btn-new-word");
-    const btnClearBar = document.getElementById("btn-clear-bar");
+    const btnResetBar = document.getElementById("btn-reset-bar");
     const dragWordDisplay = document.getElementById("drag-word-display");
     const tilesContainer = document.getElementById("tiles-container");
     const blendBar = document.getElementById("blend-bar");
+    const blendLettersContainer = document.getElementById("blend-letters");
+    const trackerLine = document.getElementById("tracker-line");
     const btnDragSlow = document.getElementById("btn-drag-slow");
     const btnDragFast = document.getElementById("btn-drag-fast");
     const starsDisplay = document.getElementById("stars-count");
@@ -393,37 +412,27 @@
     let currentWord = "";
     let stars = 0;
 
-    function clearBlendBar() {
-      blendBar.innerHTML = '<span class="small-label">Tap tiles, then slide your finger across here</span>';
-    }
-
-    function addLetterToBlendBar(letter) {
-      // Remove placeholder if present
-      const placeholder = blendBar.querySelector(".small-label");
-      if (placeholder) placeholder.remove();
-
-      const span = document.createElement("span");
-      span.textContent = letter;
-      span.classList.add("blend-letter");
-      blendBar.appendChild(span);
-    }
-
-    function getBlendBarWord() {
-      const letters = Array.from(blendBar.querySelectorAll(".blend-letter"));
-      return letters.map(l => l.textContent).join("");
+    function buildBlendBarForWord(word) {
+      blendLettersContainer.innerHTML = "";
+      const letters = word.split("");
+      letters.forEach(letter => {
+        const span = document.createElement("span");
+        span.textContent = letter;
+        span.classList.add("blend-letter");
+        blendLettersContainer.appendChild(span);
+      });
     }
 
     function createTilesForWord(word) {
       tilesContainer.innerHTML = "";
-      const letters = word.split("");
-      letters.forEach(letter => {
+      const uniqueLetters = Array.from(new Set(word.split(""))); // one tile per letter type
+      uniqueLetters.forEach(letter => {
         const tile = document.createElement("div");
         tile.classList.add("tile");
         tile.classList.add(isVowel(letter) ? "vowel" : "consonant");
         tile.textContent = letter;
         tile.addEventListener("click", () => {
-          // Tap = add to bar + play phonics sound
-          addLetterToBlendBar(letter);
+          // Tap = just hear the sound, no duplicates added
           tile.classList.add("active");
           setTimeout(() => tile.classList.remove("active"), 150);
           speak(toPhonicsSound(letter), 0.8);
@@ -439,59 +448,74 @@
       currentWord = randomWord;
       dragWordDisplay.textContent = currentWord.toUpperCase();
       createTilesForWord(currentWord);
-      clearBlendBar();
+      buildBlendBarForWord(currentWord);
+      clearActiveBlendLetters();
+      hideTrackerLine();
     }
 
     btnNewWord.addEventListener("click", chooseNewWord);
-    btnClearBar.addEventListener("click", clearBlendBar);
+    btnResetBar.addEventListener("click", () => {
+      if (!currentWord) return;
+      buildBlendBarForWord(currentWord);
+      clearActiveBlendLetters();
+      hideTrackerLine();
+    });
 
     btnDragSlow.addEventListener("click", () => {
-      const letters = Array.from(blendBar.querySelectorAll(".blend-letter"));
-      if (!letters.length) return;
-      const parts = letters.map(l => l.textContent);
-      const built = parts.join("");
-      speakSequence(parts, built, true);
-      if (built === currentWord) {
-        stars++;
-        starsDisplay.textContent = stars;
-      }
+      if (!currentWord) return;
+      const parts = currentWord.split("");
+      speakSequence(parts, currentWord, true);
     });
 
     btnDragFast.addEventListener("click", () => {
-      const letters = Array.from(blendBar.querySelectorAll(".blend-letter"));
-      if (!letters.length) return;
-      const parts = letters.map(l => l.textContent);
-      const built = parts.join("");
-      speakSequence(parts, built, false);
-      if (built === currentWord) {
-        stars++;
-        starsDisplay.textContent = stars;
-      }
+      if (!currentWord) return;
+      const parts = currentWord.split("");
+      speakSequence(parts, currentWord, false);
     });
 
     // -------------------------
-    // FINGER SLIDE BLENDING ON BLEND BAR
+    // FINGER SLIDE BLENDING WITH HOT-PINK LINE
     // -------------------------
     let lastActiveIndex = -1;
     let hasSlid = false;
 
     function clearActiveBlendLetters() {
-      const letters = Array.from(blendBar.querySelectorAll(".blend-letter"));
+      const letters = Array.from(blendLettersContainer.querySelectorAll(".blend-letter"));
       letters.forEach(l => l.classList.remove("active"));
     }
 
+    function showTrackerLine() {
+      trackerLine.style.display = "block";
+    }
+
+    function hideTrackerLine() {
+      trackerLine.style.display = "none";
+    }
+
+    function moveTrackerLine(localX, barRect) {
+      const width = 30; // same as CSS
+      let x = localX - width / 2;
+      if (x < 0) x = 0;
+      if (x + width > barRect.width) x = barRect.width - width;
+      trackerLine.style.left = x + "px";
+    }
+
     function handleTouch(e) {
-      const letters = Array.from(blendBar.querySelectorAll(".blend-letter"));
+      const letters = Array.from(blendLettersContainer.querySelectorAll(".blend-letter"));
       if (!letters.length) return;
 
       e.preventDefault();
       const touch = e.touches[0];
-      const x = touch.clientX;
+      const barRect = blendBar.getBoundingClientRect();
+      const localX = touch.clientX - barRect.left;
+
+      showTrackerLine();
+      moveTrackerLine(localX, barRect);
 
       let activeIndex = -1;
       letters.forEach((el, idx) => {
         const rect = el.getBoundingClientRect();
-        if (x >= rect.left && x <= rect.right) {
+        if (touch.clientX >= rect.left && touch.clientX <= rect.right) {
           activeIndex = idx;
         }
       });
@@ -508,19 +532,17 @@
       }
     }
 
-    blendBar.addEventListener("touchstart", handleTouch);
-    blendBar.addEventListener("touchmove", handleTouch);
+    blendBar.addEventListener("touchstart", handleTouch, { passive: false });
+    blendBar.addEventListener("touchmove", handleTouch, { passive: false });
     blendBar.addEventListener("touchend", () => {
-      const built = getBlendBarWord();
       clearActiveBlendLetters();
+      hideTrackerLine();
       lastActiveIndex = -1;
-      if (hasSlid && built) {
-        // After sliding across, say full word
-        speak(built, 0.9);
-        if (currentWord && built === currentWord) {
-          stars++;
-          starsDisplay.textContent = stars;
-        }
+      if (hasSlid && currentWord) {
+        // After sliding across, say full word & reward
+        speak(currentWord, 0.9);
+        stars++;
+        starsDisplay.textContent = stars;
       }
       hasSlid = false;
     });
