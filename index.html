@@ -203,15 +203,14 @@
       <button id="btn-type-fast">Fast Blend</button>
     </div>
     <div id="output"></div>
-    <p class="small-label">Uses UK synthetic phonics sounds (s, a, t, p, i, n…)</p>
+    <p class="small-label">Will use phonics audio from the <code>sounds/</code> folder when available.</p>
   </div>
 
   <!-- TILE GAME PANEL -->
   <div id="panel-drag" class="panel hidden">
     <h2>Tile Sound Game</h2>
-    <p>Kiki can tap tiles to hear the sounds, then slide her finger under the word to blend it.</p>
+    <p>Kiki taps tiles to hear sounds, then slides her finger under the word to blend it.</p>
 
-    <!-- Level / word selection -->
     <label for="levelSelect"><strong>Choose level:</strong></label>
     <select id="levelSelect">
       <option value="satpin">Level 1 – s a t p i n</option>
@@ -225,17 +224,13 @@
 
     <div id="drag-word-display"></div>
 
-    <!-- Tiles -->
-    <div class="tiles-container" id="tiles-container">
-      <!-- Filled by JS -->
-    </div>
+    <div class="tiles-container" id="tiles-container"></div>
 
-    <!-- Blending bar with tracker line -->
     <div class="blend-bar" id="blend-bar">
       <div class="blend-letters" id="blend-letters"></div>
       <div id="tracker-line"></div>
     </div>
-    <p class="hint">She just slides her finger under the letters – the pink line and sounds will follow.</p>
+    <p class="hint">Slide her finger under the letters – the pink line and phonics sounds will follow.</p>
 
     <div class="controls-row">
       <button id="btn-drag-slow">Slow Blend</button>
@@ -243,7 +238,6 @@
     </div>
 
     <div class="stars" id="stars-display">⭐ Stars: <span id="stars-count">0</span></div>
-    <p class="small-label">She earns a star when she slides under the whole word.</p>
   </div>
 
   <script>
@@ -270,9 +264,42 @@
     });
 
     // -------------------------
-    // PHONICS MAP (PURE UK SYNTHETIC PHONICS)
+    // PHONICS AUDIO MAP
+    // (You will add these files in a "sounds" folder)
+    // e.g. sounds/a.mp3, sounds/b.mp3, sounds/sh.mp3
     // -------------------------
-    const phonicsMap = {
+    const phonemeAudioMap = {
+      a: "a.mp3",
+      b: "b.mp3",
+      c: "k.mp3",    // could use same as k
+      k: "k.mp3",
+      d: "d.mp3",
+      e: "e.mp3",
+      f: "f.mp3",
+      g: "g.mp3",
+      h: "h.mp3",
+      i: "i.mp3",
+      j: "j.mp3",
+      l: "l.mp3",
+      m: "m.mp3",
+      n: "n.mp3",
+      o: "o.mp3",
+      p: "p.mp3",
+      q: "k.mp3",
+      r: "r.mp3",
+      s: "s.mp3",
+      t: "t.mp3",
+      v: "v.mp3",
+      w: "w.mp3",
+      x: "x.mp3",    // or "ks.mp3"
+      y: "y.mp3",
+      z: "z.mp3",
+      u: "u.mp3"
+      // later you can add: sh: "sh.mp3", ch: "ch.mp3", th: "th.mp3", etc.
+    };
+
+    // Fallback simple phonics (if no audio file yet)
+    const simplePhonicsFallback = {
       a: "a",
       b: "b",
       c: "k",
@@ -301,43 +328,53 @@
       u: "u"
     };
 
-    function toPhonicsSound(letter) {
+    function playPhoneme(letter, rate = 0.8) {
       const key = letter.toLowerCase();
-      return phonicsMap[key] || key;
+      const file = phonemeAudioMap[key];
+      if (file) {
+        const audio = new Audio("sounds/" + file);
+        audio.play().catch(() => {
+          // if audio fails, fallback to TTS
+          const fallbackSound = simplePhonicsFallback[key] || key;
+          const u = new SpeechSynthesisUtterance(fallbackSound);
+          u.rate = rate;
+          speechSynthesis.cancel();
+          speechSynthesis.speak(u);
+        });
+      } else {
+        // no mapped file yet → fallback to simple phonics TTS
+        const fallbackSound = simplePhonicsFallback[key] || key;
+        const u = new SpeechSynthesisUtterance(fallbackSound);
+        u.rate = rate;
+        speechSynthesis.cancel();
+        speechSynthesis.speak(u);
+      }
     }
 
-    // -------------------------
-    // SPEECH HELPERS
-    // -------------------------
-    function speak(text, rate = 0.9) {
-      if (!text) return;
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.rate = rate;
+    function speakWord(finalWord) {
+      if (!finalWord) return;
+      const uFinal = new SpeechSynthesisUtterance(finalWord);
+      uFinal.rate = 1.05; // slightly excited
       speechSynthesis.cancel();
-      speechSynthesis.speak(utter);
+      speechSynthesis.speak(uFinal);
     }
 
     // Soft, spaced phonemes → then excited final word
-    function speakSequence(parts, finalWord, mode = "slow") {
+    function playPhonemeSequence(parts, finalWord, mode = "slow") {
       speechSynthesis.cancel();
       let delay = 0;
       const baseDelay = mode === "slow" ? 700 : 350;
-      const soundParts = parts.map(p => toPhonicsSound(p));
 
-      soundParts.forEach(sound => {
+      parts.forEach(letter => {
         setTimeout(() => {
-          const u = new SpeechSynthesisUtterance(sound);
-          u.rate = mode === "slow" ? 0.7 : 0.95;
-          speechSynthesis.speak(u);
+          playPhoneme(letter, mode === "slow" ? 0.7 : 0.95);
         }, delay);
         delay += baseDelay;
       });
 
       if (finalWord) {
         setTimeout(() => {
-          const uFinal = new SpeechSynthesisUtterance(finalWord);
-          uFinal.rate = 1.05; // slightly excited
-          speechSynthesis.speak(uFinal);
+          speakWord(finalWord);
         }, delay + 200);
       }
     }
@@ -369,7 +406,7 @@
         return;
       }
       output.innerText = word;
-      speakSequence(parts, word, "slow");
+      playPhonemeSequence(parts, word, "slow");
     });
 
     btnTypeFast.addEventListener("click", () => {
@@ -379,7 +416,7 @@
         return;
       }
       output.innerText = word;
-      speakSequence(parts, word, "fast");
+      playPhonemeSequence(parts, word, "fast");
     });
 
     // -------------------------
@@ -436,7 +473,7 @@
         tile.addEventListener("click", () => {
           tile.classList.add("active");
           setTimeout(() => tile.classList.remove("active"), 150);
-          speak(toPhonicsSound(letter), 0.8);
+          playPhoneme(letter, 0.8);
         });
         tilesContainer.appendChild(tile);
       });
@@ -465,13 +502,13 @@
     btnDragSlow.addEventListener("click", () => {
       if (!currentWord) return;
       const parts = currentWord.split("");
-      speakSequence(parts, currentWord, "slow");
+      playPhonemeSequence(parts, currentWord, "slow");
     });
 
     btnDragFast.addEventListener("click", () => {
       if (!currentWord) return;
       const parts = currentWord.split("");
-      speakSequence(parts, currentWord, "fast");
+      playPhonemeSequence(parts, currentWord, "fast");
     });
 
     // -------------------------
@@ -526,9 +563,8 @@
         const activeLetter = letters[activeIndex];
         activeLetter.classList.add("active");
         const letterChar = activeLetter.textContent.toLowerCase();
-        const sound = toPhonicsSound(letterChar);
-        // soft, spaced phonemes while sliding
-        speak(sound, 0.7);
+        // soft phonics as she slides
+        playPhoneme(letterChar, 0.7);
         lastActiveIndex = activeIndex;
         hasSlid = true;
       }
@@ -541,8 +577,7 @@
       hideTrackerLine();
       lastActiveIndex = -1;
       if (hasSlid && currentWord) {
-        // After sliding under the word: excited final word
-        speak(currentWord, 1.05);
+        speakWord(currentWord); // excited final word
         stars++;
         starsDisplay.textContent = stars;
       }
