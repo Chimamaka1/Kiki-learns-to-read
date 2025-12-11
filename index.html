@@ -84,7 +84,7 @@
       color: #333;
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
       cursor: pointer;
-      transition: transform 0.1s;
+      transition: transform 0.1s, box-shadow 0.1s, background 0.1s;
       user-select: none;
     }
     .tile.consonant {
@@ -93,13 +93,17 @@
     .tile.vowel {
       background: #ffd1d1;
     }
+    .tile.active {
+      background: #ffe6fd;
+      box-shadow: 0 0 12px #ff80df;
+    }
     .tile:active {
       transform: scale(0.9);
     }
 
     .blend-bar {
       margin-top: 12px;
-      padding: 10px;
+      padding: 12px;
       min-height: 60px;
       border-radius: 12px;
       border: 2px dashed #ff9ad9;
@@ -112,6 +116,13 @@
     .blend-letter {
       font-size: 26px;
       font-weight: bold;
+      padding: 4px 6px;
+      border-radius: 6px;
+      transition: background 0.1s, box-shadow 0.1s;
+    }
+    .blend-letter.active {
+      background: #ffe6fd;
+      box-shadow: 0 0 12px #ff80df;
     }
 
     .controls-row {
@@ -145,6 +156,13 @@
       width: 100%;
       margin-top: 6px;
     }
+
+    .hint {
+      font-size: 13px;
+      text-align: center;
+      color: #aa5aa0;
+      margin-top: 6px;
+    }
   </style>
 </head>
 <body>
@@ -157,23 +175,23 @@
     <button id="mode-drag">Tile Game</button>
   </div>
 
-  <!-- TYPE & BLEND PANEL (original + improved) -->
+  <!-- TYPE & BLEND PANEL -->
   <div id="panel-type" class="panel">
     <h2>Type & Blend</h2>
-    <p>Type sounds like <strong>c-a-t</strong> then choose slow or fast blend.</p>
+    <p>Type sounds like <strong>c-a-t</strong>, then choose slow or fast blend.</p>
     <input id="phonemes" placeholder="Enter sounds e.g. c-a-t" style="width:100%; margin-top:6px;"/>
     <div class="controls-row">
       <button id="btn-type-slow">Slow Blend</button>
       <button id="btn-type-fast">Fast Blend</button>
     </div>
     <div id="output"></div>
-    <p class="small-label">Tip: use dashes between sounds (s-a-t, m-a-p, d-o-g).</p>
+    <p class="small-label">Uses UK synthetic phonics: s, a, t, p, i, n, etc.</p>
   </div>
 
-  <!-- DRAG / TILE GAME PANEL -->
+  <!-- TILE GAME PANEL -->
   <div id="panel-drag" class="panel hidden">
     <h2>Tile Sound Game</h2>
-    <p>Tap the tiles to hear the sounds. Then blend them slowly or fast.</p>
+    <p>Tap tiles to hear sounds. Slide your finger along the bar to blend.</p>
 
     <!-- Level / word selection -->
     <label for="levelSelect"><strong>Choose level:</strong></label>
@@ -189,15 +207,16 @@
 
     <div id="drag-word-display"></div>
 
-    <!-- Tiles you can tap (like drag) -->
+    <!-- Tiles -->
     <div class="tiles-container" id="tiles-container">
-      <!-- Tiles created by JS -->
+      <!-- Filled by JS -->
     </div>
 
     <!-- Blending bar -->
     <div class="blend-bar" id="blend-bar">
-      <span class="small-label">Tap tiles above to add sounds here</span>
+      <span class="small-label">Tap tiles, then slide your finger across here</span>
     </div>
+    <p class="hint">Glow will follow her finger & sounds will play in order.</p>
 
     <div class="controls-row">
       <button id="btn-drag-slow">Slow Blend</button>
@@ -232,6 +251,43 @@
     });
 
     // -------------------------
+    // PHONICS MAP (UK synthetic phonics style)
+    // -------------------------
+    const phonicsMap = {
+      a: "a",
+      b: "b",
+      c: "k",
+      k: "k",
+      d: "d",
+      e: "e",
+      f: "fff",
+      g: "g",
+      h: "h",
+      i: "i",
+      j: "j",
+      l: "lll",
+      m: "mmm",
+      n: "nnn",
+      o: "o",
+      p: "p",
+      q: "k",
+      r: "rrr",
+      s: "sss",
+      t: "t",
+      v: "v",
+      w: "w",
+      x: "ks",
+      y: "y",
+      z: "zzz",
+      u: "u"
+    };
+
+    function toPhonicsSound(letter) {
+      const key = letter.toLowerCase();
+      return phonicsMap[key] || key;
+    }
+
+    // -------------------------
     // SPEECH HELPERS
     // -------------------------
     function speak(text, rate = 0.9) {
@@ -247,9 +303,11 @@
       let delay = 0;
       const baseDelay = slow ? 600 : 250;
 
-      parts.forEach(p => {
+      const soundParts = parts.map(p => toPhonicsSound(p));
+
+      soundParts.forEach(sound => {
         setTimeout(() => {
-          const u = new SpeechSynthesisUtterance(p);
+          const u = new SpeechSynthesisUtterance(sound);
           u.rate = slow ? 0.7 : 1.0;
           speechSynthesis.speak(u);
         }, delay);
@@ -265,7 +323,6 @@
       }
     }
 
-    // Simple consonant/vowel checker
     function isVowel(letter) {
       return ["a","e","i","o","u"].includes(letter.toLowerCase());
     }
@@ -336,25 +393,15 @@
     let currentWord = "";
     let stars = 0;
 
-    function createTilesForWord(word) {
-      tilesContainer.innerHTML = "";
-      const letters = word.split("");
-      letters.forEach(letter => {
-        const tile = document.createElement("div");
-        tile.classList.add("tile");
-        tile.classList.add(isVowel(letter) ? "vowel" : "consonant");
-        tile.textContent = letter;
-        tile.addEventListener("click", () => {
-          // When Kiki taps a tile:
-          addLetterToBlendBar(letter);
-          speak(letter); // single sound
-        });
-        tilesContainer.appendChild(tile);
-      });
+    function clearBlendBar() {
+      blendBar.innerHTML = '<span class="small-label">Tap tiles, then slide your finger across here</span>';
     }
 
     function addLetterToBlendBar(letter) {
-      // Don't overflow too many letters
+      // Remove placeholder if present
+      const placeholder = blendBar.querySelector(".small-label");
+      if (placeholder) placeholder.remove();
+
       const span = document.createElement("span");
       span.textContent = letter;
       span.classList.add("blend-letter");
@@ -366,8 +413,23 @@
       return letters.map(l => l.textContent).join("");
     }
 
-    function clearBlendBar() {
-      blendBar.innerHTML = '<span class="small-label">Tap tiles above to add sounds here</span>';
+    function createTilesForWord(word) {
+      tilesContainer.innerHTML = "";
+      const letters = word.split("");
+      letters.forEach(letter => {
+        const tile = document.createElement("div");
+        tile.classList.add("tile");
+        tile.classList.add(isVowel(letter) ? "vowel" : "consonant");
+        tile.textContent = letter;
+        tile.addEventListener("click", () => {
+          // Tap = add to bar + play phonics sound
+          addLetterToBlendBar(letter);
+          tile.classList.add("active");
+          setTimeout(() => tile.classList.remove("active"), 150);
+          speak(toPhonicsSound(letter), 0.8);
+        });
+        tilesContainer.appendChild(tile);
+      });
     }
 
     function chooseNewWord() {
@@ -389,8 +451,6 @@
       const parts = letters.map(l => l.textContent);
       const built = parts.join("");
       speakSequence(parts, built, true);
-
-      // Reward star if she built the actual target word
       if (built === currentWord) {
         stars++;
         starsDisplay.textContent = stars;
@@ -403,14 +463,69 @@
       const parts = letters.map(l => l.textContent);
       const built = parts.join("");
       speakSequence(parts, built, false);
-
       if (built === currentWord) {
         stars++;
         starsDisplay.textContent = stars;
       }
     });
 
-    // Initialise first word on load
+    // -------------------------
+    // FINGER SLIDE BLENDING ON BLEND BAR
+    // -------------------------
+    let lastActiveIndex = -1;
+    let hasSlid = false;
+
+    function clearActiveBlendLetters() {
+      const letters = Array.from(blendBar.querySelectorAll(".blend-letter"));
+      letters.forEach(l => l.classList.remove("active"));
+    }
+
+    function handleTouch(e) {
+      const letters = Array.from(blendBar.querySelectorAll(".blend-letter"));
+      if (!letters.length) return;
+
+      e.preventDefault();
+      const touch = e.touches[0];
+      const x = touch.clientX;
+
+      let activeIndex = -1;
+      letters.forEach((el, idx) => {
+        const rect = el.getBoundingClientRect();
+        if (x >= rect.left && x <= rect.right) {
+          activeIndex = idx;
+        }
+      });
+
+      if (activeIndex !== -1 && activeIndex !== lastActiveIndex) {
+        clearActiveBlendLetters();
+        const activeLetter = letters[activeIndex];
+        activeLetter.classList.add("active");
+        const letterChar = activeLetter.textContent.toLowerCase();
+        const sound = toPhonicsSound(letterChar);
+        speak(sound, 0.8);
+        lastActiveIndex = activeIndex;
+        hasSlid = true;
+      }
+    }
+
+    blendBar.addEventListener("touchstart", handleTouch);
+    blendBar.addEventListener("touchmove", handleTouch);
+    blendBar.addEventListener("touchend", () => {
+      const built = getBlendBarWord();
+      clearActiveBlendLetters();
+      lastActiveIndex = -1;
+      if (hasSlid && built) {
+        // After sliding across, say full word
+        speak(built, 0.9);
+        if (currentWord && built === currentWord) {
+          stars++;
+          starsDisplay.textContent = stars;
+        }
+      }
+      hasSlid = false;
+    });
+
+    // Initialise first word
     chooseNewWord();
   </script>
 
