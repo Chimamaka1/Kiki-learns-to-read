@@ -53,6 +53,7 @@
     button {
       background: #ffc7f2;
       border: none;
+      cursor: pointer;
     }
     button:active {
       transform: scale(0.98);
@@ -242,7 +243,7 @@
     </div>
 
     <div class="stars" id="stars-display">⭐ Stars: <span id="stars-count">0</span></div>
-    <p class="small-label">She earns a star when she slides under the whole word correctly.</p>
+    <p class="small-label">She earns a star when she slides under the whole word.</p>
   </div>
 
   <script>
@@ -269,7 +270,7 @@
     });
 
     // -------------------------
-    // PHONICS MAP (UK synthetic phonics style)
+    // PHONICS MAP (PURE UK SYNTHETIC PHONICS)
     // -------------------------
     const phonicsMap = {
       a: "a",
@@ -278,25 +279,25 @@
       k: "k",
       d: "d",
       e: "e",
-      f: "fff",
+      f: "f",
       g: "g",
       h: "h",
       i: "i",
       j: "j",
-      l: "lll",
-      m: "mmm",
-      n: "nnn",
+      l: "l",
+      m: "m",
+      n: "n",
       o: "o",
       p: "p",
       q: "k",
-      r: "rrr",
-      s: "sss",
+      r: "r",
+      s: "s",
       t: "t",
       v: "v",
       w: "w",
       x: "ks",
       y: "y",
-      z: "zzz",
+      z: "z",
       u: "u"
     };
 
@@ -316,16 +317,17 @@
       speechSynthesis.speak(utter);
     }
 
-    function speakSequence(parts, finalWord, slow = true) {
+    // Soft, spaced phonemes → then excited final word
+    function speakSequence(parts, finalWord, mode = "slow") {
       speechSynthesis.cancel();
       let delay = 0;
-      const baseDelay = slow ? 600 : 250;
+      const baseDelay = mode === "slow" ? 700 : 350;
       const soundParts = parts.map(p => toPhonicsSound(p));
 
       soundParts.forEach(sound => {
         setTimeout(() => {
           const u = new SpeechSynthesisUtterance(sound);
-          u.rate = slow ? 0.7 : 1.0;
+          u.rate = mode === "slow" ? 0.7 : 0.95;
           speechSynthesis.speak(u);
         }, delay);
         delay += baseDelay;
@@ -334,7 +336,7 @@
       if (finalWord) {
         setTimeout(() => {
           const uFinal = new SpeechSynthesisUtterance(finalWord);
-          uFinal.rate = 0.9;
+          uFinal.rate = 1.05; // slightly excited
           speechSynthesis.speak(uFinal);
         }, delay + 200);
       }
@@ -367,7 +369,7 @@
         return;
       }
       output.innerText = word;
-      speakSequence(parts, word, true);
+      speakSequence(parts, word, "slow");
     });
 
     btnTypeFast.addEventListener("click", () => {
@@ -377,7 +379,7 @@
         return;
       }
       output.innerText = word;
-      speakSequence(parts, word, false);
+      speakSequence(parts, word, "fast");
     });
 
     // -------------------------
@@ -425,14 +427,13 @@
 
     function createTilesForWord(word) {
       tilesContainer.innerHTML = "";
-      const uniqueLetters = Array.from(new Set(word.split(""))); // one tile per letter type
+      const uniqueLetters = Array.from(new Set(word.split("")));
       uniqueLetters.forEach(letter => {
         const tile = document.createElement("div");
         tile.classList.add("tile");
         tile.classList.add(isVowel(letter) ? "vowel" : "consonant");
         tile.textContent = letter;
         tile.addEventListener("click", () => {
-          // Tap = just hear the sound, no duplicates added
           tile.classList.add("active");
           setTimeout(() => tile.classList.remove("active"), 150);
           speak(toPhonicsSound(letter), 0.8);
@@ -464,13 +465,13 @@
     btnDragSlow.addEventListener("click", () => {
       if (!currentWord) return;
       const parts = currentWord.split("");
-      speakSequence(parts, currentWord, true);
+      speakSequence(parts, currentWord, "slow");
     });
 
     btnDragFast.addEventListener("click", () => {
       if (!currentWord) return;
       const parts = currentWord.split("");
-      speakSequence(parts, currentWord, false);
+      speakSequence(parts, currentWord, "fast");
     });
 
     // -------------------------
@@ -493,7 +494,7 @@
     }
 
     function moveTrackerLine(localX, barRect) {
-      const width = 30; // same as CSS
+      const width = 30;
       let x = localX - width / 2;
       if (x < 0) x = 0;
       if (x + width > barRect.width) x = barRect.width - width;
@@ -526,7 +527,8 @@
         activeLetter.classList.add("active");
         const letterChar = activeLetter.textContent.toLowerCase();
         const sound = toPhonicsSound(letterChar);
-        speak(sound, 0.8);
+        // soft, spaced phonemes while sliding
+        speak(sound, 0.7);
         lastActiveIndex = activeIndex;
         hasSlid = true;
       }
@@ -539,8 +541,8 @@
       hideTrackerLine();
       lastActiveIndex = -1;
       if (hasSlid && currentWord) {
-        // After sliding across, say full word & reward
-        speak(currentWord, 0.9);
+        // After sliding under the word: excited final word
+        speak(currentWord, 1.05);
         stars++;
         starsDisplay.textContent = stars;
       }
