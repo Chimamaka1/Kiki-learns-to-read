@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kiki Learns to Read - Phoneme Blender</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+    }
+    input, button {
+      padding: 12px;
+      font-size: 18px;
+      width: 100%;
+      margin-top: 10px;
+    }
+    #output {
+      margin-top: 20px;
+      font-size: 28px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Kiki Learns to Read</h2>
+  <p>Type phonemes like <strong>c-a-t</strong></p>
+
+  <input id="phonemes" placeholder="Enter phonemes e.g. c-a-t"/>
+  <button id="blendBtn">Blend & Speak</button>
+
+  <div id="output"></div>
+
+  <script>
+    const blendBtn = document.getElementById("blendBtn");
+
+    blendBtn.addEventListener("click", () => {
+      const input = document.getElementById("phonemes").value
+        .trim().toLowerCase();
+
+      if (!input) {
+        document.getElementById("output").innerText = "Please enter phonemes.";
+        return;
+      }
+
+      const parts = input.replace(/\s+/g, "").split("-");
+      const word = parts.join("");
+
+      document.getElementById("output").innerText = word;
+
+      const utter = new SpeechSynthesisUtterance(word);
+      utter.rate = 0.9;
+
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utter);
+    });
+  </script>
+
+</body>
+</html>
