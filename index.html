@@ -1,636 +1,274 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Kiki Learns to Read - Phoneme Blender</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
-  </script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 16px;
-      max-width: 480px;
-      margin: auto;
-      background: #fff7ff;
-    }
-    h1, h2 {
-      text-align: center;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kiki Learns to Read</title>
 
-    .mode-switch {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-    .mode-switch button {
-      flex: 1;
-      padding: 10px;
-      font-size: 14px;
-      border-radius: 8px;
-      border: none;
-      background: #eee;
-    }
-    .mode-switch button.active {
-      background: #ffb3e6;
-      font-weight: bold;
-    }
+<style>
+body{
+  font-family:"Arial Rounded MT Bold",Arial,sans-serif;
+  background:#fff0fa;
+  margin:0;
+  padding:16px;
+  max-width:480px;
+  margin:auto;
+}
+h1,h2{text-align:center}
 
-    .panel {
-      border-radius: 12px;
-      background: #ffffff;
-      padding: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      margin-bottom: 16px;
-    }
+.mode-bar{
+  display:flex;
+  gap:8px;
+  margin-bottom:14px;
+}
+.mode-bar button{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:14px;
+  font-size:14px;
+  background:#ffd3ec;
+}
+.mode-bar button.active{
+  background:#ff69c9;
+  color:white;
+}
 
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background: #ffc7f2;
-      border: none;
-      cursor: pointer;
-    }
-    button:active {
-      transform: scale(0.98);
-    }
+.panel{
+  background:white;
+  border-radius:18px;
+  padding:14px;
+  box-shadow:0 4px 10px rgba(0,0,0,.15);
+  margin-bottom:16px;
+}
+.hidden{display:none}
 
-    #output, #drag-word-display {
-      margin-top: 10px;
-      font-size: 24px;
-      font-weight: bold;
-      text-align: center;
-    }
+.tiles{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+.tile{
+  width:56px;
+  height:56px;
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  background:#ffe3f3;
+  box-shadow:0 0 12px #ffb6e6;
+}
 
-    /* Tiles */
-    .tiles-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: center;
-      margin-top: 10px;
-    }
-    .tile {
-      width: 48px;
-      height: 48px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      font-weight: bold;
-      color: #333;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      cursor: pointer;
-      transition: transform 0.1s, box-shadow 0.1s, background 0.1s;
-      user-select: none;
-    }
-    .tile.consonant {
-      background: #c7e7ff;
-    }
-    .tile.vowel {
-      background: #ffd1d1;
-    }
-    .tile.active {
-      background: #ffe6fd;
-      box-shadow: 0 0 12px #ff80df;
-    }
-    .tile:active {
-      transform: scale(0.9);
-    }
+.blend-bar{
+  margin-top:16px;
+  padding:16px 10px 24px;
+  border:3px dashed #ff5fb8;
+  border-radius:18px;
+  position:relative;
+  overflow:hidden;
+  background:#fff5fc;
+}
+.blend-letter{
+  font-size:30px;
+  margin:0 8px;
+  position:relative;
+}
+.blend-letter.active{
+  background:#ffd9f2;
+  border-radius:8px;
+  box-shadow:0 0 14px #ff4fb3;
+}
+.blend-letter::after{
+  content:"";
+  position:absolute;
+  left:0; right:0;
+  bottom:-6px;
+  height:5px;
+  background:transparent;
+}
+.blend-letter.active::after{
+  background:#ff1493;
+  box-shadow:0 0 10px #ff1493;
+}
 
-    /* Blend bar & finger tracker */
-    .blend-bar {
-      margin-top: 16px;
-      padding: 16px 8px 10px;
-      min-height: 60px;
-      border-radius: 12px;
-      border: 2px dashed #ff9ad9;
-      background: #fff0fb;
-      position: relative;
-      overflow: hidden;
-    }
-    .blend-letters {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-    .blend-letter {
-      font-size: 26px;
-      font-weight: bold;
-      padding: 4px 6px;
-      border-radius: 6px;
-      position: relative;
-      transition: background 0.1s, box-shadow 0.1s;
-    }
-    .blend-letter.active {
-      background: #ffe6fd;
-      box-shadow: 0 0 12px #ff80df;
-    }
+/* BIG finger tracker */
+#tracker{
+  position:absolute;
+  bottom:2px;
+  height:12px;
+  width:80px;
+  background:#ff1493;
+  border-radius:999px;
+  box-shadow:0 0 20px #ff1493;
+  display:none;
+}
 
-    /* Pink underline that moves under each letter */
-    .blend-letter::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -4px;
-      height: 3px;
-      border-radius: 999px;
-      background: transparent;
-      box-shadow: none;
-      transition: background 0.1s, box-shadow 0.1s;
-    }
-    .blend-letter.active::after {
-      background: #ff0080;
-      box-shadow: 0 0 8px #ff0080;
-    }
-
-    /* Pink reading tracker line */
-    #tracker-line {
-      position: absolute;
-      bottom: 4px;
-      width: 30px;
-      height: 3px;
-      background: #ff0080;
-      border-radius: 999px;
-      display: none;
-      pointer-events: none;
-      box-shadow: 0 0 8px #ff0080;
-    }
-
-    .controls-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
-    .controls-row button {
-      flex: 1;
-    }
-
-    .stars {
-      margin-top: 10px;
-      text-align: center;
-      font-size: 20px;
-    }
-    .small-label {
-      font-size: 12px;
-      color: #666;
-      text-align: center;
-      margin-top: 4px;
-    }
-    .hidden {
-      display: none;
-    }
-    select {
-      width: 100%;
-      margin-top: 6px;
-    }
-    .hint {
-      font-size: 13px;
-      text-align: center;
-      color: #aa5aa0;
-      margin-top: 6px;
-    }
-  </style>
+.word-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin-top:12px;
+}
+.word-card{
+  padding:16px;
+  font-size:22px;
+  border-radius:16px;
+  background:#ffe6f6;
+  text-align:center;
+  box-shadow:0 0 12px #ffb6e6;
+}
+.stars{text-align:center;font-size:22px}
+</style>
 </head>
+
 <body>
 
-  <h1>🌟 Kiki Learns to Read 🌟</h1>
+<h1>🌸 Kiki Learns to Read 🌸</h1>
 
-  <!-- Mode Switch -->
-  <div class="mode-switch">
-    <button id="mode-type" class="active">Type & Blend</button>
-    <button id="mode-drag">Tile Game</button>
+<div class="mode-bar">
+  <button id="mType" class="active">Type & Blend</button>
+  <button id="mSlide">Slide & Blend</button>
+  <button id="mFind">Find the Word</button>
+</div>
+
+<!-- TYPE -->
+<div id="pType" class="panel">
+  <h2>Type & Blend</h2>
+  <input id="typeInput" placeholder="c-a-t" style="width:100%;font-size:20px">
+  <button onclick="typeBlend()">Blend</button>
+</div>
+
+<!-- SLIDE -->
+<div id="pSlide" class="panel hidden">
+  <h2>Slide to Read</h2>
+  <div id="slideWord" style="text-align:center;font-size:28px"></div>
+  <div class="tiles" id="slideTiles"></div>
+  <div class="blend-bar" id="blendBar">
+    <div id="blendLetters"></div>
+    <div id="tracker"></div>
   </div>
+</div>
 
-  <!-- TYPE & BLEND PANEL -->
-  <div id="panel-type" class="panel">
-    <h2>Type & Blend</h2>
-    <p>Type sounds like <strong>c-a-t</strong>, then choose slow or fast blend.</p>
-    <input id="phonemes" placeholder="Enter sounds e.g. c-a-t" style="width:100%; margin-top:6px;"/>
-    <div class="controls-row">
-      <button id="btn-type-slow">Slow Blend</button>
-      <button id="btn-type-fast">Fast Blend</button>
-    </div>
-    <div id="output"></div>
-    <p class="small-label">Uses phonics audio from the <code>sounds/</code> folder when available.</p>
-  </div>
+<!-- FIND -->
+<div id="pFind" class="panel hidden">
+  <h2>Find the Word</h2>
+  <p id="findPrompt" style="text-align:center;font-size:22px"></p>
+  <div class="word-grid" id="findGrid"></div>
+  <div class="stars">⭐ <span id="starCount">0</span></div>
+</div>
 
-  <!-- TILE GAME PANEL -->
-  <div id="panel-drag" class="panel hidden">
-    <h2>Tile Sound Game</h2>
-    <p>Kiki taps tiles to hear sounds, then slides her finger under the word to blend it.</p>
+<script>
+// -------- MODE --------
+const panels={type:pType,slide:pSlide,find:pFind};
+function show(m){
+  Object.values(panels).forEach(p=>p.classList.add("hidden"));
+  panels[m].classList.remove("hidden");
+  [mType,mSlide,mFind].forEach(b=>b.classList.remove("active"));
+  document.getElementById("m"+m.charAt(0).toUpperCase()+m.slice(1)).classList.add("active");
+}
+mType.onclick=()=>show("type");
+mSlide.onclick=()=>show("slide");
+mFind.onclick=()=>show("find");
 
-    <label for="levelSelect"><strong>Choose level:</strong></label>
-    <select id="levelSelect">
-      <option value="satpin">Level 1 – s a t p i n</option>
-      <option value="cvc1">Level 2 – CVC starter words</option>
-    </select>
+// -------- FEMALE TTS --------
+let female=null;
+speechSynthesis.onvoiceschanged=()=>{
+  female=speechSynthesis.getVoices().find(v=>v.lang.startsWith("en")&&/Samantha|Karen|Moira|Serena/i.test(v.name));
+};
+function speak(t){
+  const u=new SpeechSynthesisUtterance(t);
+  u.voice=female; u.rate=.95; u.pitch=1.2;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
 
-    <div class="controls-row" style="margin-top:8px;">
-      <button id="btn-new-word">New Word</button>
-      <button id="btn-reset-bar">Reset Word</button>
-    </div>
+// -------- PHONEME AUDIO --------
+function playSound(l){
+  const a=new Audio(`sounds/${l}.m4a`);
+  a.onerror=()=>speak(l);
+  a.play();
+}
 
-    <div id="drag-word-display"></div>
+// -------- TYPE --------
+function typeBlend(){
+  const parts=typeInput.value.toLowerCase().split("-");
+  let d=0;
+  parts.forEach(p=>{setTimeout(()=>playSound(p),d);d+=600;});
+  setTimeout(()=>speak(parts.join("")),d+200);
+}
 
-    <div class="tiles-container" id="tiles-container"></div>
+// -------- SLIDE --------
+const words=["cat","pin","sun","map","dog"];
+let current=words[Math.floor(Math.random()*words.length)];
+slideWord.textContent=current.toUpperCase();
+slideTiles.innerHTML="";
+blendLetters.innerHTML="";
+current.split("").forEach(l=>{
+  const t=document.createElement("div");
+  t.className="tile"; t.textContent=l;
+  t.onclick=()=>playSound(l);
+  slideTiles.appendChild(t);
 
-    <div class="blend-bar" id="blend-bar">
-      <div class="blend-letters" id="blend-letters"></div>
-      <div id="tracker-line"></div>
-    </div>
-    <p class="hint">Let her slide her finger from left to right – the pink glow and sounds will follow, then the whole word will be spoken.</p>
+  const s=document.createElement("span");
+  s.className="blend-letter"; s.textContent=l;
+  blendLetters.appendChild(s);
+});
 
-    <div class="controls-row">
-      <button id="btn-drag-slow">Slow Blend</button>
-      <button id="btn-drag-fast">Fast Blend</button>
-    </div>
+let lastIndex=-1, finished=false;
+blendBar.addEventListener("touchmove",e=>{
+  e.preventDefault();
+  const rect=blendBar.getBoundingClientRect();
+  const x=e.touches[0].clientX-rect.left;
+  tracker.style.display="block";
+  tracker.style.left=Math.max(0,Math.min(rect.width-80,x-40))+"px";
 
-    <div class="stars" id="stars-display">⭐ Stars: <span id="stars-count">0</span></div>
-  </div>
-
-  <script>
-    // -------------------------
-    // MODE SWITCHING
-    // -------------------------
-    const modeTypeBtn = document.getElementById("mode-type");
-    const modeDragBtn = document.getElementById("mode-drag");
-    const panelType = document.getElementById("panel-type");
-    const panelDrag = document.getElementById("panel-drag");
-
-    modeTypeBtn.addEventListener("click", () => {
-      modeTypeBtn.classList.add("active");
-      modeDragBtn.classList.remove("active");
-      panelType.classList.remove("hidden");
-      panelDrag.classList.add("hidden");
-    });
-
-    modeDragBtn.addEventListener("click", () => {
-      modeDragBtn.classList.add("active");
-      modeTypeBtn.classList.remove("active");
-      panelDrag.classList.remove("hidden");
-      panelType.classList.add("hidden");
-    });
-
-    // -------------------------
-    // PHONICS MAPS
-    // -------------------------
-    // base filename for each phoneme (no extension)
-    const phonemeAudioMap = {
-      a: "a",
-      b: "b",
-      c: "c",
-      k: "k",
-      d: "d",
-      e: "e",
-      f: "f",
-      g: "g",
-      h: "h",
-      i: "i",
-      j: "j",
-      l: "l",
-      m: "m",
-      n: "n",
-      o: "o",
-      p: "p",
-      q: "k",
-      r: "r",
-      s: "s",
-      t: "t",
-      v: "v",
-      w: "w",
-      x: "x",   // you can later map to x-ks / x-z
-      y: "y",
-      z: "z",
-      u: "u"
-      // later add: sh: "sh", ch: "ch", "th": "th-unvoiced", etc.
-    };
-
-    // simple fallback phonics if no audio exists
-    const simplePhonicsFallback = {
-      a: "a",
-      b: "b",
-      c: "k",
-      k: "k",
-      d: "d",
-      e: "e",
-      f: "f",
-      g: "g",
-      h: "h",
-      i: "i",
-      j: "j",
-      l: "l",
-      m: "m",
-      n: "n",
-      o: "o",
-      p: "p",
-      q: "k",
-      r: "r",
-      s: "s",
-      t: "t",
-      v: "v",
-      w: "w",
-      x: "ks",
-      y: "y",
-      z: "z",
-      u: "u"
-    };
-
-    // -------------------------
-    // AUDIO HELPERS (m4a first then mp3, then TTS)
-    // -------------------------
-    function playPhoneme(letter, rate = 0.8) {
-      const key = letter.toLowerCase();
-      const base = phonemeAudioMap[key] || key;
-
-      let triedMp3 = false;
-      let audio = new Audio(`sounds/${base}.m4a`);
-
-      function fallback() {
-        const sound = simplePhonicsFallback[key] || key;
-        const u = new SpeechSynthesisUtterance(sound);
-        u.rate = rate;
-        speechSynthesis.cancel();
-        speechSynthesis.speak(u);
-      }
-
-      audio.onerror = () => {
-        if (!triedMp3) {
-          triedMp3 = true;
-          audio = new Audio(`sounds/${base}.mp3`);
-          audio.onerror = fallback;
-          audio.play().catch(fallback);
-        } else {
-          fallback();
-        }
-      };
-
-      audio.play().catch(fallback);
-    }
-
-    function speakWord(word) {
-      if (!word) return;
-      const u = new SpeechSynthesisUtterance(word);
-      u.rate = 1.05; // slightly excited
-      speechSynthesis.cancel();
-      speechSynthesis.speak(u);
-    }
-
-    // spaced phoneme sequence then whole word
-    function playPhonemeSequence(parts, finalWord, mode = "slow") {
-      speechSynthesis.cancel();
-      let delay = 0;
-      const baseDelay = mode === "slow" ? 650 : 320; // natural-ish
-
-      parts.forEach(letter => {
-        setTimeout(() => {
-          playPhoneme(letter, mode === "slow" ? 0.75 : 0.95);
-        }, delay);
-        delay += baseDelay;
-      });
-
-      if (finalWord) {
-        setTimeout(() => {
-          speakWord(finalWord);
-        }, delay + 200);
-      }
-    }
-
-    function isVowel(letter) {
-      return ["a","e","i","o","u"].includes(letter.toLowerCase());
-    }
-
-    // -------------------------
-    // TYPE & BLEND
-    // -------------------------
-    const phonemeInput = document.getElementById("phonemes");
-    const btnTypeSlow = document.getElementById("btn-type-slow");
-    const btnTypeFast = document.getElementById("btn-type-fast");
-    const output = document.getElementById("output");
-
-    function parsePhonemesInput() {
-      const raw = phonemeInput.value.trim().toLowerCase();
-      if (!raw) return { parts: [], word: "" };
-      const parts = raw.replace(/\s+/g, "").split("-");
-      const word = parts.join("");
-      return { parts, word };
-    }
-
-    btnTypeSlow.addEventListener("click", () => {
-      const { parts, word } = parsePhonemesInput();
-      if (!word) {
-        output.innerText = "Please enter sounds.";
-        return;
-      }
-      output.innerText = word;
-      playPhonemeSequence(parts, word, "slow");
-    });
-
-    btnTypeFast.addEventListener("click", () => {
-      const { parts, word } = parsePhonemesInput();
-      if (!word) {
-        output.innerText = "Please enter sounds.";
-        return;
-      }
-      output.innerText = word;
-      playPhonemeSequence(parts, word, "fast");
-    });
-
-    // -------------------------
-    // TILE GAME DATA (LEVELS)
-    // -------------------------
-    const levels = {
-      satpin: {
-        name: "SATPIN letters",
-        words: ["sat","sit","pin","pan","tap","tin","nap"]
-      },
-      cvc1: {
-        name: "CVC starter words",
-        words: ["cat","dog","map","sun","bed","cup","lip","cap","bug"]
-      }
-    };
-
-    // -------------------------
-    // TILE GAME LOGIC
-    // -------------------------
-    const levelSelect = document.getElementById("levelSelect");
-    const btnNewWord = document.getElementById("btn-new-word");
-    const btnResetBar = document.getElementById("btn-reset-bar");
-    const dragWordDisplay = document.getElementById("drag-word-display");
-    const tilesContainer = document.getElementById("tiles-container");
-    const blendBar = document.getElementById("blend-bar");
-    const blendLettersContainer = document.getElementById("blend-letters");
-    const trackerLine = document.getElementById("tracker-line");
-    const btnDragSlow = document.getElementById("btn-drag-slow");
-    const btnDragFast = document.getElementById("btn-drag-fast");
-    const starsDisplay = document.getElementById("stars-count");
-
-    let currentWord = "";
-    let stars = 0;
-
-    function buildBlendBarForWord(word) {
-      blendLettersContainer.innerHTML = "";
-      const letters = word.split("");
-      letters.forEach(letter => {
-        const span = document.createElement("span");
-        span.textContent = letter;
-        span.classList.add("blend-letter");
-        blendLettersContainer.appendChild(span);
-      });
-    }
-
-    function createTilesForWord(word) {
-      tilesContainer.innerHTML = "";
-      const uniqueLetters = Array.from(new Set(word.split("")));
-      uniqueLetters.forEach(letter => {
-        const tile = document.createElement("div");
-        tile.classList.add("tile");
-        tile.classList.add(isVowel(letter) ? "vowel" : "consonant");
-        tile.textContent = letter;
-        tile.addEventListener("click", () => {
-          tile.classList.add("active");
-          setTimeout(() => tile.classList.remove("active"), 150);
-          playPhoneme(letter, 0.8);
-        });
-        tilesContainer.appendChild(tile);
-      });
-    }
-
-    function chooseNewWord() {
-      const levelKey = levelSelect.value;
-      const list = levels[levelKey].words;
-      const randomWord = list[Math.floor(Math.random() * list.length)];
-      currentWord = randomWord;
-      dragWordDisplay.textContent = currentWord.toUpperCase();
-      createTilesForWord(currentWord);
-      buildBlendBarForWord(currentWord);
-      clearActiveBlendLetters();
-      hideTrackerLine();
-    }
-
-    btnNewWord.addEventListener("click", chooseNewWord);
-    btnResetBar.addEventListener("click", () => {
-      if (!currentWord) return;
-      buildBlendBarForWord(currentWord);
-      clearActiveBlendLetters();
-      hideTrackerLine();
-    });
-
-    btnDragSlow.addEventListener("click", () => {
-      if (!currentWord) return;
-      const parts = currentWord.split("");
-      playPhonemeSequence(parts, currentWord, "slow");
-    });
-
-    btnDragFast.addEventListener("click", () => {
-      if (!currentWord) return;
-      const parts = currentWord.split("");
-      playPhonemeSequence(parts, currentWord, "fast");
-    });
-
-    // -------------------------
-    // FINGER SLIDE BLENDING
-    // C: natural speed, A: final word at end, C: glow + underline
-    // -------------------------
-    let lastActiveIndex = -1;
-    let hasSlid = false;
-    let reachedEndOnce = false;
-
-    function clearActiveBlendLetters() {
-      const letters = Array.from(blendLettersContainer.querySelectorAll(".blend-letter"));
-      letters.forEach(l => l.classList.remove("active"));
-    }
-
-    function showTrackerLine() {
-      trackerLine.style.display = "block";
-    }
-
-    function hideTrackerLine() {
-      trackerLine.style.display = "none";
-    }
-
-    function moveTrackerLine(localX, barRect) {
-      const width = 30;
-      let x = localX - width / 2;
-      if (x < 0) x = 0;
-      if (x + width > barRect.width) x = barRect.width - width;
-      trackerLine.style.left = x + "px";
-    }
-
-    function handleTouch(e) {
-      const letters = Array.from(blendLettersContainer.querySelectorAll(".blend-letter"));
-      if (!letters.length) return;
-
-      e.preventDefault();
-      const touch = e.touches[0];
-      const barRect = blendBar.getBoundingClientRect();
-      const localX = touch.clientX - barRect.left;
-
-      showTrackerLine();
-      moveTrackerLine(localX, barRect);
-
-      let activeIndex = -1;
-      letters.forEach((el, idx) => {
-        const rect = el.getBoundingClientRect();
-        if (touch.clientX >= rect.left && touch.clientX <= rect.right) {
-          activeIndex = idx;
-        }
-      });
-
-      if (activeIndex !== -1 && activeIndex !== lastActiveIndex) {
-        clearActiveBlendLetters();
-        const activeLetter = letters[activeIndex];
-        activeLetter.classList.add("active");
-        const letterChar = activeLetter.textContent.toLowerCase();
-        // natural-speed phoneme
-        playPhoneme(letterChar, 0.9);
-        hasSlid = true;
-        lastActiveIndex = activeIndex;
-
-        // if we reach final letter for the first time, say full word
-        if (activeIndex === letters.length - 1 && !reachedEndOnce && currentWord) {
-          reachedEndOnce = true;
-          setTimeout(() => {
-            speakWord(currentWord);
-            stars++;
-            starsDisplay.textContent = stars;
-          }, 350); // slight delay so last phoneme finishes
+  [...blendLetters.children].forEach((el,i)=>{
+    const r=el.getBoundingClientRect();
+    if(e.touches[0].clientX>=r.left&&e.touches[0].clientX<=r.right){
+      if(i!==lastIndex){
+        [...blendLetters.children].forEach(l=>l.classList.remove("active"));
+        el.classList.add("active");
+        playSound(el.textContent);
+        lastIndex=i;
+        if(i===blendLetters.children.length-1&&!finished){
+          finished=true;
+          setTimeout(()=>speak(current),350);
         }
       }
     }
+  });
+},{passive:false});
 
-    blendBar.addEventListener("touchstart", (e) => {
-      lastActiveIndex = -1;
-      hasSlid = false;
-      reachedEndOnce = false;
-      handleTouch(e);
-    }, { passive: false });
+blendBar.addEventListener("touchend",()=>{
+  tracker.style.display="none";
+  lastIndex=-1; finished=false;
+  [...blendLetters.children].forEach(l=>l.classList.remove("active"));
+});
 
-    blendBar.addEventListener("touchmove", handleTouch, { passive: false });
-
-    blendBar.addEventListener("touchend", () => {
-      clearActiveBlendLetters();
-      hideTrackerLine();
-      lastActiveIndex = -1;
-      // if she slid but didn't reach end, we don't auto-say word
-    });
-
-    // -------------------------
-    // INIT
-    // -------------------------
-    chooseNewWord(); // start with a word
-  </script>
+// -------- FIND --------
+const cvc=["cat","dog","sun","map","cap"];
+const sight=["the","is","a","to"];
+let stars=0;
+function startFind(){
+  const target=cvc[Math.floor(Math.random()*cvc.length)];
+  findPrompt.textContent="Find: "+target.toUpperCase();
+  speak("Find "+target);
+  const opts=[target,...sight].sort(()=>Math.random()-.5);
+  findGrid.innerHTML="";
+  opts.forEach(w=>{
+    const c=document.createElement("div");
+    c.className="word-card"; c.textContent=w;
+    c.onclick=()=>{
+      if(w===target){stars++;starCount.textContent=stars;speak("Well done "+w);startFind();}
+      else speak("Try again");
+    };
+    findGrid.appendChild(c);
+  });
+}
+startFind();
+</script>
 
 </body>
 </html>
