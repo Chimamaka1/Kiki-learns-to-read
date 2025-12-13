@@ -15,112 +15,86 @@ body{
   margin:auto;
 }
 h1,h2{text-align:center}
-
-.mode-bar{
-  display:flex;
-  gap:8px;
-  margin-bottom:14px;
-}
-.mode-bar button{
-  flex:1;
-  padding:12px;
-  border:none;
-  border-radius:14px;
-  font-size:14px;
-  background:#ffd3ec;
-}
-.mode-bar button.active{
-  background:#ff69c9;
-  color:white;
-}
-
 .panel{
   background:white;
   border-radius:18px;
-  padding:14px;
-  box-shadow:0 4px 10px rgba(0,0,0,.15);
-  margin-bottom:16px;
+  padding:16px;
+  margin-bottom:18px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
 }
 .hidden{display:none}
 
+button{
+  padding:12px;
+  width:100%;
+  border:none;
+  border-radius:14px;
+  background:#ff69c9;
+  color:white;
+  font-size:16px;
+}
+
 .tiles{
   display:flex;
-  gap:12px;
   justify-content:center;
-  flex-wrap:wrap;
+  gap:14px;
   margin-top:12px;
 }
 .tile{
-  width:56px;
-  height:56px;
+  width:60px;height:60px;
   border-radius:16px;
+  background:#ffe3f3;
+  font-size:26px;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:24px;
-  background:#ffe3f3;
-  box-shadow:0 0 12px #ffb6e6;
+  box-shadow:0 0 14px #ffb6e6;
 }
 
 .blend-bar{
-  margin-top:16px;
-  padding:16px 10px 24px;
+  margin-top:18px;
+  padding:24px 12px 36px;
   border:3px dashed #ff5fb8;
   border-radius:18px;
   position:relative;
-  overflow:hidden;
   background:#fff5fc;
 }
 .blend-letter{
-  font-size:30px;
-  margin:0 8px;
-  position:relative;
+  font-size:34px;
+  margin:0 10px;
 }
 .blend-letter.active{
   background:#ffd9f2;
-  border-radius:8px;
-  box-shadow:0 0 14px #ff4fb3;
-}
-.blend-letter::after{
-  content:"";
-  position:absolute;
-  left:0; right:0;
-  bottom:-6px;
-  height:5px;
-  background:transparent;
-}
-.blend-letter.active::after{
-  background:#ff1493;
-  box-shadow:0 0 10px #ff1493;
+  border-radius:10px;
+  box-shadow:0 0 18px #ff4fb3;
 }
 
-/* BIG finger tracker */
 #tracker{
   position:absolute;
-  bottom:2px;
-  height:12px;
-  width:80px;
+  bottom:8px;
+  height:14px;
+  width:90px;
   background:#ff1493;
   border-radius:999px;
-  box-shadow:0 0 20px #ff1493;
+  box-shadow:0 0 24px #ff1493;
   display:none;
 }
 
 .word-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
-  gap:12px;
-  margin-top:12px;
+  gap:14px;
+  margin-top:14px;
 }
 .word-card{
-  padding:16px;
+  padding:18px;
   font-size:22px;
-  border-radius:16px;
+  border-radius:18px;
   background:#ffe6f6;
   text-align:center;
-  box-shadow:0 0 12px #ffb6e6;
+  box-shadow:0 0 14px #ffb6e6;
 }
-.stars{text-align:center;font-size:22px}
+.progress{text-align:center;font-size:18px}
 </style>
 </head>
 
@@ -128,113 +102,154 @@ h1,h2{text-align:center}
 
 <h1>🌸 Kiki Learns to Read 🌸</h1>
 
-<div class="mode-bar">
-  <button id="mType" class="active">Type & Blend</button>
-  <button id="mSlide">Slide & Blend</button>
-  <button id="mFind">Find the Word</button>
-</div>
-
-<!-- TYPE -->
-<div id="pType" class="panel">
-  <h2>Type & Blend</h2>
-  <input id="typeInput" placeholder="c-a-t" style="width:100%;font-size:20px">
-  <button onclick="typeBlend()">Blend</button>
-</div>
-
-<!-- SLIDE -->
-<div id="pSlide" class="panel hidden">
+<div id="blendPanel" class="panel">
   <h2>Slide to Read</h2>
-  <div id="slideWord" style="text-align:center;font-size:28px"></div>
-  <div class="tiles" id="slideTiles"></div>
+  <div id="wordDisplay" style="text-align:center;font-size:30px"></div>
+  <div class="tiles" id="tiles"></div>
   <div class="blend-bar" id="blendBar">
-    <div id="blendLetters"></div>
+    <div id="letters"></div>
     <div id="tracker"></div>
   </div>
 </div>
 
-<!-- FIND -->
-<div id="pFind" class="panel hidden">
+<div id="findPanel" class="panel hidden">
   <h2>Find the Word</h2>
-  <p id="findPrompt" style="text-align:center;font-size:22px"></p>
-  <div class="word-grid" id="findGrid"></div>
-  <div class="stars">⭐ <span id="starCount">0</span></div>
+  <div id="findPrompt" style="text-align:center;font-size:22px"></div>
+  <div class="word-grid" id="grid"></div>
+</div>
+
+<div id="sentencePanel" class="panel hidden">
+  <h2>Read the Sentence</h2>
+  <div id="sentenceText" style="text-align:center;font-size:24px"></div>
+  <button onclick="readSentence()">Read</button>
+</div>
+
+<div class="progress">
+⭐ Level: <span id="level">1</span>
 </div>
 
 <script>
-// -------- MODE --------
-const panels={type:pType,slide:pSlide,find:pFind};
-function show(m){
-  Object.values(panels).forEach(p=>p.classList.add("hidden"));
-  panels[m].classList.remove("hidden");
-  [mType,mSlide,mFind].forEach(b=>b.classList.remove("active"));
-  document.getElementById("m"+m.charAt(0).toUpperCase()+m.slice(1)).classList.add("active");
-}
-mType.onclick=()=>show("type");
-mSlide.onclick=()=>show("slide");
-mFind.onclick=()=>show("find");
-
-// -------- FEMALE TTS --------
-let female=null;
+// ---------- FEMALE TTS ONLY ----------
+let femaleVoice=null;
 speechSynthesis.onvoiceschanged=()=>{
-  female=speechSynthesis.getVoices().find(v=>v.lang.startsWith("en")&&/Samantha|Karen|Moira|Serena/i.test(v.name));
+  femaleVoice = speechSynthesis.getVoices().find(v =>
+    v.lang.startsWith("en") &&
+    !/male|fred|daniel|alex/i.test(v.name)
+  );
 };
-function speak(t){
-  const u=new SpeechSynthesisUtterance(t);
-  u.voice=female; u.rate=.95; u.pitch=1.2;
-  speechSynthesis.cancel(); speechSynthesis.speak(u);
+
+function speakWord(text){
+  if(!femaleVoice) return;
+  const u=new SpeechSynthesisUtterance(text);
+  u.voice=femaleVoice;
+  u.rate=0.9;
+  u.pitch=1.25;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
 }
 
-// -------- PHONEME AUDIO --------
-function playSound(l){
-  const a=new Audio(`sounds/${l}.m4a`);
-  a.onerror=()=>speak(l);
-  a.play();
+// ---------- PHONICS ----------
+function playPhoneme(l){
+  return new Promise(res=>{
+    const a=new Audio(`sounds/${l}.m4a`);
+    a.onended=res;
+    a.onerror=res;
+    a.play();
+  });
 }
 
-// -------- TYPE --------
-function typeBlend(){
-  const parts=typeInput.value.toLowerCase().split("-");
-  let d=0;
-  parts.forEach(p=>{setTimeout(()=>playSound(p),d);d+=600;});
-  setTimeout(()=>speak(parts.join("")),d+200);
-}
-
-// -------- SLIDE --------
-const words=["cat","pin","sun","map","dog"];
-let current=words[Math.floor(Math.random()*words.length)];
-slideWord.textContent=current.toUpperCase();
-slideTiles.innerHTML="";
-blendLetters.innerHTML="";
-current.split("").forEach(l=>{
-  const t=document.createElement("div");
-  t.className="tile"; t.textContent=l;
-  t.onclick=()=>playSound(l);
-  slideTiles.appendChild(t);
-
-  const s=document.createElement("span");
-  s.className="blend-letter"; s.textContent=l;
-  blendLetters.appendChild(s);
+// ---------- CVC GENERATION ----------
+const consonants=["b","c","d","f","g","h","j","k","l","m","n","p","r","s","t","v","w","y","z"];
+const vowels=["a","e","i","o","u"];
+let words=[];
+consonants.forEach(c1=>{
+  vowels.forEach(v=>{
+    consonants.forEach(c2=>{
+      words.push(c1+v+c2);
+    });
+  });
 });
+words=words.sort(()=>Math.random()-0.5);
+let index=0;
+function nextWord(){
+  if(index>=words.length){
+    words=words.sort(()=>Math.random()-0.5);
+    index=0;
+  }
+  return words[index++];
+}
 
-let lastIndex=-1, finished=false;
-blendBar.addEventListener("touchmove",e=>{
+// ---------- LEVEL SYSTEM ----------
+let level=1, correct=0;
+const levelSpan=document.getElementById("level");
+
+function advance(){
+  correct++;
+  if(correct>=5){
+    level++;
+    correct=0;
+    levelSpan.textContent=level;
+    loadLevel();
+  } else loadLevel();
+}
+
+// ---------- LOAD LEVEL ----------
+let currentWord="";
+function loadLevel(){
+  blendPanel.classList.add("hidden");
+  findPanel.classList.add("hidden");
+  sentencePanel.classList.add("hidden");
+
+  if(level===1){
+    blendPanel.classList.remove("hidden");
+    loadBlend();
+  } else if(level===2){
+    findPanel.classList.remove("hidden");
+    loadFind();
+  } else {
+    sentencePanel.classList.remove("hidden");
+    loadSentence();
+  }
+}
+
+// ---------- BLEND ----------
+function loadBlend(){
+  currentWord=nextWord();
+  wordDisplay.textContent=currentWord.toUpperCase();
+  tiles.innerHTML="";
+  letters.innerHTML="";
+  currentWord.split("").forEach(l=>{
+    const t=document.createElement("div");
+    t.className="tile"; t.textContent=l;
+    t.onclick=()=>playPhoneme(l);
+    tiles.appendChild(t);
+
+    const s=document.createElement("span");
+    s.className="blend-letter"; s.textContent=l;
+    letters.appendChild(s);
+  });
+}
+
+let last=-1;
+blendBar.addEventListener("touchmove",async e=>{
   e.preventDefault();
   const rect=blendBar.getBoundingClientRect();
   const x=e.touches[0].clientX-rect.left;
   tracker.style.display="block";
-  tracker.style.left=Math.max(0,Math.min(rect.width-80,x-40))+"px";
+  tracker.style.left=Math.max(0,Math.min(rect.width-90,x-45))+"px";
 
-  [...blendLetters.children].forEach((el,i)=>{
+  [...letters.children].forEach(async (el,i)=>{
     const r=el.getBoundingClientRect();
     if(e.touches[0].clientX>=r.left&&e.touches[0].clientX<=r.right){
-      if(i!==lastIndex){
-        [...blendLetters.children].forEach(l=>l.classList.remove("active"));
+      if(i!==last){
         el.classList.add("active");
-        playSound(el.textContent);
-        lastIndex=i;
-        if(i===blendLetters.children.length-1&&!finished){
-          finished=true;
-          setTimeout(()=>speak(current),350);
+        await playPhoneme(el.textContent);
+        last=i;
+        if(i===letters.children.length-1){
+          setTimeout(()=>{
+            speakWord(currentWord);
+            advance();
+          },300);
         }
       }
     }
@@ -243,31 +258,42 @@ blendBar.addEventListener("touchmove",e=>{
 
 blendBar.addEventListener("touchend",()=>{
   tracker.style.display="none";
-  lastIndex=-1; finished=false;
-  [...blendLetters.children].forEach(l=>l.classList.remove("active"));
+  last=-1;
+  [...letters.children].forEach(l=>l.classList.remove("active"));
 });
 
-// -------- FIND --------
-const cvc=["cat","dog","sun","map","cap"];
-const sight=["the","is","a","to"];
-let stars=0;
-function startFind(){
-  const target=cvc[Math.floor(Math.random()*cvc.length)];
-  findPrompt.textContent="Find: "+target.toUpperCase();
-  speak("Find "+target);
-  const opts=[target,...sight].sort(()=>Math.random()-.5);
-  findGrid.innerHTML="";
+// ---------- FIND ----------
+function loadFind(){
+  currentWord=nextWord();
+  findPrompt.textContent="Find: "+currentWord.toUpperCase();
+  speakWord("Find "+currentWord);
+  const opts=[currentWord,nextWord(),nextWord(),nextWord()].sort(()=>Math.random()-0.5);
+  grid.innerHTML="";
   opts.forEach(w=>{
     const c=document.createElement("div");
     c.className="word-card"; c.textContent=w;
     c.onclick=()=>{
-      if(w===target){stars++;starCount.textContent=stars;speak("Well done "+w);startFind();}
-      else speak("Try again");
+      if(w===currentWord){
+        speakWord("Well done");
+        advance();
+      } else speakWord("Try again");
     };
-    findGrid.appendChild(c);
+    grid.appendChild(c);
   });
 }
-startFind();
+
+// ---------- SENTENCES ----------
+const sight=["the","is","a","to"];
+function loadSentence(){
+  const w1=nextWord(), w2=nextWord();
+  const s=`${sight[Math.floor(Math.random()*sight.length)]} ${w1} is a ${w2}`;
+  sentenceText.textContent=s;
+}
+function readSentence(){
+  speakWord(sentenceText.textContent);
+}
+
+loadLevel();
 </script>
 
 </body>
