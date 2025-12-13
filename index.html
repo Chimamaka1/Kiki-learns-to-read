@@ -15,6 +15,7 @@ body{
   margin:auto;
 }
 h1,h2{text-align:center}
+
 .panel{
   background:white;
   border-radius:18px;
@@ -23,16 +24,6 @@ h1,h2{text-align:center}
   box-shadow:0 4px 12px rgba(0,0,0,.15);
 }
 .hidden{display:none}
-
-button{
-  padding:12px;
-  width:100%;
-  border:none;
-  border-radius:14px;
-  background:#ff69c9;
-  color:white;
-  font-size:16px;
-}
 
 .tiles{
   display:flex;
@@ -94,7 +85,17 @@ button{
   text-align:center;
   box-shadow:0 0 14px #ffb6e6;
 }
-.progress{text-align:center;font-size:18px}
+
+.progress{text-align:center;font-size:18px;margin-bottom:10px}
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:14px;
+  background:#ff69c9;
+  color:white;
+  font-size:16px;
+}
 </style>
 </head>
 
@@ -102,6 +103,11 @@ button{
 
 <h1>🌸 Kiki Learns to Read 🌸</h1>
 
+<div class="progress">
+Level: <span id="level">1</span> ⭐ Stars: <span id="starCount">0</span>
+</div>
+
+<!-- LEVEL 1 -->
 <div id="blendPanel" class="panel">
   <h2>Slide to Read</h2>
   <div id="wordDisplay" style="text-align:center;font-size:30px"></div>
@@ -112,38 +118,43 @@ button{
   </div>
 </div>
 
+<!-- LEVEL 2 -->
 <div id="findPanel" class="panel hidden">
   <h2>Find the Word</h2>
   <div id="findPrompt" style="text-align:center;font-size:22px"></div>
   <div class="word-grid" id="grid"></div>
 </div>
 
+<!-- LEVEL 3 -->
 <div id="sentencePanel" class="panel hidden">
   <h2>Read the Sentence</h2>
   <div id="sentenceText" style="text-align:center;font-size:24px"></div>
   <button onclick="readSentence()">Read</button>
 </div>
 
-<div class="progress">
-⭐ Level: <span id="level">1</span>
+<!-- LEVEL 4 -->
+<div id="storyPanel" class="panel hidden">
+  <h2 id="storyTitle"></h2>
+  <img id="storyImage" style="width:150px;display:block;margin:10px auto;">
+  <div id="storyText" style="text-align:center;font-size:24px;margin:14px 0"></div>
+  <button onclick="readStoryPage()">Read</button>
+  <button onclick="nextStoryPage()" style="margin-top:10px;background:#ff9adf">Next →</button>
 </div>
 
 <script>
 // ---------- FEMALE TTS ONLY ----------
 let femaleVoice=null;
 speechSynthesis.onvoiceschanged=()=>{
-  femaleVoice = speechSynthesis.getVoices().find(v =>
-    v.lang.startsWith("en") &&
-    !/male|fred|daniel|alex/i.test(v.name)
+  femaleVoice=speechSynthesis.getVoices().find(v=>
+    v.lang.startsWith("en") && !/male|fred|alex|daniel/i.test(v.name)
   );
 };
-
 function speakWord(text){
   if(!femaleVoice) return;
   const u=new SpeechSynthesisUtterance(text);
   u.voice=femaleVoice;
   u.rate=0.9;
-  u.pitch=1.25;
+  u.pitch=1.2;
   speechSynthesis.cancel();
   speechSynthesis.speak(u);
 }
@@ -158,72 +169,77 @@ function playPhoneme(l){
   });
 }
 
-// ---------- CVC GENERATION ----------
-const consonants=["b","c","d","f","g","h","j","k","l","m","n","p","r","s","t","v","w","y","z"];
-const vowels=["a","e","i","o","u"];
-let words=[];
-consonants.forEach(c1=>{
-  vowels.forEach(v=>{
-    consonants.forEach(c2=>{
-      words.push(c1+v+c2);
-    });
-  });
-});
-words=words.sort(()=>Math.random()-0.5);
-let index=0;
+// ---------- SAFE WORD LIST ----------
+const WORDS=[
+"cat","dog","sun","hat","bat","rat","mat","map","cap",
+"pen","hen","bed","red","leg","jet","net",
+"cup","bug","rug","jug","mud","bus",
+"pig","dig","fig","log","hog","fog",
+"box","fox","top","hop","pot",
+"man","fan","can","pan","van",
+"run","fun","bun","jam","ram"
+];
+
+let pool=[...WORDS].sort(()=>Math.random()-0.5);
+let wIndex=0;
 function nextWord(){
-  if(index>=words.length){
-    words=words.sort(()=>Math.random()-0.5);
-    index=0;
+  if(wIndex>=pool.length){
+    pool=[...WORDS].sort(()=>Math.random()-0.5);
+    wIndex=0;
   }
-  return words[index++];
+  return pool[wIndex++];
 }
 
-// ---------- LEVEL SYSTEM ----------
-let level=1, correct=0;
-const levelSpan=document.getElementById("level");
-
+// ---------- PROGRESS ----------
+let level=1, correct=0, stars=0;
+function save(){
+  localStorage.setItem("kiki_level",level);
+  localStorage.setItem("kiki_stars",stars);
+}
+function load(){
+  level=Number(localStorage.getItem("kiki_level"))||1;
+  stars=Number(localStorage.getItem("kiki_stars"))||0;
+  levelSpan.textContent=level;
+  starCount.textContent=stars;
+}
 function advance(){
   correct++;
   if(correct>=5){
+    stars++; correct=0;
+    starCount.textContent=stars;
     level++;
-    correct=0;
-    levelSpan.textContent=level;
-    loadLevel();
-  } else loadLevel();
+  }
+  save();
+  loadLevel();
 }
 
-// ---------- LOAD LEVEL ----------
-let currentWord="";
-function loadLevel(){
+// ---------- LEVEL LOAD ----------
+function hideAll(){
   blendPanel.classList.add("hidden");
   findPanel.classList.add("hidden");
   sentencePanel.classList.add("hidden");
-
-  if(level===1){
-    blendPanel.classList.remove("hidden");
-    loadBlend();
-  } else if(level===2){
-    findPanel.classList.remove("hidden");
-    loadFind();
-  } else {
-    sentencePanel.classList.remove("hidden");
-    loadSentence();
-  }
+  storyPanel.classList.add("hidden");
+}
+function loadLevel(){
+  hideAll();
+  levelSpan.textContent=level;
+  if(level===1){blendPanel.classList.remove("hidden");loadBlend();}
+  else if(level===2){findPanel.classList.remove("hidden");loadFind();}
+  else if(level===3){sentencePanel.classList.remove("hidden");loadSentence();}
+  else{storyPanel.classList.remove("hidden");loadStory();}
 }
 
-// ---------- BLEND ----------
+// ---------- LEVEL 1 ----------
+let currentWord="";
 function loadBlend(){
   currentWord=nextWord();
-  wordDisplay.textContent=currentWord.toUpperCase();
-  tiles.innerHTML="";
-  letters.innerHTML="";
+  wordDisplay.innerHTML=`${currentWord.toUpperCase()}<br><img src="images/${currentWord}.png" width="120">`;
+  tiles.innerHTML=""; letters.innerHTML="";
   currentWord.split("").forEach(l=>{
     const t=document.createElement("div");
     t.className="tile"; t.textContent=l;
     t.onclick=()=>playPhoneme(l);
     tiles.appendChild(t);
-
     const s=document.createElement("span");
     s.className="blend-letter"; s.textContent=l;
     letters.appendChild(s);
@@ -234,65 +250,74 @@ let last=-1;
 blendBar.addEventListener("touchmove",async e=>{
   e.preventDefault();
   const rect=blendBar.getBoundingClientRect();
-  const x=e.touches[0].clientX-rect.left;
   tracker.style.display="block";
-  tracker.style.left=Math.max(0,Math.min(rect.width-90,x-45))+"px";
-
+  tracker.style.left=Math.min(rect.width-90,e.touches[0].clientX-rect.left-45)+"px";
   [...letters.children].forEach(async (el,i)=>{
     const r=el.getBoundingClientRect();
-    if(e.touches[0].clientX>=r.left&&e.touches[0].clientX<=r.right){
-      if(i!==last){
-        el.classList.add("active");
-        await playPhoneme(el.textContent);
-        last=i;
-        if(i===letters.children.length-1){
-          setTimeout(()=>{
-            speakWord(currentWord);
-            advance();
-          },300);
-        }
+    if(e.touches[0].clientX>=r.left&&e.touches[0].clientX<=r.right&&i!==last){
+      el.classList.add("active");
+      await playPhoneme(el.textContent);
+      last=i;
+      if(i===letters.children.length-1){
+        setTimeout(()=>{speakWord(currentWord);advance();},300);
       }
     }
   });
 },{passive:false});
-
 blendBar.addEventListener("touchend",()=>{
   tracker.style.display="none";
   last=-1;
   [...letters.children].forEach(l=>l.classList.remove("active"));
 });
 
-// ---------- FIND ----------
+// ---------- LEVEL 2 ----------
 function loadFind(){
   currentWord=nextWord();
-  findPrompt.textContent="Find: "+currentWord.toUpperCase();
+  findPrompt.innerHTML=`Find: ${currentWord.toUpperCase()}<br><img src="images/${currentWord}.png" width="120">`;
   speakWord("Find "+currentWord);
   const opts=[currentWord,nextWord(),nextWord(),nextWord()].sort(()=>Math.random()-0.5);
   grid.innerHTML="";
   opts.forEach(w=>{
     const c=document.createElement("div");
     c.className="word-card"; c.textContent=w;
-    c.onclick=()=>{
-      if(w===currentWord){
-        speakWord("Well done");
-        advance();
-      } else speakWord("Try again");
-    };
+    c.onclick=()=>{w===currentWord?(speakWord("Well done"),advance()):speakWord("Try again");};
     grid.appendChild(c);
   });
 }
 
-// ---------- SENTENCES ----------
-const sight=["the","is","a","to"];
+// ---------- LEVEL 3 ----------
+const sight=["the","is","a"];
 function loadSentence(){
-  const w1=nextWord(), w2=nextWord();
-  const s=`${sight[Math.floor(Math.random()*sight.length)]} ${w1} is a ${w2}`;
+  const s=`${sight[Math.floor(Math.random()*3)]} ${nextWord()} is a ${nextWord()}`;
   sentenceText.textContent=s;
 }
-function readSentence(){
-  speakWord(sentenceText.textContent);
+function readSentence(){speakWord(sentenceText.textContent);advance();}
+
+// ---------- LEVEL 4 STORYBOOK ----------
+const STORIES=[
+{title:"The Cat",image:"cat.png",pages:["the cat is a cat","the cat is a pet","the cat is a cat"]},
+{title:"The Dog",image:"dog.png",pages:["the dog is a dog","the dog is a pet","the dog can run"]},
+{title:"The Sun",image:"sun.png",pages:["the sun is hot","the sun is up","the sun is hot"]}
+];
+let story=null, page=0;
+function loadStory(){
+  story=STORIES[Math.floor(Math.random()*STORIES.length)];
+  page=0;
+  storyTitle.textContent=story.title;
+  storyImage.src="images/"+story.image;
+  showPage();
+}
+function showPage(){
+  storyText.textContent=story.pages[page];
+  speakWord(storyText.textContent);
+}
+function readStoryPage(){speakWord(storyText.textContent);}
+function nextStoryPage(){
+  if(page<story.pages.length-1){page++;showPage();}
+  else{speakWord("Well done reading!");advance();}
 }
 
+load();
 loadLevel();
 </script>
 
