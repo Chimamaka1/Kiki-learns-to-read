@@ -1,0 +1,70 @@
+body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f4f7f6;
+}
+
+#app-container {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 90%;
+    max-width: 600px;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 30px;
+}
+
+#word-display {
+    min-height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    font-size: 5em;
+    margin-bottom: 30px;
+}
+
+.letter {
+    cursor: pointer;
+    padding: 15px 20px;
+    border: 3px solid #007bff;
+    border-radius: 10px;
+    background-color: #e6f2ff;
+    transition: background-color 0.1s, transform 0.1s;
+    user-select: none; /* Prevents text selection */
+    font-weight: bold;
+}
+
+.letter:hover {
+    background-color: #cce0ff;
+    transform: scale(1.05);
+}
+
+#new-word-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#new-word-button:hover {
+    background-color: #218838;
+}
+
+.instruction {
+    margin-top: 20px;
+    color: #6c757d;
+}
