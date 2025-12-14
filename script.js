@@ -37,12 +37,33 @@ const cvcWords = [
     "cut", "hut", "nut",
 ];
 
-// --- 2. DOM Elements and Global Variables ---
+
+// --- 2. Phonetic Mapping Table (The Fix for Phonics) ---
+// Maps the letter to its short phonetic sound using the International Phonetic Alphabet (IPA).
+const phoneticMap = {
+    // Vowels (Short sounds)
+    'a': 'æ', // as in 'cat'
+    'e': 'ɛ', // as in 'bed'
+    'i': 'ɪ', // as in 'pig'
+    'o': 'ɒ', // as in 'dog' (or 'ɑ' in US English)
+    'u': 'ʌ', // as in 'sun'
+    
+    // Consonants (Phonetic sounds)
+    'b': 'b', 'c': 'k', 'd': 'd', 'f': 'f', 'g': 'g', 
+    'h': 'h', 'j': 'dʒ', 'k': 'k', 'l': 'l', 'm': 'm', 
+    'n': 'n', 'p': 'p', 'r': 'r', 's': 's', 't': 't', 
+    'v': 'v', 'w': 'w', 'y': 'j', 'z': 'z', 
+    'x': 'ks' // Note: 'x' is two sounds, but 'ks' is often used phonetically
+};
+
+
+// --- 3. DOM Elements and Global Variables ---
 const wordDisplay = document.getElementById('word-display');
 const newWordButton = document.getElementById('new-word-button');
 let currentWord = '';
 
-// --- 3. Application Functions ---
+
+// --- 4. Application Functions ---
 
 /**
  * Generates and displays a new random CVC word on the screen.
@@ -84,12 +105,12 @@ function handleLetterClick(event) {
 }
 
 
-// --- 4. ElevenLabs API Integration Setup ---
+// --- 5. ElevenLabs API Integration with SSML (The Fix) ---
 
 /**
- * Plays the phonetic sound for a given letter using the ElevenLabs API.
- * The function fetches the generated audio stream and plays it.
- * * @param {string} letter - The letter to generate the phonetic sound for (e.g., 'c', 'a', 't').
+ * Plays the phonetic sound for a given letter using the ElevenLabs API,
+ * using SSML and IPA to ensure correct short vowel/consonant sounds.
+ * @param {string} letter - The letter to generate the sound for.
  */
 async function playPhoneticSound(letter) {
     // 🛑 IMPORTANT: REPLACE THESE PLACEHOLDERS WITH YOUR ACTUAL KEYS!
@@ -101,16 +122,27 @@ async function playPhoneticSound(letter) {
     const API_URL = `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`;
     // --------------------------------------------------------
     
-    // The text to be spoken by the TTS engine. 
-    // This prompts the engine to pronounce the *sound* of the letter.
-    const phoneticText = `The sound of the letter ${letter}.`; 
+    const lowerLetter = letter.toLowerCase();
+    const phoneme = phoneticMap[lowerLetter];
 
-    if (ELEVEN_LABS_API_KEY === "YOUR_ELEVEN_LABS_API_KEY") {
-        console.warn("ElevenLabs API Key is not set. Using browser console log as a mock.");
-        console.log(`[MOCK SOUND PLAYED]: ${letter}`);
+    if (!phoneme) {
+        console.error(`Phoneme not found for letter: ${letter}`);
+        // Fallback to simple letter name pronunciation
         return;
     }
 
+    // 1. Construct the SSML payload
+    // The <phoneme> tag with the IPA alphabet and 'ph' attribute forces the phonetic pronunciation.
+    const SSML_TEXT = `<speak>
+        The sound is <phoneme alphabet="ipa" ph="${phoneme}">${lowerLetter}</phoneme>.
+    </speak>`;
+
+    if (ELEVEN_LABS_API_KEY === "YOUR_ELEVEN_LABS_API_KEY") {
+        console.warn("ElevenLabs API Key is not set. Mocking phonetic sound in console.");
+        console.log(`[MOCK PHONETIC SOUND PLAYED]: IPA /${phoneme}/`);
+        return;
+    }
+    
     try {
         const response = await fetch(API_URL, {
             method: 'POST',
@@ -119,7 +151,8 @@ async function playPhoneticSound(letter) {
                 'xi-api-key': ELEVEN_LABS_API_KEY,
             },
             body: JSON.stringify({
-                text: phoneticText,
+                // Send the SSML string
+                text: SSML_TEXT, 
                 model_id: "eleven_multilingual_v2", 
                 voice_settings: {
                     stability: 0.5,
@@ -129,19 +162,18 @@ async function playPhoneticSound(letter) {
         });
 
         if (!response.ok) {
-            // Log the error response body for better debugging
             const errorBody = await response.text();
             throw new Error(`ElevenLabs API request failed: ${response.statusText}. Response body: ${errorBody}`);
         }
 
-        // 1. Convert the MP3 audio stream response into a Blob
+        // 2. Convert the MP3 audio stream response into a Blob
         const audioBlob = await response.blob();
         
-        // 2. Create a URL for the Blob and an Audio object
+        // 3. Create a URL for the Blob and an Audio object
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
         
-        // 3. Play the sound
+        // 4. Play the sound
         audio.play();
 
     } catch (error) {
@@ -150,10 +182,12 @@ async function playPhoneticSound(letter) {
 }
 
 
-// --- 5. Event Listeners and Initialization ---
+// --- 6. Event Listeners and Initialization ---
 
 // Start a new word when the button is clicked
 newWordButton.addEventListener('click', displayNewWord);
 
 // Display the first word when the page loads
 document.addEventListener('DOMContentLoaded', displayNewWord);
+
+
