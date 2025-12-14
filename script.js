@@ -93,10 +93,10 @@ function handleLetterClick(event) {
  */
 async function playPhoneticSound(letter) {
     // 🛑 IMPORTANT: REPLACE THESE PLACEHOLDERS WITH YOUR ACTUAL KEYS!
-    const ELEVEN_LABS_API_KEY = "YOUR_ELEVEN_LABS_API_KEY"; 
+    const ELEVEN_LABS_API_KEY = "sk_cbe515f7e047e94226f77b71f0a370e9afb7eaac81cdefed"; 
     
     // Recommended Voice ID for clear, educational narration (Rachel)
-    const VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; 
+    const VOICE_ID = "1Jw9TVbvfe0WN96y7Hp3"; 
     
     const API_URL = `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`;
     // --------------------------------------------------------
