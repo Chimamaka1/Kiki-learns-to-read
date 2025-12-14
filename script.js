@@ -134,7 +134,7 @@ async function playPhoneticSound(letter) {
     // 1. Construct the SSML payload
     // The <phoneme> tag with the IPA alphabet and 'ph' attribute forces the phonetic pronunciation.
     const SSML_TEXT = `<speak>
-        phoneme
+        /${phoneme}/
     </speak>`;
 
     if (ELEVEN_LABS_API_KEY === "YOUR_ELEVEN_LABS_API_KEY") {
