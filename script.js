@@ -100,87 +100,21 @@ function handleLetterClick(event) {
         event.target.style.backgroundColor = '#e6f2ff';
     }, 200);
 
-    // Call the ElevenLabs sound function
-    playPhoneticSound(letter);
+    const soundCache = {};
+
+function playPhoneticSound(letter) {
+  const lowerLetter = letter.toLowerCase();
+
+  if (!soundCache[lowerLetter]) {
+    soundCache[lowerLetter] = new Audio(`sounds/${lowerLetter}.mp3`);
+  }
+
+  const audio = soundCache[lowerLetter];
+  audio.currentTime = 0;
+  audio.play().catch(err => {
+    console.error("Audio play failed:", err);
+  });
 }
-
-
-// --- 5. ElevenLabs API Integration with SSML (The Fix) ---
-
-/**
- * Plays the phonetic sound for a given letter using the ElevenLabs API,
- * using SSML and IPA to ensure correct short vowel/consonant sounds.
- * @param {string} letter - The letter to generate the sound for.
- */
-async function playPhoneticSound(letter) {
-    // 🛑 IMPORTANT: REPLACE THESE PLACEHOLDERS WITH YOUR ACTUAL KEYS!
-    const ELEVEN_LABS_API_KEY = "sk_cbe515f7e047e94226f77b71f0a370e9afb7eaac81cdefed"; 
-    
-    // Recommended Voice ID for clear, educational narration (Rachel)
-    const VOICE_ID = "CHVXSypvQaXLYlmLWvLY"; 
-    
-    const API_URL = `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`;
-    // --------------------------------------------------------
-    
-    const lowerLetter = letter.toLowerCase();
-    const phoneme = phoneticMap[lowerLetter];
-
-    if (!phoneme) {
-        console.error(`Phoneme not found for letter: ${letter}`);
-        // Fallback to simple letter name pronunciation
-        return;
-    }
-
-    // 1. Construct the SSML payload
-    // The <phoneme> tag with the IPA alphabet and 'ph' attribute forces the phonetic pronunciation.
-    const SSML_TEXT = `<speak>
-        /${phoneme}/
-    </speak>`;
-
-    if (ELEVEN_LABS_API_KEY === "YOUR_ELEVEN_LABS_API_KEY") {
-        console.warn("ElevenLabs API Key is not set. Mocking phonetic sound in console.");
-        console.log(`[MOCK PHONETIC SOUND PLAYED]: IPA /${phoneme}/`);
-        return;
-    }
-    
-    try {
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'xi-api-key': ELEVEN_LABS_API_KEY,
-            },
-            body: JSON.stringify({
-                // Send the SSML string
-                text: SSML_TEXT, 
-                model_id: "eleven_multilingual_v2", 
-                voice_settings: {
-                    stability: 0.5,
-                    similarity_boost: 0.8
-                }
-            })
-        });
-
-        if (!response.ok) {
-            const errorBody = await response.text();
-            throw new Error(`ElevenLabs API request failed: ${response.statusText}. Response body: ${errorBody}`);
-        }
-
-        // 2. Convert the MP3 audio stream response into a Blob
-        const audioBlob = await response.blob();
-        
-        // 3. Create a URL for the Blob and an Audio object
-        const audioUrl = URL.createObjectURL(audioBlob);
-        const audio = new Audio(audioUrl);
-        
-        // 4. Play the sound
-        audio.play();
-
-    } catch (error) {
-        console.error("ElevenLabs API Error:", error);
-    }
-}
-
 
 // --- 6. Event Listeners and Initialization ---
 
