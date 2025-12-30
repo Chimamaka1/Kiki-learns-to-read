@@ -100,4 +100,3 @@ newWordButton.addEventListener("click", displayNewWord);
 /* ---------- 8. INITIAL STATE ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   wordDisplay.innerHTML = `<p>Click "New Word" to start!</p>`;
-});
