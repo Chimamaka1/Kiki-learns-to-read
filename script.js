@@ -1,6 +1,6 @@
 /************************************************
- * KIKI LEARNS TO READ – SMOOTH PHONICS SCRIPT
- * Calm, non-jumpy, teacher-grade behaviour
+ * KIKI LEARNS TO READ – STABLE BLENDING SCRIPT
+ * iPhone-safe, smooth, teacher-grade
  ************************************************/
 
 /* ---------- DOM ---------- */
@@ -9,14 +9,14 @@ const newWordButton = document.getElementById("new-word-button");
 const blendButton = document.getElementById("blend-word-button");
 const slider = document.getElementById("blend-slider");
 
-/* ---------- WORDS ---------- */
-const words = ["cat", "man", "sun", "log", "pin", "cup"];
+/* ---------- WORD LIST ---------- */
+const words = ["cat", "sun", "man", "log", "pin", "cup"];
 let currentWord = "";
 
 /* ---------- AUDIO CACHE ---------- */
 const audioCache = {};
 
-/* ---------- PLAY LETTER (SEGMENTING ONLY) ---------- */
+/* ---------- PLAY LETTER (SEGMENTING) ---------- */
 function playLetter(letter) {
   if (!audioCache[letter]) {
     audioCache[letter] = new Audio(`sounds_clean/${letter}.mp3`);
@@ -26,16 +26,18 @@ function playLetter(letter) {
 }
 
 /* ---------- SPEAK WORD (CONTINUOUS BLEND) ---------- */
-function speakWordSmooth() {
+function speakWord() {
+  if (!currentWord) return;
+
+  speechSynthesis.cancel(); // important for iOS
   const utterance = new SpeechSynthesisUtterance(currentWord);
-  utterance.rate = 0.6;      // slower = smoother
+  utterance.rate = 0.6;
   utterance.pitch = 1.0;
   utterance.volume = 1.0;
-  speechSynthesis.cancel();
   speechSynthesis.speak(utterance);
 }
 
-/* ---------- SHOW WORD ---------- */
+/* ---------- SHOW NEW WORD ---------- */
 function showNewWord() {
   wordDisplay.innerHTML = "";
   currentWord = words[Math.floor(Math.random() * words.length)];
@@ -46,12 +48,13 @@ function showNewWord() {
     span.dataset.letter = letter;
     span.className = "letter";
 
-    // Tap-to-hear (segmenting)
-    span.onclick = () => playLetter(letter);
+    // Tap-to-hear (segmenting stage)
+    span.addEventListener("click", () => playLetter(letter));
 
     wordDisplay.appendChild(span);
   }
 
+  // Reset slider (visual tracking only)
   slider.min = 0;
   slider.max = currentWord.length;
   slider.value = 0;
@@ -67,24 +70,27 @@ slider.addEventListener("input", () => {
   });
 });
 
-/* ---------- BLEND BUTTON = TRUE CONTINUOUS BLEND ---------- */
-blendButton.onclick = () => {
-  const letters = document.querySelectorAll(".letter");
-  let i = 0;
+/* ---------- BLEND WORD BUTTON ---------- */
+blendButton.addEventListener("click", () => {
+  if (!currentWord) return;
 
-  const highlightInterval = setInterval(() => {
+  const letters = document.querySelectorAll(".letter");
+  let index = 0;
+
+  const highlightTimer = setInterval(() => {
     letters.forEach(l => (l.style.backgroundColor = ""));
-    if (letters[i]) letters[i].style.backgroundColor = "#ffd966";
-    i++;
-    if (i >= letters.length) {
-      clearInterval(highlightInterval);
-      setTimeout(speakWordSmooth, 200);
+    if (letters[index]) {
+      letters[index].style.backgroundColor = "#ffd966";
+      index++;
+    } else {
+      clearInterval(highlightTimer);
+      setTimeout(speakWord, 200);
     }
   }, 350);
-};
+});
 
 /* ---------- EVENTS ---------- */
-newWordButton.onclick = showNewWord;
+newWordButton.addEventListener("click", showNewWord);
 
 /* ---------- INIT ---------- */
 wordDisplay.innerHTML = `<p>Click "New Word" to start!</p>`;
