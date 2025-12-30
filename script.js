@@ -18,7 +18,7 @@ const audioCache = {};
 /* PLAY SOUND */
 function playSound(letter) {
   const l = letter.toLowerCase();
-  const path = `Sounds_clean/${l}.mp3`;
+  const path = `sounds_clean/${l}.mp3`;
 
   if (!audioCache[l]) {
     audioCache[l] = new Audio(path);
