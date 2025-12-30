@@ -47,7 +47,45 @@ const words = [
   "cap","map","tap","nap",
   "sun","fun","run","bun",
   "cot","hot","pot","dot"
+  "man","fan","can","pan","ran","tan",
+  "bed","red","fed","led","wed",
+  "pen","hen","ten","men",
+  "cup","mug","bug","hug","rug",
+  "lip","sip","dip","hip","tip",
+  "jam","ham","ram","yam",
+  "kit","sit","hit","pit","fit",
+  "box","fox","mix","six","fix",
+  "van","ran","fan","tan",
+  "leg","peg","beg","jet","net",
+  "mud","bud","sad","bad","mad",
+  "cap","lap","sap","gap","zap",
+  "top","mop","hop","pop",
+  "rib","bib","fib","jib",
+  "bag","rag","tag","wag",
+  "hen","pen","den","men"
+
 ];
+
+const stories = [
+  [
+    "The cat sat.",
+    "A cat sat on a mat."
+    "The cat has a hat."
+    "The cat has a rat."
+  ],
+  [
+    "A dog ran.",
+    "The dog ran to a hut."
+    "The dog sat on a log."
+  ],
+  [
+    "The sun is hot.",
+    "A man ran in the sun."
+  ]
+];
+
+let currentStory = 0;
+let currentPage = 0;
 
 let currentWord = "";
 let letters = [];
@@ -105,6 +143,51 @@ function renderWord(word) {
     letters.push(tile);
   });
 
+  function renderStoryPage() {
+  const container = document.createElement("div");
+  container.id = "story-container";
+
+  const sentence = stories[currentStory][currentPage];
+  container.innerHTML = "";
+
+  sentence.split(" ").forEach(word => {
+    const span = document.createElement("span");
+    span.className = "story-word";
+    span.textContent = word;
+
+    span.onclick = () => speakWord(word.replace(".", ""));
+
+    container.appendChild(span);
+  });
+
+  const controls = document.createElement("div");
+  controls.className = "story-controls";
+
+  const nextBtn = document.createElement("button");
+  nextBtn.textContent = "Next Page";
+  nextBtn.onclick = nextStoryPage;
+
+  const readBtn = document.createElement("button");
+  readBtn.textContent = "Read to Me";
+  readBtn.onclick = () => speakWord(sentence);
+
+  controls.appendChild(readBtn);
+  controls.appendChild(nextBtn);
+  container.appendChild(controls);
+
+  wordDisplay.innerHTML = "";
+  wordDisplay.appendChild(container);
+}
+
+  function nextStoryPage() {
+  currentPage++;
+  if (currentPage >= stories[currentStory].length) {
+    currentStory = (currentStory + 1) % stories.length;
+    currentPage = 0;
+  }
+  renderStoryPage();
+}
+
   slider.max = letters.length - 1;
   slider.value = 0;
 }
@@ -158,3 +241,7 @@ blendBtn.onclick = async () => {
 /* ---------- START ---------- */
 newWordBtn.click();
 
+document.getElementById("story-button").onclick = () => {
+  currentPage = 0;
+  renderStoryPage();
+};
