@@ -15,16 +15,20 @@ const words = [
 
 let currentWord = "";
 let letters = [];
+let lastSliderValue = 0;
 
 /* ---------- AUDIO ---------- */
 function playSound(letter) {
   const audio = new Audio(`sounds_clean/${letter}.mp3`);
-  audio.play();
+  audio.currentTime = 0;
+  audio.play().catch(() => {});
 }
 
-function playWord(word) {
-  const audio = new Audio(`sounds_clean/${word}.mp3`);
-  audio.play();
+function speakWord(word) {
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(word);
+  u.rate = 0.6;
+  speechSynthesis.speak(u);
 }
 
 /* ---------- RENDER ---------- */
@@ -43,8 +47,10 @@ function renderWord(word) {
     letters.push(span);
   });
 
-  slider.max = letters.length - 1;
+  slider.min = 0;
+  slider.max = letters.length;
   slider.value = 0;
+  lastSliderValue = 0;
 }
 
 /* ---------- WORD PICKER ---------- */
@@ -55,10 +61,17 @@ function newWord() {
 
 /* ---------- SLIDER ---------- */
 slider.addEventListener("input", () => {
-  letters.forEach(l => l.classList.remove("active"));
-  const index = Number(slider.value);
-  letters[index].classList.add("active");
-  playSound(letters[index].textContent);
+  const value = Number(slider.value);
+
+  letters.forEach((l, i) => {
+    l.classList.toggle("active", i === value - 1);
+  });
+
+  if (value > lastSliderValue && letters[value - 1]) {
+    playSound(letters[value - 1].textContent);
+  }
+
+  lastSliderValue = value;
 });
 
 /* ---------- BLEND ---------- */
@@ -67,12 +80,15 @@ blendBtn.addEventListener("click", async () => {
     letters.forEach(l => l.classList.remove("active"));
     letters[i].classList.add("active");
     playSound(letters[i].textContent);
-    await new Promise(r => setTimeout(r, 600));
+    await new Promise(r => setTimeout(r, 650));
   }
 
   await new Promise(r => setTimeout(r, 400));
-  playWord(currentWord);
+  speakWord(currentWord);
 });
 
 /* ---------- BUTTON ---------- */
 newWordBtn.addEventListener("click", newWord);
+
+/* ---------- 🔑 IMPORTANT ---------- */
+newWord(); // render FIRST word on load
