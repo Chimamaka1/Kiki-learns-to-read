@@ -1,102 +1,54 @@
-/*************************************************
- * CVC PHONICS TRAINER – CLEAN WORKING SCRIPT
- * Uses local audio files in /sounds folder
- * Example: sounds/a.mp3, sounds/b.mp3, etc.
- *************************************************/
+console.log("SCRIPT LOADED");
 
-/* ---------- 1. CVC WORD LIST ---------- */
-const cvcWords = [
-  // a words
-  "bat","cat","hat","mat","pat","rat",
-  "can","fan","man","pan","ran","tan",
-  "bag","lag","rag","tag","wag",
-  "dad","had","mad","pad","sad",
-
-  // e words
-  "bed","fed","led","red","wed",
-  "beg","leg","peg",
-  "den","hen","men","pen","ten",
-  "get","jet","met","net","pet","set",
-
-  // i words
-  "bib","fib","rib",
-  "bid","did","hid","kid","lid","rid",
-  "big","dig","fig","jig","pig","wig",
-  "bin","fin","pin","tin","win",
-  "fit","hit","kit","lit","sit",
-
-  // o words
-  "bob","cob","job","mob","rob","sob",
-  "cod","pod","rod",
-  "dog","fog","hog","jog","log",
-  "box","fox","pox",
-  "cot","dot","got","hot","pot","rot",
-  "cop","hop","mop","pop","top",
-
-  // u words
-  "bub","cub","hub","rub","sub","tub",
-  "bud","cud","mud",
-  "bug","hug","jug","mug","rug","tug",
-  "bun","fun","gun","nun","run",
-  "cut","hut","nut"
-];
-
-/* ---------- 2. DOM ELEMENTS ---------- */
+/* DOM */
 const wordDisplay = document.getElementById("word-display");
 const newWordButton = document.getElementById("new-word-button");
 
-/* ---------- 3. AUDIO CACHE (GLOBAL) ---------- */
-const soundCache = {};
+/* WORD LIST */
+const words = [
+  "cat", "bat", "hat",
+  "dog", "log", "fog",
+  "pin", "tin", "win",
+  "cup", "bug", "rug"
+];
 
-/* ---------- 4. PLAY LETTER SOUND ---------- */
-function playPhoneticSound(letter) {
-  const lowerLetter = letter.toLowerCase();
+/* AUDIO CACHE */
+const audioCache = {};
 
-  if (!soundCache[lowerLetter]) {
-    soundCache[lowerLetter] = new Audio(`sounds/${lowerLetter}.mp3`);
+/* PLAY SOUND */
+function playSound(letter) {
+  const l = letter.toLowerCase();
+  const path = `Sounds_clean/${l}.mp3`;
+
+  if (!audioCache[l]) {
+    audioCache[l] = new Audio(path);
   }
 
-  const audio = soundCache[lowerLetter];
-  audio.currentTime = 0;
-  audio.play().catch(err => {
-    console.error("Audio play failed:", err);
-  });
+  audioCache[l].currentTime = 0;
+  audioCache[l].play().catch(err => console.log(err));
 }
 
-/* ---------- 5. LETTER CLICK HANDLER ---------- */
-function handleLetterClick(event) {
-  const letter = event.target.dataset.letter;
-
-  // Visual feedback
-  event.target.style.backgroundColor = "#a0c4ff";
-  setTimeout(() => {
-    event.target.style.backgroundColor = "";
-  }, 200);
-
-  playPhoneticSound(letter);
+/* LETTER CLICK */
+function letterClick(e) {
+  playSound(e.target.dataset.letter);
 }
 
-/* ---------- 6. DISPLAY NEW WORD ---------- */
-function displayNewWord() {
+/* NEW WORD */
+function showNewWord() {
+  console.log("BUTTON CLICKED");
+
   wordDisplay.innerHTML = "";
-
-  const randomIndex = Math.floor(Math.random() * cvcWords.length);
-  const word = cvcWords[randomIndex];
+  const word = words[Math.floor(Math.random() * words.length)];
 
   for (const letter of word) {
     const span = document.createElement("span");
-    span.className = "letter";
     span.textContent = letter.toUpperCase();
     span.dataset.letter = letter;
-    span.addEventListener("click", handleLetterClick);
-
+    span.className = "letter";
+    span.onclick = letterClick;
     wordDisplay.appendChild(span);
   }
 }
 
-/* ---------- 7. EVENT LISTENERS ---------- */
-newWordButton.addEventListener("click", displayNewWord);
-
-/* ---------- 8. INITIAL STATE ---------- */
-document.addEventListener("DOMContentLoaded", () => {
-  wordDisplay.innerHTML = `<p>Click "New Word" to start!</p>`;
+/* EVENT */
+newWordButton.onclick = showNewWord;
