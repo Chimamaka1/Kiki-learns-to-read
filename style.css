@@ -68,8 +68,30 @@ h1 {
     margin-top: 20px;
     color: #6c757d;
 }
+/* Finger blending slider – iOS friendly */
 #blend-slider {
   width: 100%;
-  margin: 20px 0;
-  accent-color: #4caf50;
+  margin: 30px 0;
+  height: 24px;
+  -webkit-appearance: none;
+  background: #d0ebd8;
+  border-radius: 12px;
+  outline: none;
+}
+
+/* Slider track */
+#blend-slider::-webkit-slider-runnable-track {
+  height: 24px;
+  background: #d0ebd8;
+  border-radius: 12px;
+}
+
+/* Slider thumb (the finger) */
+#blend-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 40px;
+  height: 40px;
+  background: #4caf50;
+  border-radius: 50%;
+  margin-top: -8px;
 }
