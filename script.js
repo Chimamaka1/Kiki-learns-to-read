@@ -1,36 +1,24 @@
-console.log("SCRIPT LOADED");
-
 /* DOM */
 const wordDisplay = document.getElementById("word-display");
 const newWordButton = document.getElementById("new-word-button");
 const blendButton = document.getElementById("blend-word-button");
+const slider = document.getElementById("blend-slider");
 
 /* WORD LIST */
-const words = [
-  "cat", "bat", "hat",
-  "dog", "log", "fog",
-  "pin", "tin", "win",
-  "cup", "bug", "rug"
-];
+const words = ["cat", "bat", "dog", "log", "pin", "cup"];
 
 let currentWord = "";
+let audioCache = {};
+let lastSliderValue = -1;
 
-/* AUDIO CACHE */
-const audioCache = {};
-
-/* PLAY LETTER SOUND */
+/* PLAY LETTER */
 function playLetter(letter) {
   const l = letter.toLowerCase();
   if (!audioCache[l]) {
     audioCache[l] = new Audio(`sounds_clean/${l}.mp3`);
   }
   audioCache[l].currentTime = 0;
-  return audioCache[l].play();
-}
-
-/* LETTER CLICK */
-function letterClick(e) {
-  playLetter(e.target.dataset.letter);
+  audioCache[l].play();
 }
 
 /* SHOW NEW WORD */
@@ -43,30 +31,38 @@ function showNewWord() {
     span.textContent = letter.toUpperCase();
     span.dataset.letter = letter;
     span.className = "letter";
-    span.onclick = letterClick;
     wordDisplay.appendChild(span);
   }
+
+  // Reset slider
+  slider.max = currentWord.length - 1;
+  slider.value = 0;
+  lastSliderValue = -1;
 }
 
-/* BLEND WORD */
-async function blendWord() {
-  if (!currentWord) return;
+/* SLIDER MOVE = FINGER UNDER WORD */
+slider.addEventListener("input", () => {
+  const index = Number(slider.value);
+  const letters = document.querySelectorAll(".letter");
 
-  // play letters slowly
-  for (const letter of currentWord) {
-    await playLetter(letter);
-    await new Promise(res => setTimeout(res, 400));
+  if (index === lastSliderValue) return;
+
+  letters.forEach(l => (l.style.backgroundColor = ""));
+  letters[index].style.backgroundColor = "#ffd966";
+
+  playLetter(letters[index].dataset.letter);
+  lastSliderValue = index;
+
+  // If at end, say whole word
+  if (index === letters.length - 1) {
+    setTimeout(() => {
+      const utterance = new SpeechSynthesisUtterance(currentWord);
+      utterance.rate = 0.7;
+      speechSynthesis.speak(utterance);
+    }, 500);
   }
+});
 
-  // short pause before full word
-  await new Promise(res => setTimeout(res, 500));
-
-  // spell whole word using browser voice (temporary, works instantly)
-  const utterance = new SpeechSynthesisUtterance(currentWord);
-  utterance.rate = 0.7;
-  speechSynthesis.speak(utterance);
-}
-
-/* EVENTS */
+/* BUTTON EVENTS */
 newWordButton.onclick = showNewWord;
-blendButton.onclick = blendWord;
+blendButton.onclick = () => slider.focus();
