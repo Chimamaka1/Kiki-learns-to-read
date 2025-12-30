@@ -1,5 +1,5 @@
 // ===============================
-// CVC PHONICS TRAINER – FULL JS
+// CVC PHONICS TRAINER – FINAL JS
 // ===============================
 
 // ----- DOM ELEMENTS -----
@@ -8,11 +8,32 @@ const newWordBtn = document.getElementById("new-word-button");
 const blendBtn = document.getElementById("blend-word-button");
 const slider = document.getElementById("blend-slider");
 
-// ----- WORD LIST (EXPANDABLE) -----
+// ----- EXPANDED PHONICS WORD LIST -----
 const words = [
-  "cat", "dog", "sun", "hat", "man", "pen", "pig", "bed",
-  "dig", "cup", "run", "map", "log", "tap", "sit", "fan",
-  "bat", "top", "jam", "red", "hen", "lip", "box", "fox"
+
+  // Short A
+  "cat","bat","rat","mat","sat","hat","pat","tap","map","jam",
+  "cap","lap","man","pan","fan","can","ran","dad","bad","bag",
+  "tag","rag","wag","van","tan","cab","ham","ram","sad",
+
+  // Short E
+  "bed","red","fed","led","wed","pen","hen","men","ten","net",
+  "jet","vet","pet","leg","beg","peg","den","get","let","set",
+  "met","yet","web","yes",
+
+  // Short I
+  "sit","pit","hit","bit","fit","kit","lit","mit","rid","did",
+  "dig","fig","pig","wig","big","zip","lip","sip","tip","dip",
+  "win","fin","bin","pin","tin","kid","hid",
+
+  // Short O
+  "dog","log","hog","fog","bog","cot","hot","pot","lot","not",
+  "top","mop","hop","pop","cop","box","fox","rod","nod","job",
+  "sob","rob","got","dot",
+
+  // Short U
+  "sun","fun","run","bun","gun","hug","jug","rug","bug","mug",
+  "cup","pup","cut","nut","hut","mud","bud","tub","rub","sub"
 ];
 
 // ----- STATE -----
@@ -25,7 +46,6 @@ function playLetter(letter) {
   audio.play().catch(() => {});
 }
 
-// Whole word (speech synthesis)
 function speakWholeWord(word) {
   speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(word);
@@ -34,12 +54,11 @@ function speakWholeWord(word) {
   speechSynthesis.speak(utterance);
 }
 
-// ----- DISPLAY WORD -----
-function showNewWord() {
-  currentWord = words[Math.floor(Math.random() * words.length)];
+// ----- RENDER WORD (CRITICAL) -----
+function renderWord(word) {
   wordDisplay.innerHTML = "";
 
-  currentWord.split("").forEach(letter => {
+  word.split("").forEach(letter => {
     const span = document.createElement("span");
     span.className = "letter";
     span.textContent = letter;
@@ -51,11 +70,18 @@ function showNewWord() {
     wordDisplay.appendChild(span);
   });
 
-  // Reset slider
   slider.value = 0;
-  slider.max = currentWord.length;
+  slider.max = word.length;
   lastSliderValue = 0;
 }
+
+// ----- NEW WORD -----
+function newWord() {
+  currentWord = words[Math.floor(Math.random() * words.length)];
+  renderWord(currentWord);
+}
+
+newWordBtn.addEventListener("click", newWord);
 
 // ----- SLIDER BLENDING (FINGER SLIDE) -----
 slider.addEventListener("input", () => {
@@ -63,29 +89,24 @@ slider.addEventListener("input", () => {
   const value = Number(slider.value);
 
   letters.forEach((l, i) => {
-    l.style.backgroundColor = i < value ? "#ffe599" : "";
+    l.style.backgroundColor = i < value ? "#ffe599" : "#e6f2ff";
   });
 
-  // Only play sound when moving forward
   if (value > lastSliderValue && letters[value - 1]) {
-    const letter = letters[value - 1].textContent.toLowerCase();
-    playLetter(letter);
+    playLetter(letters[value - 1].textContent);
   }
 
   lastSliderValue = value;
 });
 
-// ----- BUTTON BLEND (STEP-BY-STEP → WHOLE WORD) -----
+// ----- BUTTON BLEND (STEP → WHOLE WORD) -----
 blendBtn.addEventListener("click", () => {
   const letters = document.querySelectorAll(".letter");
   let i = 0;
 
   const interval = setInterval(() => {
-    letters.forEach(l => (l.style.backgroundColor = ""));
-
-    if (letters[i]) {
-      letters[i].style.backgroundColor = "#ffd966";
-      playLetter(letters[i].textContent.toLowerCase());
+    if (i < letters.length) {
+      playLetter(letters[i].textContent);
       i++;
     } else {
       clearInterval(interval);
@@ -93,6 +114,3 @@ blendBtn.addEventListener("click", () => {
     }
   }, 350);
 });
-
-// ----- NEW WORD BUTTON -----
-newWordBtn.addEventListener("click", showNewWord);
