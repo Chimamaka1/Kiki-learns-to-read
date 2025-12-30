@@ -1,31 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CVC Phonics App</title>
-    <link rel="stylesheet" href="style.css">
-</head>
 <body>
-    <div id="app-container">
-        <h1>CVC Phonics Trainer</h1>
-        <div id="word-display">
-            <p>Click "New Word" to start!</p>
-        </div>
+  <div id="app-container">
+    <h1>CVC Phonics Trainer</h1>
 
-<input
-  type="range"
-  id="blend-slider"
-  min="0"
-  step="1"
-  value="0"
-/>
-        <button id="new-word-button">New Word</button>
-        <button id="blend-word-button">Blend Word</button>
-
-        <p class="instruction">Click any letter to hear its phonetic sound.</p>
+    <div id="word-display">
+      <p>Click "New Word" to start!</p>
     </div>
 
- <script src="script.js?v=101"></script>
+    <input
+      type="range"
+      id="blend-slider"
+      min="0"
+      step="1"
+      value="0"
+      style="width:100%; margin:20px 0;"
+    />
+
+    <button id="new-word-button">New Word</button>
+    <button id="blend-word-button">Blend Word</button>
+
+    <p class="instruction">
+      Click any letter to hear its phonetic sound.
+    </p>
+  </div>
+
+  <script src="script.js?v=101"></script>
 </body>
-</html>
