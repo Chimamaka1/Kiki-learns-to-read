@@ -241,7 +241,13 @@ blendBtn.onclick = async () => {
 /* ---------- START ---------- */
 newWordBtn.click();
 
-document.getElementById("story-button").onclick = () => {
-  currentPage = 0;
-  renderStoryPage();
-};
+window.addEventListener("load", () => {
+  const storyBtn = document.getElementById("story-button");
+  if (storyBtn) {
+    storyBtn.onclick = () => {
+      currentPage = 0;
+      renderStoryPage();
+    };
+  }
+});
+
