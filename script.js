@@ -1,99 +1,95 @@
-// ===============================
-// CVC PHONICS TRAINER – STABLE FIX
-// ===============================
+document.addEventListener("DOMContentLoaded", () => {
 
-// ----- DOM -----
-const wordDisplay = document.getElementById("word-display");
-const newWordBtn = document.getElementById("new-word-button");
-const blendBtn = document.getElementById("blend-word-button");
-const slider = document.getElementById("blend-slider");
+  // ----- ELEMENTS -----
+  const wordDisplay = document.getElementById("word-display");
+  const newWordBtn = document.getElementById("new-word-button");
+  const blendBtn = document.getElementById("blend-word-button");
+  const slider = document.getElementById("blend-slider");
 
-// ----- WORD LIST -----
-const words = [
-  "cat","bat","rat","mat","sat","hat","map","jam","cap","lap",
-  "bed","red","pen","hen","net","jet","pet","leg",
-  "sit","pit","hit","bit","fit","kit","dig","pig","wig",
-  "dog","log","fog","hot","pot","top","box","fox",
-  "sun","fun","run","bun","hug","bug","cup","cut","nut"
-];
+  // ----- WORD LIST -----
+  const words = [
+    "cat","bat","rat","mat","sat","hat","map","jam","cap","lap",
+    "bed","red","pen","hen","net","jet","pet","leg",
+    "sit","pit","hit","bit","fit","kit","dig","pig","wig",
+    "dog","log","fog","hot","pot","top","box","fox",
+    "sun","fun","run","bun","hug","bug","cup","cut","nut"
+  ];
 
-// ----- STATE -----
-let currentWord = "";
-let lastSliderValue = 0;
+  let currentWord = "";
+  let lastSliderValue = 0;
 
-// ----- AUDIO -----
-function playLetter(letter) {
-  const audio = new Audio(`sounds_clean/${letter}.mp3`);
-  audio.play().catch(() => {});
-}
-
-function speakWholeWord(word) {
-  speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(word);
-  utter.rate = 0.55; // slower, child-friendly
-  speechSynthesis.speak(utter);
-}
-
-// ----- FORCE TILE RENDER -----
-function renderWord(word) {
-  wordDisplay.innerHTML = ""; // removes <p> text completely
-
-  word.split("").forEach(letter => {
-    const tile = document.createElement("span");
-    tile.className = "letter";
-    tile.textContent = letter;
-
-    tile.addEventListener("click", () => playLetter(letter));
-
-    wordDisplay.appendChild(tile);
-  });
-
-  slider.value = 0;
-  slider.max = word.length;
-  lastSliderValue = 0;
-}
-
-// ----- NEW WORD -----
-function newWord() {
-  currentWord = words[Math.floor(Math.random() * words.length)];
-  renderWord(currentWord);
-}
-
-newWordBtn.addEventListener("click", newWord);
-
-// 🔑 IMPORTANT: render first word on load
-newWord();
-
-// ----- SLIDER BLENDING -----
-slider.addEventListener("input", () => {
-  const tiles = document.querySelectorAll(".letter");
-  const value = Number(slider.value);
-
-  tiles.forEach((t, i) => {
-    t.style.backgroundColor = i < value ? "#ffe599" : "#e6f2ff";
-  });
-
-  if (value > lastSliderValue && tiles[value - 1]) {
-    playLetter(tiles[value - 1].textContent);
+  // ----- AUDIO -----
+  function playLetter(letter) {
+    const audio = new Audio(`sounds_clean/${letter}.mp3`);
+    audio.play().catch(() => {});
   }
 
-  lastSliderValue = value;
-});
+  function speakWholeWord(word) {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(word);
+    u.rate = 0.55;
+    speechSynthesis.speak(u);
+  }
 
-// ----- BUTTON BLEND (SLOW + CLEAR) -----
-blendBtn.addEventListener("click", () => {
-  const tiles = document.querySelectorAll(".letter");
-  let index = 0;
+  // ----- RENDER WORD AS TILES -----
+  function renderWord(word) {
+    wordDisplay.innerHTML = "";
 
-  const interval = setInterval(() => {
-    if (index < tiles.length) {
-      tiles.forEach(t => (t.style.backgroundColor = "#e6f2ff"));
-      tiles[index].style.backgroundColor = "#ffd966";
-      playLetter(tiles[index].textContent);
-      index++;
-    } else {
-      clearInterval(interval);
-      setTimeout(() => speakWholeWord(currentWord), 500);
+    word.split("").forEach(letter => {
+      const span = document.createElement("span");
+      span.className = "letter";
+      span.textContent = letter;
+
+      span.addEventListener("click", () => playLetter(letter));
+      wordDisplay.appendChild(span);
+    });
+
+    slider.value = 0;
+    slider.max = word.length;
+    lastSliderValue = 0;
+  }
+
+  // ----- NEW WORD -----
+  function newWord() {
+    currentWord = words[Math.floor(Math.random() * words.length)];
+    renderWord(currentWord);
+  }
+
+  newWordBtn.addEventListener("click", newWord);
+
+  // ----- SLIDER BLEND -----
+  slider.addEventListener("input", () => {
+    const tiles = document.querySelectorAll(".letter");
+    const value = Number(slider.value);
+
+    tiles.forEach((t, i) => {
+      t.style.backgroundColor = i < value ? "#ffe599" : "#e6f2ff";
+    });
+
+    if (value > lastSliderValue && tiles[value - 1]) {
+      playLetter(tiles[value - 1].textContent);
     }
-  }, 650); // 👈 slowed blend timing
+
+    lastSliderValue = value;
+  });
+
+  // ----- BUTTON BLEND (SLOW → WHOLE WORD) -----
+  blendBtn.addEventListener("click", () => {
+    const tiles = document.querySelectorAll(".letter");
+    let i = 0;
+
+    const interval = setInterval(() => {
+      if (i < tiles.length) {
+        playLetter(tiles[i].textContent);
+        i++;
+      } else {
+        clearInterval(interval);
+        setTimeout(() => speakWholeWord(currentWord), 600);
+      }
+    }, 700);
+  });
+
+  // 🔑 FORCE FIRST WORD ON LOAD
+  newWord();
+
 });
