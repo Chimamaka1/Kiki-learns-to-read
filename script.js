@@ -1,95 +1,71 @@
-document.addEventListener("DOMContentLoaded", () => {
+const words = [
+  "cat","bat","hat","mat","rat",
+  "dog","dig","log","hog",
+  "pen","ten","hen","men",
+  "pig","wig","big","fig",
+  "sun","run","fun","bun"
+];
 
-  // ----- ELEMENTS -----
-  const wordDisplay = document.getElementById("word-display");
-  const newWordBtn = document.getElementById("new-word-button");
-  const blendBtn = document.getElementById("blend-word-button");
-  const slider = document.getElementById("blend-slider");
+const wordDisplay = document.getElementById("word-display");
+const slider = document.getElementById("blend-slider");
+const newWordBtn = document.getElementById("new-word-button");
+const blendBtn = document.getElementById("blend-word-button");
 
-  // ----- WORD LIST -----
-  const words = [
-    "cat","bat","rat","mat","sat","hat","map","jam","cap","lap",
-    "bed","red","pen","hen","net","jet","pet","leg",
-    "sit","pit","hit","bit","fit","kit","dig","pig","wig",
-    "dog","log","fog","hot","pot","top","box","fox",
-    "sun","fun","run","bun","hug","bug","cup","cut","nut"
-  ];
+let currentWord = "";
+let letterElements = [];
 
-  let currentWord = "";
-  let lastSliderValue = 0;
+function speak(text, rate = 0.6) {
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = rate;
+  speechSynthesis.speak(u);
+}
 
-  // ----- AUDIO -----
-  function playLetter(letter) {
-    const audio = new Audio(`sounds_clean/${letter}.mp3`);
-    audio.play().catch(() => {});
-  }
+function showWord(word) {
+  wordDisplay.innerHTML = "";
+  letterElements = [];
 
-  function speakWholeWord(word) {
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(word);
-    u.rate = 0.55;
-    speechSynthesis.speak(u);
-  }
-
-  // ----- RENDER WORD AS TILES -----
-  function renderWord(word) {
-    wordDisplay.innerHTML = "";
-
-    word.split("").forEach(letter => {
-      const span = document.createElement("span");
-      span.className = "letter";
-      span.textContent = letter;
-
-      span.addEventListener("click", () => playLetter(letter));
-      wordDisplay.appendChild(span);
-    });
-
-    slider.value = 0;
-    slider.max = word.length;
-    lastSliderValue = 0;
-  }
-
-  // ----- NEW WORD -----
-  function newWord() {
-    currentWord = words[Math.floor(Math.random() * words.length)];
-    renderWord(currentWord);
-  }
-
-  newWordBtn.addEventListener("click", newWord);
-
-  // ----- SLIDER BLEND -----
-  slider.addEventListener("input", () => {
-    const tiles = document.querySelectorAll(".letter");
-    const value = Number(slider.value);
-
-    tiles.forEach((t, i) => {
-      t.style.backgroundColor = i < value ? "#ffe599" : "#e6f2ff";
-    });
-
-    if (value > lastSliderValue && tiles[value - 1]) {
-      playLetter(tiles[value - 1].textContent);
-    }
-
-    lastSliderValue = value;
+  [...word].forEach(letter => {
+    const span = document.createElement("span");
+    span.className = "letter";
+    span.textContent = letter;
+    span.onclick = () => speak(letter);
+    wordDisplay.appendChild(span);
+    letterElements.push(span);
   });
 
-  // ----- BUTTON BLEND (SLOW → WHOLE WORD) -----
-  blendBtn.addEventListener("click", () => {
-    const tiles = document.querySelectorAll(".letter");
-    let i = 0;
+  slider.max = letterElements.length;
+  slider.value = 0;
+}
 
-    const interval = setInterval(() => {
-      if (i < tiles.length) {
-        playLetter(tiles[i].textContent);
-        i++;
-      } else {
-        clearInterval(interval);
-        setTimeout(() => speakWholeWord(currentWord), 600);
-      }
-    }, 700);
-  });
+newWordBtn.onclick = () => {
+  currentWord = words[Math.floor(Math.random() * words.length)];
+  showWord(currentWord);
+};
 
-  // 🔑 FORCE FIRST WORD ON LOAD
-  newWord();
+slider.oninput = () => {
+  const index = Number(slider.value);
 
-});
+  letterElements.forEach(el => el.classList.remove("active"));
+
+  if (index > 0 && index <= letterElements.length) {
+    const letter = currentWord[index - 1];
+    letterElements[index - 1].classList.add("active");
+    speak(letter);
+  }
+};
+
+blendBtn.onclick = async () => {
+  slider.value = 0;
+
+  for (let i = 0; i < currentWord.length; i++) {
+    slider.value = i + 1;
+    letterElements.forEach(el => el.classList.remove("active"));
+    letterElements[i].classList.add("active");
+    speak(currentWord[i]);
+    await new Promise(r => setTimeout(r, 700)); // slow & smooth
+  }
+
+  await new Promise(r => setTimeout(r, 400));
+  speak(currentWord, 0.7); // full word
+};
