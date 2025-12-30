@@ -1,3 +1,39 @@
+/* ===== CONTINUOUS BLENDING ENGINE ===== */
+
+// sounds that can be stretched
+const CONTINUANTS = ["s","m","n","f","l","r","v","z"];
+
+// audio context (required for overlap)
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+async function playContinuousBlend(word) {
+  let startTime = audioCtx.currentTime;
+
+  for (let i = 0; i < word.length; i++) {
+    const letter = word[i];
+
+    // load sound
+    const response = await fetch(`sounds_clean/${letter}.mp3`);
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+
+    // stretch continuous sounds
+    source.playbackRate.value = CONTINUANTS.includes(letter) ? 0.7 : 1.0;
+
+    source.connect(audioCtx.destination);
+
+    // play sound
+    source.start(startTime);
+
+    // overlap timing
+    const overlapFactor = CONTINUANTS.includes(letter) ? 0.55 : 0.75;
+    startTime += buffer.duration * overlapFactor;
+  }
+}
+
 const wordDisplay = document.getElementById("word-display");
 const newWordBtn = document.getElementById("new-word-button");
 const blendBtn = document.getElementById("blend-word-button");
@@ -95,24 +131,29 @@ blendBtn.onclick = async () => {
   if (!letters.length) return;
   blending = true;
 
-  // blend letters
+  // highlight letters as we blend
   for (let i = 0; i < letters.length; i++) {
     letters.forEach(l => l.classList.remove("active"));
     letters[i].classList.add("active");
-    playSound(letters[i].textContent);
-    await new Promise(r => setTimeout(r, 800));
+    await new Promise(r => setTimeout(r, 350));
   }
 
-  // say whole word
+  // 🔊 CONTINUOUS MELTING BLEND
+  await playContinuousBlend(currentWord);
+
+  // short pause
   await new Promise(r => setTimeout(r, 500));
+
+  // say whole word
   speakWord(currentWord);
 
-  // reward + encouragement
+  // reward
   showReward();
   encourage();
 
   blending = false;
 };
+
 
 /* ---------- START ---------- */
 newWordBtn.click();
