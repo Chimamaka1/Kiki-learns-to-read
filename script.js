@@ -239,10 +239,14 @@ blendBtn.onclick = async () => {
   blending = false;
 };
 
-document.getElementById("story-button").onclick = () => {
-  currentPage = 0;
-  renderStoryPage();
-};
+const storyBtn = document.getElementById("story-button");
+if (storyBtn) {
+  storyBtn.onclick = () => {
+    currentPage = 0;
+    renderStoryPage();
+  };
+}
+
 
 /* ==============================
    START
