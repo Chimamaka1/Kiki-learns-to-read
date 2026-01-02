@@ -1,115 +1,176 @@
-* { box-sizing: border-box; }
+/* ===============================
+   GLOBAL RESET & BASE
+================================ */
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
 
 body {
-  margin: 0;
-  font-family: "Comic Sans MS", system-ui, sans-serif;
-  background: linear-gradient(135deg, #ffe4f1, #ffc1dd);
-}
-
-/* AUDIO GATE */
-#audio-gate {
-  position: fixed;
-  inset: 0;
-  background: rgba(255, 182, 213, 0.96);
+  font-family: Arial, sans-serif;
+  background: linear-gradient(180deg, #fff3e6, #ffe0f0);
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 9999;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
 }
 
-#start-audio {
-  font-size: 1.4rem;
-  padding: 18px 26px;
-  border-radius: 26px;
-  border: none;
-  background: #ff4da6;
-  color: white;
-  font-weight: bold;
-  box-shadow: 0 6px 0 #c2185b;
-}
+/* ===============================
+   APP CONTAINER
+================================ */
 
-/* APP */
 #app-container {
+  background: white;
+  padding: 30px;
+  border-radius: 22px;
+  width: 95%;
   max-width: 420px;
-  margin: 20px auto;
-  padding: 20px;
-  background: #fff0f7;
-  border-radius: 24px;
-  box-shadow: 0 10px 25px rgba(255,105,180,.25);
   text-align: center;
+  box-shadow: 0 12px 25px rgba(0,0,0,0.15);
 }
 
-h1 { color: #ff4da6; }
+h1 {
+  margin-bottom: 20px;
+}
+
+/* ===============================
+   PHONICS LETTER TILES
+================================ */
 
 #word-display {
   display: flex;
   justify-content: center;
   gap: 14px;
-  margin: 18px 0;
+  margin: 25px 0;
 }
 
 .letter {
-  font-size: 2.6rem;
+  width: 70px;
+  height: 70px;
+  border-radius: 16px;
+  background: #ffe6f0;
+  border: 3px solid #ff69b4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.5rem;
   font-weight: bold;
-  background: white;
-  padding: 6px 12px;
-  border-radius: 14px;
-  color: #ff69b4;
-  box-shadow: 0 4px 0 #ffc1dd;
   cursor: pointer;
 }
 
 .letter.active {
-  background: #ffb3d9;
-  color: white;
+  background: #fff176;
+  border-color: #fbc02d;
 }
 
-/* SLIDER */
-#blend-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 16px;
-  border-radius: 999px;
-  background: linear-gradient(to right, #ff9acb, #ff4da6);
-  margin: 10px auto 18px;
+/* ===============================
+   SLIDER
+================================ */
+
+input[type="range"] {
+  width: 100%;
+  margin: 20px 0;
 }
 
-/* PURPLE CAR */
-#blend-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 48px;
-  height: 32px;
-  background: purple;
-  border-radius: 8px;
-}
-
-#blend-slider::-moz-range-thumb {
-  width: 48px;
-  height: 32px;
-  background: purple;
-  border-radius: 8px;
-}
+/* ===============================
+   BUTTONS
+================================ */
 
 button {
-  margin: 6px;
-  padding: 10px 14px;
-  border-radius: 18px;
+  padding: 14px 22px;
+  margin: 8px;
+  border-radius: 30px;
   border: none;
-  background: linear-gradient(#ffb3d9, #ff69b4);
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+#new-word-button {
+  background: #4caf50;
   color: white;
+}
+
+#blend-word-button {
+  background: #2196f3;
+  color: white;
+}
+
+#play-word {
+  background: #ff9800;
+  color: white;
+}
+
+#next-question {
+  background: #673ab7;
+  color: white;
+}
+
+.choose-btn {
+  margin-top: 12px;
+  padding: 10px 18px;
+  border-radius: 20px;
+  background: #4caf50;
+  color: white;
+  font-size: 1rem;
   font-weight: bold;
 }
 
-.instruction { color: #b03060; }
+/* ===============================
+   REWARD
+================================ */
+
+#reward {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff8cc;
+  border: 4px solid #ffd700;
+  border-radius: 20px;
+  padding: 30px 40px;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ff9800;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  z-index: 999;
+  animation: pop 0.4s ease;
+}
+
+.hidden {
+  display: none;
+}
+
+@keyframes pop {
+  0% { transform: translate(-50%, -50%) scale(0.6); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ===============================
+   LISTEN & CHOOSE
+================================ */
+
+#choices {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin: 25px 0;
+}
 
 .word-option {
-  display: inline-block;
   padding: 16px;
-  border-radius: 18px;
+  border-radius: 20px;
   border: 3px solid #ff69b4;
   background: #ffe6f0;
-  margin: 10px;
-  cursor: pointer;
 }
 
 .letters {
@@ -122,27 +183,75 @@ button {
   width: 55px;
   height: 55px;
   border-radius: 12px;
-  background: #fff;
+  background: white;
   border: 2px solid #ff69b4;
   font-size: 2rem;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.choose-btn {
-  margin-top: 12px;
-  padding: 10px 18px;
-  border-radius: 20px;
-  border: none;
-  background: #4caf50;
-  color: white;
-  font-size: 1rem;
-  font-weight: bold;
   cursor: pointer;
 }
 
-.choose-btn:active {
-  transform: scale(0.95);
+/* ===============================
+   BALLOON GAME
+================================ */
+
+#sky {
+  position: relative;
+  height: 350px;
+  overflow: hidden;
+  margin-top: 20px;
+  background: linear-gradient(#e3f2fd, #ffffff);
+  border-radius: 20px;
+}
+
+/* Balloon body */
+.balloon {
+  position: absolute;
+  bottom: -100px;
+  width: 70px;
+  height: 90px;
+  background: var(--balloon-color, pink);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  animation: floatUp 6s linear forwards;
+}
+
+/* Balloon knot */
+.balloon::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid var(--balloon-color, pink);
+}
+
+/* Balloon string */
+.balloon::before {
+  content: "";
+  position: absolute;
+  bottom: -45px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 35px;
+  background: #999;
+}
+
+/* Balloon floating */
+@keyframes floatUp {
+  from { bottom: -100px; }
+  to { bottom: 420px; }
 }
