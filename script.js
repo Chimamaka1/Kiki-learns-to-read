@@ -151,13 +151,27 @@ function renderWord(word) {
 ================================ */
 
 function adjustSliderToWord() {
-  const wordWidth = wordDisplay.offsetWidth;
+  if (letters.length === 0) return;
 
-  slider.style.width = wordWidth + "px";
-  slider.style.marginLeft = "auto";
-  slider.style.marginRight = "auto";
-  slider.style.display = "block";
+  const first = letters[0].getBoundingClientRect();
+  const last  = letters[letters.length - 1].getBoundingClientRect();
+  const parent = wordDisplay.getBoundingClientRect();
+
+  // Distance from centre of first letter to centre of last letter
+  const sliderWidth =
+    (last.left + last.width / 2) -
+    (first.left + first.width / 2);
+
+  slider.style.width = sliderWidth + "px";
+
+  // Center slider under the word
+  const sliderOffset =
+    (first.left + last.right) / 2 - parent.left - sliderWidth / 2;
+
+  slider.style.marginLeft = sliderOffset + "px";
+  slider.style.marginRight = "0";
 }
+
 
 /* ==============================
    MODE SWITCHING
