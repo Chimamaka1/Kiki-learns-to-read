@@ -5,7 +5,6 @@
 const CONTINUANTS = ["s","m","n","f","l","r","v","z"];
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-// Resume audio on first user interaction (mobile safety)
 document.body.addEventListener("click", () => {
   if (audioCtx.state === "suspended") audioCtx.resume();
 }, { once: true });
@@ -37,16 +36,16 @@ const wordDisplay = document.getElementById("word-display");
 const newWordBtn = document.getElementById("new-word-button");
 const blendBtn = document.getElementById("blend-word-button");
 const slider = document.getElementById("blend-slider");
-const reward = document.getElementById("reward");
 
-const vcBtn = document.getElementById("vc-button");
-const cvBtn = document.getElementById("cv-button");
+const vcBtn  = document.getElementById("vc-button");
+const cvBtn  = document.getElementById("cv-button");
+const cvcBtn = document.getElementById("cvc-button");
 
 /* ==============================
    WORD BANKS
 ================================ */
 
-// VC (vowel–consonant)
+// VC
 const vcWords = [
   "at","an","am","ap","ad","ag","as",
   "et","en","em","ep","ed","eg","es",
@@ -55,13 +54,13 @@ const vcWords = [
   "ut","un","um","up","ud","ug","us"
 ];
 
-// CV (consonant–vowel)
+// CV
 const cvWords = [
   "ma","pa","sa","ta","na","la","ra",
   "go","no","so"
 ];
 
-// Your original CVC words (unchanged)
+// CVC
 const cvcWords = [
   "cat","bat","mat","rat","sat","pat",
   "dog","dig","log","fog","hog",
@@ -79,39 +78,14 @@ const cvcWords = [
 ];
 
 /* ==============================
-   STORY DATA
-================================ */
-
-const stories = [
-  [
-    "The cat sat.",
-    "A cat sat on a mat.",
-    "The cat has a hat.",
-    "The cat has a rat."
-  ],
-  [
-    "A dog ran.",
-    "The dog ran to a hut.",
-    "The dog sat on a log."
-  ],
-  [
-    "The sun is hot.",
-    "A man ran in the sun."
-  ]
-];
-
-/* ==============================
    STATE
 ================================ */
 
-let mode = "VC";          // VC | CV | CVC (future)
+let mode = "VC";       // VC | CV | CVC
 let activeWords = vcWords;
 let currentWord = "";
 let letters = [];
 let blending = false;
-
-let currentStory = 0;
-let currentPage = 0;
 
 /* ==============================
    AUDIO HELPERS
@@ -121,15 +95,6 @@ function playSound(name) {
   const audio = new Audio(`sounds_clean/${name}.mp3`);
   audio.onerror = () => audio.src = `sounds_clean/${name}.m4a`;
   audio.play().catch(() => {});
-}
-
-// 🔇 No praise speech
-function speakWord(text) {
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.rate = 0.8;
-  utter.pitch = 1.2;
-  speechSynthesis.cancel();
-  speechSynthesis.speak(utter);
 }
 
 /* ==============================
@@ -160,15 +125,16 @@ function renderWord(word) {
 function setMode(newMode) {
   mode = newMode;
 
-  if (mode === "VC") activeWords = vcWords;
-  if (mode === "CV") activeWords = cvWords;
+  if (mode === "VC")  activeWords = vcWords;
+  if (mode === "CV")  activeWords = cvWords;
   if (mode === "CVC") activeWords = cvcWords;
 
   newWord();
 }
 
-vcBtn.onclick = () => setMode("VC");
-cvBtn.onclick = () => setMode("CV");
+vcBtn.onclick  = () => setMode("VC");
+cvBtn.onclick  = () => setMode("CV");
+cvcBtn.onclick = () => setMode("CVC");
 
 /* ==============================
    WORD LOGIC
@@ -209,59 +175,11 @@ blendBtn.onclick = async () => {
   }
 
   await playContinuousBlend(currentWord);
-  showReward();
-
   blending = false;
 };
 
 /* ==============================
-   STORY MODE
+   START
 ================================ */
 
-function renderStoryPage() {
-  const container = document.createElement("div");
-  container.id = "story-container";
-
-  const sentence = stories[currentStory][currentPage];
-
-  sentence.split(" ").forEach(word => {
-    const span = document.createElement("span");
-    span.className = "story-word";
-    span.textContent = word;
-    span.onclick = () => speakWord(word.replace(".", ""));
-    container.appendChild(span);
-  });
-
-  const controls = document.createElement("div");
-  controls.className = "story-controls";
-
-  const readBtn = document.createElement("button");
-  readBtn.textContent = "Read to Me";
-  readBtn.onclick = () => speakWord(sentence);
-
-  const nextBtn = document.createElement("button");
-  nextBtn.textContent = "Next Page";
-  nextBtn.onclick = nextStoryPage;
-
-  controls.appendChild(readBtn);
-  controls.appendChild(nextBtn);
-  container.appendChild(controls);
-
-  wordDisplay.innerHTML = "";
-  wordDisplay.appendChild(container);
-}
-
-function nextStoryPage() {
-  currentPage++;
-  if (currentPage >= stories[currentStory].length) {
-    currentStory = (currentStory + 1) % stories.length;
-    currentPage = 0;
-  }
-  renderStoryPage();
-}
-
-/* ==============================
-   START APP
-================================ */
-
-setMode("VC");   // start with VC (best for beginners)
+setMode("VC"); // start with VC (correct pedagogy)
