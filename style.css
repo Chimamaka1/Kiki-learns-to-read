@@ -130,3 +130,19 @@ button {
   align-items: center;
   justify-content: center;
 }
+
+.choose-btn {
+  margin-top: 12px;
+  padding: 10px 18px;
+  border-radius: 20px;
+  border: none;
+  background: #4caf50;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.choose-btn:active {
+  transform: scale(0.95);
+}
