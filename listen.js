@@ -1,5 +1,5 @@
 /* =========================
-   LISTEN & CHOOSE GAME
+   LISTEN & CHOOSE (PHONICS)
 ========================= */
 
 const words = [
@@ -26,16 +26,10 @@ function speakWord(word) {
   speechSynthesis.speak(utter);
 }
 
-/* ---------- PLAY PHONICS ---------- */
-function playPhonics(word) {
-  let delay = 0;
-  [...word].forEach(letter => {
-    setTimeout(() => {
-      const audio = new Audio(`sounds_clean/${letter}.mp3`);
-      audio.play().catch(() => {});
-    }, delay);
-    delay += 450;
-  });
+/* ---------- PLAY SINGLE LETTER ---------- */
+function playLetter(letter) {
+  const audio = new Audio(`sounds_clean/${letter}.mp3`);
+  audio.play().catch(() => {});
 }
 
 /* ---------- REWARD ---------- */
@@ -59,26 +53,41 @@ function newQuestion() {
   options.sort(() => Math.random() - 0.5);
 
   options.forEach(word => {
-    const btn = document.createElement("button");
-    btn.textContent = word;
-    btn.className = "choice-btn";
+    const optionDiv = document.createElement("div");
+    optionDiv.className = "word-option";
 
-    btn.onclick = () => {
-      playPhonics(word);
+    const lettersDiv = document.createElement("div");
+    lettersDiv.className = "letters";
 
-      setTimeout(() => {
-        if (word === correctWord) {
-          showReward();
-          speakWord("Well done");
-        } else {
-          speakWord("Try again");
-        }
-      }, 1200);
+    [...word].forEach(letter => {
+      const tile = document.createElement("div");
+      tile.className = "letter-tile";
+      tile.textContent = letter;
+
+      // play individual phoneme
+      tile.onclick = (e) => {
+        e.stopPropagation();
+        playLetter(letter);
+      };
+
+      lettersDiv.appendChild(tile);
+    });
+
+    // choosing the whole word
+    optionDiv.onclick = () => {
+      if (word === correctWord) {
+        showReward();
+        speakWord("Well done");
+      } else {
+        speakWord("Try again");
+      }
     };
 
-    choicesDiv.appendChild(btn);
+    optionDiv.appendChild(lettersDiv);
+    choicesDiv.appendChild(optionDiv);
   });
 
+  // auto say the target word
   setTimeout(() => speakWord(correctWord), 500);
 }
 
