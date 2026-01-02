@@ -9,8 +9,34 @@ document.body.addEventListener("click", () => {
   if (audioCtx.state === "suspended") audioCtx.resume();
 }, { once: true });
 
-/* 🔧 NEW: keep track of active phoneme */
 let activeSource = null;
+
+/* ==============================
+   TTS VOICE (FEMALE, CHEERFUL)
+================================ */
+
+let femaleVoice = null;
+
+function loadFemaleVoice() {
+  const voices = speechSynthesis.getVoices();
+
+  // Prefer English female voices
+  femaleVoice =
+    voices.find(v =>
+      /female|woman|girl/i.test(v.name)
+    ) ||
+    voices.find(v =>
+      /en/i.test(v.lang) && /Google|Samantha|Karen|Serena/i.test(v.name)
+    ) ||
+    voices.find(v =>
+      /en/i.test(v.lang)
+    ) ||
+    voices[0];
+}
+
+// Some browsers load voices async
+speechSynthesis.onvoiceschanged = loadFemaleVoice;
+loadFemaleVoice();
 
 async function playContinuousBlend(word) {
   let startTime = audioCtx.currentTime;
@@ -91,26 +117,38 @@ let blending = false;
    AUDIO HELPERS
 ================================ */
 
-/* 🔧 IMPROVED: stop previous sound before playing new */
 function playSound(name) {
-  if (blending) return; // 🔑 prevent spam during auto-blend
+  if (blending) return;
 
   if (activeSource) {
     try { activeSource.stop(); } catch {}
     activeSource = null;
   }
 
-  const audio = audioCtx.createBufferSource();
+  const source = audioCtx.createBufferSource();
 
   fetch(`sounds_clean/${name}.mp3`)
     .then(res => res.arrayBuffer())
     .then(buf => audioCtx.decodeAudioData(buf))
     .then(decoded => {
-      audio.buffer = decoded;
-      audio.connect(audioCtx.destination);
-      audio.start();
-      activeSource = audio;
+      source.buffer = decoded;
+      source.connect(audioCtx.destination);
+      source.start();
+      activeSource = source;
     });
+}
+
+/* 🔊 WHOLE WORD SPEECH — FEMALE & CHEERFUL */
+function speakWholeWord(word) {
+  speechSynthesis.cancel();
+
+  const utter = new SpeechSynthesisUtterance(word);
+  utter.voice = femaleVoice;
+  utter.rate = 0.9;     // natural, friendly pace
+  utter.pitch = 1.3;    // cheerful tone
+  utter.volume = 1;
+
+  speechSynthesis.speak(utter);
 }
 
 /* ==============================
@@ -178,7 +216,7 @@ slider.oninput = () => {
 };
 
 /* ==============================
-   BLEND BUTTON (SMOOTH + CLEAN AUDIO)
+   BLEND BUTTON
 ================================ */
 
 blendBtn.onclick = () => {
@@ -202,6 +240,11 @@ blendBtn.onclick = () => {
       requestAnimationFrame(animate);
     } else {
       playContinuousBlend(currentWord);
+
+      setTimeout(() => {
+        speakWholeWord(currentWord);
+      }, 600);
+
       blending = false;
     }
   }
