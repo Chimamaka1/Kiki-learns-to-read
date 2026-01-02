@@ -83,13 +83,15 @@ let currentWord = "";
 let letters = [];
 let blending = false;
 
+/* 🔒 HARD AUDIO LOCK */
+let sliderSoundEnabled = true;
+
 /* ==============================
    AUDIO HELPERS
 ================================ */
 
-/* Letter sounds — ONLY when NOT blending */
 function playSound(name) {
-  if (blending) return;
+  if (!sliderSoundEnabled) return;
 
   if (activeSource) {
     try { activeSource.stop(); } catch {}
@@ -108,7 +110,6 @@ function playSound(name) {
     });
 }
 
-/* Speak full word ONLY */
 function speakWholeWord(word) {
   speechSynthesis.cancel();
 
@@ -172,7 +173,7 @@ function newWord() {
 newWordBtn.onclick = newWord;
 
 /* ==============================
-   SLIDER (VISUAL ONLY DURING BLEND)
+   SLIDER
 ================================ */
 
 slider.oninput = () => {
@@ -182,22 +183,19 @@ slider.oninput = () => {
   const i = Math.round(slider.value);
   letters[i]?.classList.add("active");
 
-  // 🔑 CRITICAL FIX:
-  // Only play sound if NOT blending
-  if (!blending) {
-    playSound(letters[i].textContent);
-  }
+  playSound(letters[i].textContent);
 };
 
 /* ==============================
    BLEND BUTTON
-   → NO PHONETICS
-   → FULL WORD ONLY
+   (ABSOLUTE SILENCE MODE)
 ================================ */
 
 blendBtn.onclick = () => {
   if (!letters.length || blending) return;
+
   blending = true;
+  sliderSoundEnabled = false; // 🔇 HARD CUT
 
   const max = letters.length - 1;
   const duration = 900;
@@ -215,10 +213,11 @@ blendBtn.onclick = () => {
     if (progress < 1) {
       requestAnimationFrame(animate);
     } else {
-      // 🔊 ONLY the full word
       setTimeout(() => {
         speakWholeWord(currentWord);
+
         blending = false;
+        sliderSoundEnabled = true; // 🔊 RESTORE
       }, 150);
     }
   }
