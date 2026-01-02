@@ -5,101 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CVC Phonics Trainer</title>
 
-  <!-- 🛑 unchanged -->
   <link rel="stylesheet" href="style.css">
-
-  <!-- 🔧 IMPROVEMENT: fallback styles to support slider-word alignment
-       (does NOT override your existing style.css) -->
-  <style>
-    #app-container {
-      max-width: 480px;
-      margin: 0 auto;
-      text-align: center;
-      padding: 16px;
-    }
-
-    #word-display {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-bottom: 12px;
-      min-height: 48px; /* prevents layout jump */
-    }
-
-    .letter {
-      font-size: 2rem;
-      cursor: pointer;
-    }
-
-    #blend-slider {
-      display: block;
-      margin: 0 auto 16px auto;
-      /* width is intentionally NOT fixed
-         JS will dynamically resize it */
-    }
-
-    button {
-      margin: 4px;
-    }
-
-    .instruction {
-      margin-top: 12px;
-      font-size: 0.95rem;
-      opacity: 0.85;
-    }
-
-    #reward {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 2rem;
-      background: #fff6c4;
-      padding: 10px 18px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    }
-
-    .hidden {
-      display: none;
-    }
-  </style>
 </head>
-
 <body>
 
   <div id="app-container">
     <h1>🧸 CVC Phonics</h1>
 
-    <!-- 🛑 unchanged -->
     <div id="word-display"></div>
 
-    <!-- 🛑 unchanged slider
-         🔧 now visually resizes to word width via JS -->
-    <input
-      type="range"
-      id="blend-slider"
-      min="0"
-      step="1"
-      value="0"
-    />
+    <!-- Slider wrapper ensures correct positioning -->
+    <div id="slider-wrapper">
+      <input
+        type="range"
+        id="blend-slider"
+        min="0"
+        step="1"
+        value="0"
+      />
+      <!-- 🚗 NEW: car visual (JS already expects this) -->
+      <div id="slider-car">🚗</div>
+    </div>
 
-    <!-- 🛑 unchanged buttons -->
     <button id="new-word-button">New Word</button>
     <button id="blend-word-button">Blend Word</button>
     <button id="story-button">📘 Story Time</button>
+
     <button id="vc-button">VC</button>
     <button id="cv-button">CV</button>
     <button id="cvc-button">CVC</button>
 
-    <!-- 🛑 unchanged -->
     <p class="instruction">Tap a letter to hear its sound</p>
   </div>
 
-  <!-- 🛑 unchanged: reward kept exactly as-is -->
+  <!-- Reward kept exactly as-is -->
   <div id="reward" class="hidden">⭐ Well done!</div>
 
-  <!-- 🛑 unchanged script include -->
+  <!-- Your updated JS -->
   <script src="script.js?v=9999"></script>
 
 </body>
