@@ -108,15 +108,13 @@ function playSound(name) {
   audio.play().catch(() => {});
 }
 
+// 🔇 NO PRAISE / NO "WELL DONE" SPEECH
 function speakWord(text) {
   const utter = new SpeechSynthesisUtterance(text);
   utter.rate = 0.8;
   utter.pitch = 1.2;
   speechSynthesis.cancel();
   speechSynthesis.speak(utter);
-}
-
-  speakWord(phrases[Math.floor(Math.random() * phrases.length)]);
 }
 
 /* ==============================
@@ -216,9 +214,8 @@ blendBtn.onclick = async () => {
   await playContinuousBlend(currentWord);
   await new Promise(r => setTimeout(r, 500));
 
-  speakWord(currentWord);
+  // 🔕 NO spoken word, NO praise
   showReward();
-  encourage();
 
   blending = false;
 };
@@ -231,9 +228,9 @@ if (storyBtn) {
   };
 }
 
-
 /* ==============================
    START
 ================================ */
 
 newWordBtn.click();
+
