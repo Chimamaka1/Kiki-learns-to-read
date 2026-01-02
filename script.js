@@ -116,22 +116,6 @@ function speakWord(text) {
   speechSynthesis.speak(utter);
 }
 
-/* ==============================
-   REWARD
-================================ */
-
-function showReward() {
-  reward.classList.remove("hidden");
-  setTimeout(() => reward.classList.add("hidden"), 1200);
-}
-
-function encourage() {
-  const phrases = [
-    "Well done!",
-    "Great blending!",
-    "You did it!",
-    "Amazing reading!"
-  ];
   speakWord(phrases[Math.floor(Math.random() * phrases.length)]);
 }
 
