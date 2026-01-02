@@ -1,32 +1,43 @@
 /* ==============================
-   AUDIO SETUP
+   AUDIO SETUP (iPAD SAFE)
 ================================ */
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
 let audioUnlocked = false;
 let activeSource = null;
 
-/* 🔑 iOS / iPad AUDIO UNLOCK (REQUIRED) */
+/* ==============================
+   SOUND CACHE (REQUIRED FOR iOS)
+================================ */
+
+const soundCache = {};
+const LETTERS = "abcdefghijklmnopqrstuvwxyz".split("");
+
 function unlockAudioIOS() {
   if (audioUnlocked) return;
 
-  // Unlock Web Audio
+  // 🔑 Unlock AudioContext
   const buffer = audioCtx.createBuffer(1, 1, 22050);
   const source = audioCtx.createBufferSource();
   source.buffer = buffer;
   source.connect(audioCtx.destination);
   source.start(0);
 
-  // Unlock Speech Synthesis
-  const utter = new SpeechSynthesisUtterance("");
-  speechSynthesis.speak(utter);
+  // 🔑 Unlock Speech
+  speechSynthesis.speak(new SpeechSynthesisUtterance(""));
+
+  // 🔑 Preload ALL letter sounds synchronously
+  LETTERS.forEach(letter => {
+    const audio = new Audio(`sounds_clean/${letter}.mp3`);
+    audio.load();
+    soundCache[letter] = audio;
+  });
 
   audioUnlocked = true;
 }
 
 /* ==============================
-   TTS VOICE (FEMALE, CHEERFUL)
+   TTS (FEMALE)
 ================================ */
 
 let femaleVoice = null;
@@ -59,34 +70,9 @@ const cvcBtn = document.getElementById("cvc-button");
    WORD BANKS
 ================================ */
 
-const vcWords = [
-  "at","an","am","ap","ad","ag","as",
-  "et","en","em","ep","ed","eg","es",
-  "it","in","im","ip","id","ig","is",
-  "ot","on","om","op","od","og","os",
-  "ut","un","um","up","ud","ug","us"
-];
-
-const cvWords = [
-  "ma","pa","sa","ta","na","la","ra",
-  "go","no","so"
-];
-
-const cvcWords = [
-  "cat","bat","mat","rat","sat","pat",
-  "dog","dig","log","fog","hog",
-  "pin","tin","bin","fin","win",
-  "cap","map","tap","nap",
-  "sun","fun","run","bun",
-  "cot","hot","pot","dot",
-  "man","fan","can","pan","ran","tan",
-  "bed","red","fed","led","wed",
-  "pen","hen","ten","men",
-  "cup","mug","bug","hug","rug",
-  "lip","sip","dip","hip","tip",
-  "jam","ham","ram","yam",
-  "kit","sit","hit","pit","fit"
-];
+const vcWords = ["at","an","am","ap","ad","ag","as","et","en","em","ep","ed","eg","es","it","in","im","ip","id","ig","is","ot","on","om","op","od","og","os","ut","un","um","up","ud","ug","us"];
+const cvWords = ["ma","pa","sa","ta","na","la","ra","go","no","so"];
+const cvcWords = ["cat","bat","mat","rat","sat","pat","dog","dig","log","fog","hog","pin","tin","bin","fin","win","cap","map","tap","nap","sun","fun","run","bun","cot","hot","pot","dot","man","fan","can","pan","ran","tan","bed","red","fed","led","wed","pen","hen","ten","men","cup","mug","bug","hug","rug","lip","sip","dip","hip","tip","jam","ham","ram","yam","kit","sit","hit","pit","fit"];
 
 /* ==============================
    STATE
@@ -97,49 +83,30 @@ let activeWords = vcWords;
 let currentWord = "";
 let letters = [];
 let blending = false;
-
-/* 🔒 HARD LOCK FOR SLIDER SOUNDS */
 let sliderSoundEnabled = true;
 
 /* ==============================
-   AUDIO HELPERS
+   AUDIO HELPERS (NO FETCH!)
 ================================ */
 
-/* Letter sound (tap only) */
-function playSound(name) {
-  if (!sliderSoundEnabled) return;
+function playSound(letter) {
+  if (!sliderSoundEnabled || !audioUnlocked) return;
 
-  unlockAudioIOS(); // 🔑 iPad requirement
+  const audio = soundCache[letter];
+  if (!audio) return;
 
-  if (activeSource) {
-    try { activeSource.stop(); } catch {}
-    activeSource = null;
-  }
-
-  fetch(`sounds_clean/${name}.mp3`)
-    .then(res => res.arrayBuffer())
-    .then(buf => audioCtx.decodeAudioData(buf))
-    .then(decoded => {
-      const src = audioCtx.createBufferSource();
-      src.buffer = decoded;
-      src.connect(audioCtx.destination);
-      src.start();
-      activeSource = src;
-    });
+  audio.currentTime = 0;
+  audio.play().catch(() => {});
 }
 
-/* Full word speech ONLY */
 function speakWholeWord(word) {
-  unlockAudioIOS(); // 🔑 iPad requirement
+  if (!audioUnlocked) return;
 
   speechSynthesis.cancel();
-
   const utter = new SpeechSynthesisUtterance(word);
   utter.voice = femaleVoice;
   utter.rate = 0.9;
   utter.pitch = 1.25;
-  utter.volume = 1;
-
   speechSynthesis.speak(utter);
 }
 
@@ -155,39 +122,16 @@ function renderWord(word) {
     const tile = document.createElement("div");
     tile.className = "letter";
     tile.textContent = letter;
-    tile.onclick = () => playSound(letter);
+    tile.onclick = () => {
+      unlockAudioIOS();
+      playSound(letter);
+    };
     wordDisplay.appendChild(tile);
     letters.push(tile);
   });
 
   slider.max = letters.length - 1;
   slider.value = 0;
-
-  requestAnimationFrame(adjustSliderToWord);
-}
-
-/* ==============================
-   SLIDER WIDTH (PIXEL-PERFECT)
-================================ */
-
-function adjustSliderToWord() {
-  if (letters.length === 0) return;
-
-  const first = letters[0].getBoundingClientRect();
-  const last  = letters[letters.length - 1].getBoundingClientRect();
-  const parent = wordDisplay.getBoundingClientRect();
-
-  const sliderWidth =
-    (last.left + last.width / 2) -
-    (first.left + first.width / 2);
-
-  slider.style.width = sliderWidth + "px";
-
-  const sliderOffset =
-    (first.left + last.right) / 2 - parent.left - sliderWidth / 2;
-
-  slider.style.marginLeft = sliderOffset + "px";
-  slider.style.marginRight = "0";
 }
 
 /* ==============================
@@ -195,14 +139,9 @@ function adjustSliderToWord() {
 ================================ */
 
 function setMode(newMode) {
-  unlockAudioIOS(); // 🔑 unlock on tap
-
+  unlockAudioIOS();
   mode = newMode;
-
-  if (mode === "VC")  activeWords = vcWords;
-  if (mode === "CV")  activeWords = cvWords;
-  if (mode === "CVC") activeWords = cvcWords;
-
+  activeWords = mode === "VC" ? vcWords : mode === "CV" ? cvWords : cvcWords;
   newWord();
 }
 
@@ -215,8 +154,7 @@ cvcBtn.onclick = () => setMode("CVC");
 ================================ */
 
 function newWord() {
-  unlockAudioIOS(); // 🔑 unlock on tap
-
+  unlockAudioIOS();
   currentWord = activeWords[Math.floor(Math.random() * activeWords.length)];
   renderWord(currentWord);
 }
@@ -224,58 +162,31 @@ function newWord() {
 newWordBtn.onclick = newWord;
 
 /* ==============================
-   SLIDER (MANUAL DRAG ONLY)
+   SLIDER
 ================================ */
 
 slider.oninput = () => {
-  if (!letters.length) return;
-
-  letters.forEach(l => l.classList.remove("active"));
+  if (!letters.length || blending) return;
   const i = Math.round(slider.value);
-  letters[i]?.classList.add("active");
-
   playSound(letters[i].textContent);
 };
 
 /* ==============================
    BLEND BUTTON
-   → VISUAL ONLY
-   → FULL WORD SPEECH
 ================================ */
 
 blendBtn.onclick = () => {
-  unlockAudioIOS(); // 🔑 unlock on tap
-
-  if (!letters.length || blending) return;
+  unlockAudioIOS();
+  if (blending) return;
 
   blending = true;
   sliderSoundEnabled = false;
 
-  const max = letters.length - 1;
-  const duration = 900;
-  const start = performance.now();
-
-  function animate(now) {
-    const progress = Math.min((now - start) / duration, 1);
-    const eased = progress * progress * (3 - 2 * progress);
-
-    slider.value = eased * max;
-
-    letters.forEach(l => l.classList.remove("active"));
-    letters[Math.round(slider.value)]?.classList.add("active");
-
-    if (progress < 1) {
-      requestAnimationFrame(animate);
-    } else {
-      setTimeout(() => {
-        speakWholeWord(currentWord);
-        blending = false;
-        sliderSoundEnabled = true;
-      }, 100);
-    }
-  }
-
-  requestAnimationFrame(animate);
+  setTimeout(() => {
+    speakWholeWord(currentWord);
+    blending = false;
+    sliderSoundEnabled = true;
+  }, 100);
 };
 
 /* ==============================
