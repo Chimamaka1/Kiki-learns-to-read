@@ -3,37 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CVC Phonics Trainer</title>
-  <link rel="stylesheet" href="style.css?v=purplecar1">
+  <title>CVC Phonics</title>
+  <link rel="stylesheet" href="style.css?v=final1">
 </head>
 <body>
 
-  <div id="app-container">
-    <h1>🧸 CVC Phonics</h1>
+<!-- 🔊 AUDIO GATE (REQUIRED FOR iPAD) -->
+<div id="audio-gate">
+  <button id="start-audio">🔊 Tap to Start</button>
+</div>
 
-    <div id="word-display"></div>
+<div id="app-container">
+  <h1>🧸 CVC Phonics</h1>
 
-    <input
-      type="range"
-      id="blend-slider"
-      min="0"
-      step="0.01"
-      value="0"
-    />
+  <div id="word-display"></div>
 
+  <input type="range" id="blend-slider" min="0" step="1" value="0"/>
+
+  <div>
     <button id="new-word-button">New Word</button>
     <button id="blend-word-button">Blend Word</button>
-    <button id="story-button">📘 Story Time</button>
+  </div>
 
+  <div>
     <button id="vc-button">VC</button>
     <button id="cv-button">CV</button>
     <button id="cvc-button">CVC</button>
-
-    <p class="instruction">Tap a letter to hear its sound</p>
   </div>
 
-  <div id="reward" class="hidden">⭐ Well done!</div>
+  <p class="instruction">Tap a letter to hear its sound</p>
+</div>
 
-  <script src="script.js?v=9999"></script>
+<script src="script.js?v=final1"></script>
 </body>
 </html>
