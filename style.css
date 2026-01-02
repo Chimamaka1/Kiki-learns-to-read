@@ -1,53 +1,92 @@
 /* ==============================
-   GENERAL LAYOUT
+   GLOBAL RESET
 ================================ */
 
-body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #f9fafb;
+* {
+  box-sizing: border-box;
 }
 
-#app-container {
-  max-width: 480px;
-  margin: 0 auto;
-  text-align: center;
-  padding: 16px;
+body {
+  margin: 0;
+  font-family: "Comic Sans MS", "Baloo 2", system-ui, sans-serif;
+  background: linear-gradient(135deg, #ffe4f1, #ffc1dd);
 }
+
+/* ==============================
+   APP CONTAINER
+================================ */
+
+#app-container {
+  max-width: 420px;
+  margin: 20px auto;
+  padding: 20px 16px 28px;
+  background: #fff0f7;
+  border-radius: 24px;
+  box-shadow: 0 10px 25px rgba(255, 105, 180, 0.25);
+  text-align: center;
+}
+
+/* ==============================
+   TITLE
+================================ */
+
+h1 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 2rem;
+  color: #ff4da6;
+  text-shadow: 1px 1px 0 #fff;
+}
+
+/* ==============================
+   WORD DISPLAY
+================================ */
 
 #word-display {
   display: flex;
   justify-content: center;
-  gap: 16px;
-  margin-bottom: 14px;
-  min-height: 48px;
+  align-items: center;
+  gap: 14px;
+  margin: 18px 0 12px;
 }
 
 .letter {
-  font-size: 2.2rem;
+  font-size: 2.6rem;
+  font-weight: bold;
+  color: #ff69b4;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 6px 12px;
+  box-shadow: 0 4px 0 #ffc1dd;
   cursor: pointer;
+  transition: transform 0.1s ease, background 0.2s ease;
+}
+
+.letter:active {
+  transform: scale(0.95);
 }
 
 .letter.active {
-  color: #2563eb;
+  background: #ffb3d9;
+  color: #ffffff;
 }
 
 /* ==============================
-   SLIDER (THICK TRACK)
+   SLIDER (CAR TRACK)
 ================================ */
 
 #blend-slider {
   -webkit-appearance: none;
   appearance: none;
-  width: 100%;
-  height: 14px;
-  border-radius: 10px;
-  background: linear-gradient(to right, #93c5fd, #3b82f6);
+  height: 16px;
+  border-radius: 999px;
+  background: linear-gradient(to right, #ff9acb, #ff4da6);
+  margin: 8px auto 16px;
   outline: none;
-  margin-bottom: 18px;
 }
 
 /* ==============================
-   🚗 CAR THUMB (REAL SVG)
+   CAR THUMB (SVG)
 ================================ */
 
 #blend-slider::-webkit-slider-thumb {
@@ -55,44 +94,63 @@ body {
   appearance: none;
   width: 48px;
   height: 32px;
-  cursor: pointer;
-  border: none;
-  background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iOCIgeT0iMTAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIxMiIgcng9IjMiIGZpbGw9IiNmZjY2MDAiLz4KPGNpcmNsZSBjeD0iMTQiIGN5PSIyNiIgcj0iNCIgZmlsbD0iIzMzMyIvPgo8Y2lyY2xlIGN4PSIzNCIgY3k9IjI2IiByPSI0IiBmaWxsPSIjMzMzIi8+Cjwvc3ZnPg==")
+  background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iOCIgeT0iMTAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIxMiIgcng9IjMiIGZpbGw9IiNmZjY5YjQiLz4KPGNpcmNsZSBjeD0iMTQiIGN5PSIyNiIgcj0iNCIgZmlsbD0iI2ZmZmZmZiIvPgo8Y2lyY2xlIGN4PSIzNCIgY3k9IjI2IiByPSI0IiBmaWxsPSIjZmZmZmZmIi8+Cjwvc3ZnPg==")
     no-repeat center;
   background-size: contain;
+  border: none;
+  cursor: pointer;
 }
 
 #blend-slider::-moz-range-thumb {
   width: 48px;
   height: 32px;
-  cursor: pointer;
-  border: none;
-  background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iOCIgeT0iMTAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIxMiIgcng9IjMiIGZpbGw9IiNmZjY2MDAiLz4KPGNpcmNsZSBjeD0iMTQiIGN5PSIyNiIgcj0iNCIgZmlsbGw9IiMzMzMiLz4KPGNpcmNsZSBjeD0iMzQiIGN5PSIyNiIgcj0iNCIgZmlsbGw9IiMzMzMiLz4KPC9zdmc+")
+  background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iOCIgeT0iMTAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIxMiIgcng9IjMiIGZpbGw9IiNmZjY5YjQiLz4KPGNpcmNsZSBjeD0iMTQiIGN5PSIyNiIgcj0iNCIgZmlsbD0iI2ZmZmZmZiIvPgo8Y2lyY2xlIGN4PSIzNCIgY3k9IjI2IiByPSI0IiBmaWxsPSIjZmZmZmZmIi8+Cjwvc3ZnPg==")
     no-repeat center;
   background-size: contain;
+  border: none;
+  cursor: pointer;
 }
 
 /* ==============================
-   BUTTONS & TEXT
+   BUTTONS
 ================================ */
 
 button {
-  margin: 4px;
-  padding: 8px 12px;
-  border-radius: 8px;
+  font-family: inherit;
+  margin: 6px 4px;
+  padding: 10px 14px;
+  border-radius: 18px;
   border: none;
-  background: #e5e7eb;
+  background: linear-gradient(#ffb3d9, #ff69b4);
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: bold;
+  box-shadow: 0 4px 0 #ff4da6;
   cursor: pointer;
+  transition: transform 0.1s ease;
 }
 
-button:hover {
-  background: #d1d5db;
+button:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #ff4da6;
 }
+
+/* Mode buttons slightly smaller */
+#vc-button,
+#cv-button,
+#cvc-button {
+  font-size: 0.85rem;
+  padding: 8px 12px;
+}
+
+/* ==============================
+   INSTRUCTION TEXT
+================================ */
 
 .instruction {
-  margin-top: 12px;
-  font-size: 0.95rem;
-  opacity: 0.85;
+  margin-top: 14px;
+  font-size: 0.9rem;
+  color: #b03060;
 }
 
 /* ==============================
@@ -104,11 +162,12 @@ button:hover {
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 2rem;
-  background: #fff6c4;
+  background: #fff;
+  color: #ff4da6;
+  font-size: 1.6rem;
   padding: 10px 18px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  border-radius: 22px;
+  box-shadow: 0 6px 20px rgba(255, 77, 166, 0.35);
 }
 
 .hidden {
