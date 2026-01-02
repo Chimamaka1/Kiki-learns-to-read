@@ -9,6 +9,9 @@ document.body.addEventListener("click", () => {
   if (audioCtx.state === "suspended") audioCtx.resume();
 }, { once: true });
 
+/* 🔧 NEW: keep track of active phoneme */
+let activeSource = null;
+
 async function playContinuousBlend(word) {
   let startTime = audioCtx.currentTime;
 
@@ -41,13 +44,10 @@ const vcBtn  = document.getElementById("vc-button");
 const cvBtn  = document.getElementById("cv-button");
 const cvcBtn = document.getElementById("cvc-button");
 
-const car = document.getElementById("slider-car");
-
 /* ==============================
    WORD BANKS
 ================================ */
 
-// VC
 const vcWords = [
   "at","an","am","ap","ad","ag","as",
   "et","en","em","ep","ed","eg","es",
@@ -56,13 +56,11 @@ const vcWords = [
   "ut","un","um","up","ud","ug","us"
 ];
 
-// CV
 const cvWords = [
   "ma","pa","sa","ta","na","la","ra",
   "go","no","so"
 ];
 
-// CVC
 const cvcWords = [
   "cat","bat","mat","rat","sat","pat",
   "dog","dig","log","fog","hog",
@@ -83,7 +81,7 @@ const cvcWords = [
    STATE
 ================================ */
 
-let mode = "VC";       // VC | CV | CVC
+let mode = "VC";
 let activeWords = vcWords;
 let currentWord = "";
 let letters = [];
@@ -93,26 +91,26 @@ let blending = false;
    AUDIO HELPERS
 ================================ */
 
+/* 🔧 IMPROVED: stop previous sound before playing new */
 function playSound(name) {
-  const audio = new Audio(`sounds_clean/${name}.mp3`);
-  audio.onerror = () => audio.src = `sounds_clean/${name}.m4a`;
-  audio.play().catch(() => {});
-}
+  if (blending) return; // 🔑 prevent spam during auto-blend
 
-/* ==============================
-   CAR POSITION SYNC
-================================ */
+  if (activeSource) {
+    try { activeSource.stop(); } catch {}
+    activeSource = null;
+  }
 
-function updateCarPosition() {
-  if (!car) return;
+  const audio = audioCtx.createBufferSource();
 
-  const rect = slider.getBoundingClientRect();
-  const percent = slider.value / slider.max;
-
-  const left = rect.left + percent * rect.width;
-
-  car.style.top = `${rect.top}px`;
-  car.style.left = `${left}px`;
+  fetch(`sounds_clean/${name}.mp3`)
+    .then(res => res.arrayBuffer())
+    .then(buf => audioCtx.decodeAudioData(buf))
+    .then(decoded => {
+      audio.buffer = decoded;
+      audio.connect(audioCtx.destination);
+      audio.start();
+      activeSource = audio;
+    });
 }
 
 /* ==============================
@@ -134,20 +132,6 @@ function renderWord(word) {
 
   slider.max = letters.length - 1;
   slider.value = 0;
-
-  // Resize slider to match word width
-  requestAnimationFrame(() => {
-    const wordWidth = wordDisplay.offsetWidth;
-    const minWidth = 120;
-    const maxWidth = 320;
-
-    slider.style.width = `${Math.min(
-      maxWidth,
-      Math.max(minWidth, wordWidth)
-    )}px`;
-
-    updateCarPosition();
-  });
 }
 
 /* ==============================
@@ -180,22 +164,21 @@ function newWord() {
 newWordBtn.onclick = newWord;
 
 /* ==============================
-   SLIDER (MANUAL DRAG)
+   SLIDER
 ================================ */
 
 slider.oninput = () => {
-  if (!letters.length || blending) return;
+  if (!letters.length) return;
 
   letters.forEach(l => l.classList.remove("active"));
   const i = Math.round(slider.value);
   letters[i]?.classList.add("active");
 
   playSound(letters[i].textContent);
-  updateCarPosition();
 };
 
 /* ==============================
-   BLEND BUTTON (SMOOTH AUTO-SLIDE)
+   BLEND BUTTON (SMOOTH + CLEAN AUDIO)
 ================================ */
 
 blendBtn.onclick = () => {
@@ -210,13 +193,10 @@ blendBtn.onclick = () => {
     const progress = Math.min((now - start) / duration, 1);
     const eased = progress * progress * (3 - 2 * progress);
 
-    const value = eased * max;
-    slider.value = value;
+    slider.value = eased * max;
 
     letters.forEach(l => l.classList.remove("active"));
-    letters[Math.round(value)]?.classList.add("active");
-
-    updateCarPosition();
+    letters[Math.round(slider.value)]?.classList.add("active");
 
     if (progress < 1) {
       requestAnimationFrame(animate);
@@ -233,4 +213,4 @@ blendBtn.onclick = () => {
    START
 ================================ */
 
-setMode("VC"); // correct pedagogy
+setMode("VC");
