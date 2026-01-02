@@ -41,6 +41,8 @@ const vcBtn  = document.getElementById("vc-button");
 const cvBtn  = document.getElementById("cv-button");
 const cvcBtn = document.getElementById("cvc-button");
 
+const car = document.getElementById("slider-car");
+
 /* ==============================
    WORD BANKS
 ================================ */
@@ -98,6 +100,22 @@ function playSound(name) {
 }
 
 /* ==============================
+   CAR POSITION SYNC
+================================ */
+
+function updateCarPosition() {
+  if (!car) return;
+
+  const rect = slider.getBoundingClientRect();
+  const percent = slider.value / slider.max;
+
+  const left = rect.left + percent * rect.width;
+
+  car.style.top = `${rect.top}px`;
+  car.style.left = `${left}px`;
+}
+
+/* ==============================
    RENDER WORD
 ================================ */
 
@@ -117,19 +135,18 @@ function renderWord(word) {
   slider.max = letters.length - 1;
   slider.value = 0;
 
-  /* 🔧 IMPROVEMENT: resize slider to match word width */
+  // Resize slider to match word width
   requestAnimationFrame(() => {
     const wordWidth = wordDisplay.offsetWidth;
+    const minWidth = 120;
+    const maxWidth = 320;
 
-    const minWidth = 120; // prevents too-small slider
-    const maxWidth = 320; // prevents overly long slider
-
-    const finalWidth = Math.min(
+    slider.style.width = `${Math.min(
       maxWidth,
       Math.max(minWidth, wordWidth)
-    );
+    )}px`;
 
-    slider.style.width = `${finalWidth}px`;
+    updateCarPosition();
   });
 }
 
@@ -163,38 +180,57 @@ function newWord() {
 newWordBtn.onclick = newWord;
 
 /* ==============================
-   SLIDER
+   SLIDER (MANUAL DRAG)
 ================================ */
 
 slider.oninput = () => {
   if (!letters.length || blending) return;
 
   letters.forEach(l => l.classList.remove("active"));
-  const i = Number(slider.value);
+  const i = Math.round(slider.value);
   letters[i]?.classList.add("active");
+
   playSound(letters[i].textContent);
+  updateCarPosition();
 };
 
 /* ==============================
-   BLEND BUTTON
+   BLEND BUTTON (SMOOTH AUTO-SLIDE)
 ================================ */
 
-blendBtn.onclick = async () => {
+blendBtn.onclick = () => {
   if (!letters.length || blending) return;
   blending = true;
 
-  for (let i = 0; i < letters.length; i++) {
+  const max = letters.length - 1;
+  const duration = 900;
+  const start = performance.now();
+
+  function animate(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = progress * progress * (3 - 2 * progress);
+
+    const value = eased * max;
+    slider.value = value;
+
     letters.forEach(l => l.classList.remove("active"));
-    letters[i].classList.add("active");
-    await new Promise(r => setTimeout(r, 300));
+    letters[Math.round(value)]?.classList.add("active");
+
+    updateCarPosition();
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      playContinuousBlend(currentWord);
+      blending = false;
+    }
   }
 
-  await playContinuousBlend(currentWord);
-  blending = false;
+  requestAnimationFrame(animate);
 };
 
 /* ==============================
    START
 ================================ */
 
-setMode("VC"); // start with VC (correct pedagogy)
+setMode("VC"); // correct pedagogy
