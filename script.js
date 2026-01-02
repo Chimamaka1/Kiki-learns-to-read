@@ -1,8 +1,7 @@
 /* ==============================
-   CONTINUOUS BLENDING ENGINE
+   AUDIO SETUP
 ================================ */
 
-const CONTINUANTS = ["s","m","n","f","l","r","v","z"];
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 document.body.addEventListener("click", () => {
@@ -12,7 +11,7 @@ document.body.addEventListener("click", () => {
 let activeSource = null;
 
 /* ==============================
-   TTS VOICE (FEMALE)
+   TTS VOICE (FEMALE, CHEERFUL)
 ================================ */
 
 let femaleVoice = null;
@@ -27,30 +26,6 @@ function loadFemaleVoice() {
 
 speechSynthesis.onvoiceschanged = loadFemaleVoice;
 loadFemaleVoice();
-
-/* ==============================
-   BLEND ENGINE
-================================ */
-
-async function playContinuousBlend(word) {
-  let startTime = audioCtx.currentTime;
-
-  for (let letter of word) {
-    const response = await fetch(`sounds_clean/${letter}.mp3`);
-    const buffer = await audioCtx.decodeAudioData(await response.arrayBuffer());
-
-    const source = audioCtx.createBufferSource();
-    source.buffer = buffer;
-    source.playbackRate.value = CONTINUANTS.includes(letter) ? 0.7 : 1;
-    source.connect(audioCtx.destination);
-    source.start(startTime);
-
-    const overlap = CONTINUANTS.includes(letter) ? 0.55 : 0.75;
-    startTime += buffer.duration * overlap;
-  }
-
-  return startTime; // 🔑 return when blending ends
-}
 
 /* ==============================
    DOM ELEMENTS
@@ -112,18 +87,14 @@ let blending = false;
    AUDIO HELPERS
 ================================ */
 
-function stopAllAudio() {
+/* Letter sound on tap (unchanged) */
+function playSound(name) {
+  if (blending) return;
+
   if (activeSource) {
     try { activeSource.stop(); } catch {}
     activeSource = null;
   }
-  audioCtx.suspend().then(() => audioCtx.resume());
-}
-
-function playSound(name) {
-  if (blending) return;
-
-  stopAllAudio();
 
   fetch(`sounds_clean/${name}.mp3`)
     .then(res => res.arrayBuffer())
@@ -137,14 +108,14 @@ function playSound(name) {
     });
 }
 
-/* 🔊 CLEAN WHOLE-WORD SPEECH */
+/* Speak full word only */
 function speakWholeWord(word) {
   speechSynthesis.cancel();
 
   const utter = new SpeechSynthesisUtterance(word);
   utter.voice = femaleVoice;
-  utter.rate = 0.85;
-  utter.pitch = 1.2;
+  utter.rate = 0.9;
+  utter.pitch = 1.25;
   utter.volume = 1;
 
   speechSynthesis.speak(utter);
@@ -201,7 +172,7 @@ function newWord() {
 newWordBtn.onclick = newWord;
 
 /* ==============================
-   SLIDER
+   SLIDER (VISUAL ONLY)
 ================================ */
 
 slider.oninput = () => {
@@ -210,15 +181,15 @@ slider.oninput = () => {
   letters.forEach(l => l.classList.remove("active"));
   const i = Math.round(slider.value);
   letters[i]?.classList.add("active");
-
-  playSound(letters[i].textContent);
 };
 
 /* ==============================
-   BLEND BUTTON (NATURAL WORD SPEECH)
+   BLEND BUTTON
+   → VISUAL BLEND
+   → FULL WORD SPEECH ONLY
 ================================ */
 
-blendBtn.onclick = async () => {
+blendBtn.onclick = () => {
   if (!letters.length || blending) return;
   blending = true;
 
@@ -238,18 +209,11 @@ blendBtn.onclick = async () => {
     if (progress < 1) {
       requestAnimationFrame(animate);
     } else {
-      // 🔊 play phoneme blend
-      playContinuousBlend(currentWord).then(endTime => {
-
-        // ⏸️ insert silence before speech
-        const delay = Math.max(250, (endTime - audioCtx.currentTime) * 1000);
-
-        setTimeout(() => {
-          stopAllAudio();       // 🔑 clear audio pipeline
-          speakWholeWord(currentWord); // 🗣️ natural word
-          blending = false;
-        }, delay);
-      });
+      // 🔊 SAY ONLY THE FULL WORD
+      setTimeout(() => {
+        speakWholeWord(currentWord);
+        blending = false;
+      }, 150);
     }
   }
 
