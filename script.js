@@ -34,9 +34,36 @@ const cvcBtn = document.getElementById("cvc-button");
    WORDS
 ================================ */
 
-const vcWords = ["at","an","am","it","in","on","up"];
-const cvWords = ["ma","pa","no","go"];
-const cvcWords = ["cat","dog","sun","bat","hat"];
+const vcWords = ["at","an","am","it","in","on","up","ab","ad","ag","am","an","ap","at","ax","ed","eg","em","en","et","ex","ib","id","ig","im","in","ip","it","ix","ob","od","og","om","on","op","ot","ox", "ub","ud","ug","um","un","up","ut"];
+const cvWords = ["ma","pa","no","go","ba","ca","da","fa","ga","ha","ja","ka","la","ma",
+  "na","pa","ra","sa","ta","va","ya","za","be","de","he","ke","le","me","ne","pe","se","te","we","bi","di","fi","hi","ki","li","mi","ni","pi","si","ti","vi","bo","co","do","fo","go","ho","jo","lo","mo","no",
+  "po","so","to","yo","bu","cu","du","fu","gu","hu","ju","lu","mu","nu",
+  "pu","ru","su","tu","vu"];
+const cvcWords = ["bat","cat","fat","hat","mat","pat","rat","sat","vat",
+  "bad","dad","had","mad","pad","sad",
+  "bag","lag","rag","tag","wag",
+  "cap","gap","lap","map","nap","sap","tap","zap",
+  "jam","ham","ram","yam",
+  "man","fan","can","pan","ran","tan",
+  "bed","fed","led","red","wed",
+  "beg","leg","peg",
+  "hen","men","pen","ten","den",
+  "jet","net","pet","vet","get",
+  "web","keg","bin","din","fin","pin","tin","win",
+  "big","dig","fig","pig","wig",
+  "hit","kit","lit","pit","sit","fit",
+  "lip","sip","dip","hip","tip",
+  "mix","six","fix","cot","dot","hot","lot","not","pot","rot",
+  "dog","fog","hog","log",
+  "box","fox",
+  "top","mop","hop","pop",
+  "job","sob","rob",
+  "bug","hug","jug","mug","rug",
+  "bun","fun","run","sun",
+  "cup","pup","tub","rub",
+  "mud","bud"
+];
+
 
 let words = vcWords;
 let currentWord = "";
