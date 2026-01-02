@@ -32,7 +32,7 @@ body {
 }
 
 /* ==============================
-   SLIDER (THICK + CAR HANDLE)
+   SLIDER (THICK TRACK)
 ================================ */
 
 #blend-slider {
@@ -46,32 +46,30 @@ body {
   margin-bottom: 18px;
 }
 
-/* 🚗 CAR THUMB — WEBKIT (Chrome, Safari, Edge) */
+/* ==============================
+   🚗 CAR THUMB (REAL SVG)
+================================ */
+
 #blend-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 32px;
   cursor: pointer;
-  background: url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' width='44' height='44'>\
-<text x='50%' y='55%' font-size='28' text-anchor='middle'>🚗</text>\
-</svg>") no-repeat center;
-  background-size: contain;
   border: none;
+  background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iOCIgeT0iMTAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIxMiIgcng9IjMiIGZpbGw9IiNmZjY2MDAiLz4KPGNpcmNsZSBjeD0iMTQiIGN5PSIyNiIgcj0iNCIgZmlsbD0iIzMzMyIvPgo8Y2lyY2xlIGN4PSIzNCIgY3k9IjI2IiByPSI0IiBmaWxsPSIjMzMzIi8+Cjwvc3ZnPg==")
+    no-repeat center;
+  background-size: contain;
 }
 
-/* 🚗 CAR THUMB — FIREFOX */
 #blend-slider::-moz-range-thumb {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 32px;
   cursor: pointer;
-  background: url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' width='44' height='44'>\
-<text x='50%' y='55%' font-size='28' text-anchor='middle'>🚗</text>\
-</svg>") no-repeat center;
-  background-size: contain;
   border: none;
+  background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iOCIgeT0iMTAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIxMiIgcng9IjMiIGZpbGw9IiNmZjY2MDAiLz4KPGNpcmNsZSBjeD0iMTQiIGN5PSIyNiIgcj0iNCIgZmlsbGw9IiMzMzMiLz4KPGNpcmNsZSBjeD0iMzQiIGN5PSIyNiIgcj0iNCIgZmlsbGw9IiMzMzMiLz4KPC9zdmc+")
+    no-repeat center;
+  background-size: contain;
 }
 
 /* ==============================
