@@ -72,7 +72,7 @@ h1 {
 }
 
 /* ==============================
-   SLIDER (CAR TRACK)
+   SLIDER (TRACK)
 ================================ */
 
 #blend-slider {
@@ -86,25 +86,28 @@ h1 {
 }
 
 /* ==============================
-   CAR THUMB (SVG)
+   🚗 PURPLE CAR THUMB (HIGH CONTRAST)
 ================================ */
 
+/* Chrome / Safari / Edge */
 #blend-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 48px;
   height: 32px;
-  background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iOCIgeT0iMTAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIxMiIgcng9IjMiIGZpbGw9IiNmZjY5YjQiLz4KPGNpcmNsZSBjeD0iMTQiIGN5PSIyNiIgcj0iNCIgZmlsbD0iI2ZmZmZmZiIvPgo8Y2lyY2xlIGN4PSIzNCIgY3k9IjI2IiByPSI0IiBmaWxsPSIjZmZmZmZmIi8+Cjwvc3ZnPg==")
+  background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iOCIgeT0iMTAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIxMiIgcng9IjMiIGZpbGw9IiM4YjVjZjYiLz4KPGNpcmNsZSBjeD0iMTQiIGN5PSIyNiIgcj0iNCIgZmlsbD0iI2ZmZmZmZiIvPgo8Y2lyY2xlIGN4PSIzNCIgY3k9IjI2IiByPSI0IiBmaWxsPSIjZmZmZmZmIi8+Cjwvc3ZnPg==")
     no-repeat center;
   background-size: contain;
   border: none;
   cursor: pointer;
+  margin-top: -8px;
 }
 
+/* Firefox */
 #blend-slider::-moz-range-thumb {
   width: 48px;
   height: 32px;
-  background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iOCIgeT0iMTAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIxMiIgcng9IjMiIGZpbGw9IiNmZjY5YjQiLz4KPGNpcmNsZSBjeD0iMTQiIGN5PSIyNiIgcj0iNCIgZmlsbD0iI2ZmZmZmZiIvPgo8Y2lyY2xlIGN4PSIzNCIgY3k9IjI2IiByPSI0IiBmaWxsPSIjZmZmZmZmIi8+Cjwvc3ZnPg==")
+  background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iOCIgeT0iMTAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIxMiIgcng9IjMiIGZpbGw9IiM4YjVjZjYiLz4KPGNpcmNsZSBjeD0iMTQiIGN5PSIyNiIgcj0iNCIgZmlsbD0iI2ZmZmZmZiIvPgo8Y2lyY2xlIGN4PSIzNCIgY3k9IjI2IiByPSI0IiBmaWxsPSIjZmZmZmZmIi8+Cjwvc3ZnPg==")
     no-repeat center;
   background-size: contain;
   border: none;
@@ -135,7 +138,6 @@ button:active {
   box-shadow: 0 2px 0 #ff4da6;
 }
 
-/* Mode buttons slightly smaller */
 #vc-button,
 #cv-button,
 #cvc-button {
