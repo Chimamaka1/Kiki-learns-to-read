@@ -87,7 +87,7 @@ let blending = false;
    AUDIO HELPERS
 ================================ */
 
-/* Letter sound on tap (unchanged) */
+/* Letter sounds — ONLY when NOT blending */
 function playSound(name) {
   if (blending) return;
 
@@ -108,7 +108,7 @@ function playSound(name) {
     });
 }
 
-/* Speak full word only */
+/* Speak full word ONLY */
 function speakWholeWord(word) {
   speechSynthesis.cancel();
 
@@ -172,7 +172,7 @@ function newWord() {
 newWordBtn.onclick = newWord;
 
 /* ==============================
-   SLIDER (VISUAL ONLY)
+   SLIDER (VISUAL ONLY DURING BLEND)
 ================================ */
 
 slider.oninput = () => {
@@ -181,12 +181,18 @@ slider.oninput = () => {
   letters.forEach(l => l.classList.remove("active"));
   const i = Math.round(slider.value);
   letters[i]?.classList.add("active");
+
+  // 🔑 CRITICAL FIX:
+  // Only play sound if NOT blending
+  if (!blending) {
+    playSound(letters[i].textContent);
+  }
 };
 
 /* ==============================
    BLEND BUTTON
-   → VISUAL BLEND
-   → FULL WORD SPEECH ONLY
+   → NO PHONETICS
+   → FULL WORD ONLY
 ================================ */
 
 blendBtn.onclick = () => {
@@ -209,7 +215,7 @@ blendBtn.onclick = () => {
     if (progress < 1) {
       requestAnimationFrame(animate);
     } else {
-      // 🔊 SAY ONLY THE FULL WORD
+      // 🔊 ONLY the full word
       setTimeout(() => {
         speakWholeWord(currentWord);
         blending = false;
