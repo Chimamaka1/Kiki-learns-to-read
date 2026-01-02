@@ -32,15 +32,9 @@ body {
 }
 
 /* ==============================
-   SLIDER + CAR
+   SLIDER (THICK + CAR HANDLE)
 ================================ */
 
-#slider-wrapper {
-  position: relative;
-  margin-bottom: 18px;
-}
-
-/* Thick slider track */
 #blend-slider {
   -webkit-appearance: none;
   appearance: none;
@@ -49,34 +43,41 @@ body {
   border-radius: 10px;
   background: linear-gradient(to right, #93c5fd, #3b82f6);
   outline: none;
+  margin-bottom: 18px;
 }
 
-/* Hide default thumb (car replaces it visually) */
+/* 🚗 CAR AS THUMB (WEBKIT) */
 #blend-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 28px;
-  height: 28px;
+  appearance: none;
+  width: 44px;
+  height: 44px;
   background: transparent;
   cursor: pointer;
+  position: relative;
 }
 
-#blend-slider::-moz-range-thumb {
-  width: 28px;
-  height: 28px;
-  background: transparent;
-  cursor: pointer;
-}
-
-/* 🚗 Car */
-#slider-car {
+#blend-slider::-webkit-slider-thumb::before {
+  content: "🚗";
   position: absolute;
-  top: 0;
-  left: 0;
   font-size: 2rem;
-  pointer-events: none;
-  transform: translate(-50%, -70%);
-  transition: left 0.08s linear;
-  z-index: 10;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+}
+
+/* 🚗 CAR AS THUMB (FIREFOX) */
+#blend-slider::-moz-range-thumb {
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+#blend-slider::-moz-range-thumb::before {
+  content: "🚗";
+  font-size: 2rem;
 }
 
 /* ==============================
@@ -121,3 +122,4 @@ button:hover {
 .hidden {
   display: none;
 }
+
