@@ -141,6 +141,22 @@ function renderWord(word) {
 
   slider.max = letters.length - 1;
   slider.value = 0;
+
+  // ✅ NEW: adjust slider width to match word width
+  requestAnimationFrame(adjustSliderToWord);
+}
+
+/* ==============================
+   ADJUST SLIDER WIDTH (NEW)
+================================ */
+
+function adjustSliderToWord() {
+  const wordWidth = wordDisplay.offsetWidth;
+
+  slider.style.width = wordWidth + "px";
+  slider.style.marginLeft = "auto";
+  slider.style.marginRight = "auto";
+  slider.style.display = "block";
 }
 
 /* ==============================
@@ -188,14 +204,13 @@ slider.oninput = () => {
 
 /* ==============================
    BLEND BUTTON
-   (ABSOLUTE SILENCE MODE)
 ================================ */
 
 blendBtn.onclick = () => {
   if (!letters.length || blending) return;
 
   blending = true;
-  sliderSoundEnabled = false; // 🔇 HARD CUT
+  sliderSoundEnabled = false;
 
   const max = letters.length - 1;
   const duration = 900;
@@ -215,9 +230,8 @@ blendBtn.onclick = () => {
     } else {
       setTimeout(() => {
         speakWholeWord(currentWord);
-
         blending = false;
-        sliderSoundEnabled = true; // 🔊 RESTORE
+        sliderSoundEnabled = true;
       }, 150);
     }
   }
