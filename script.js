@@ -12,31 +12,25 @@ document.body.addEventListener("click", () => {
 let activeSource = null;
 
 /* ==============================
-   TTS VOICE (FEMALE, CHEERFUL)
+   TTS VOICE (FEMALE)
 ================================ */
 
 let femaleVoice = null;
 
 function loadFemaleVoice() {
   const voices = speechSynthesis.getVoices();
-
-  // Prefer English female voices
   femaleVoice =
-    voices.find(v =>
-      /female|woman|girl/i.test(v.name)
-    ) ||
-    voices.find(v =>
-      /en/i.test(v.lang) && /Google|Samantha|Karen|Serena/i.test(v.name)
-    ) ||
-    voices.find(v =>
-      /en/i.test(v.lang)
-    ) ||
+    voices.find(v => /female|woman|girl/i.test(v.name)) ||
+    voices.find(v => /en/i.test(v.lang)) ||
     voices[0];
 }
 
-// Some browsers load voices async
 speechSynthesis.onvoiceschanged = loadFemaleVoice;
 loadFemaleVoice();
+
+/* ==============================
+   BLEND ENGINE
+================================ */
 
 async function playContinuousBlend(word) {
   let startTime = audioCtx.currentTime;
@@ -48,13 +42,14 @@ async function playContinuousBlend(word) {
     const source = audioCtx.createBufferSource();
     source.buffer = buffer;
     source.playbackRate.value = CONTINUANTS.includes(letter) ? 0.7 : 1;
-
     source.connect(audioCtx.destination);
     source.start(startTime);
 
     const overlap = CONTINUANTS.includes(letter) ? 0.55 : 0.75;
     startTime += buffer.duration * overlap;
   }
+
+  return startTime; // 🔑 return when blending ends
 }
 
 /* ==============================
@@ -117,35 +112,39 @@ let blending = false;
    AUDIO HELPERS
 ================================ */
 
-function playSound(name) {
-  if (blending) return;
-
+function stopAllAudio() {
   if (activeSource) {
     try { activeSource.stop(); } catch {}
     activeSource = null;
   }
+  audioCtx.suspend().then(() => audioCtx.resume());
+}
 
-  const source = audioCtx.createBufferSource();
+function playSound(name) {
+  if (blending) return;
+
+  stopAllAudio();
 
   fetch(`sounds_clean/${name}.mp3`)
     .then(res => res.arrayBuffer())
     .then(buf => audioCtx.decodeAudioData(buf))
     .then(decoded => {
-      source.buffer = decoded;
-      source.connect(audioCtx.destination);
-      source.start();
-      activeSource = source;
+      const src = audioCtx.createBufferSource();
+      src.buffer = decoded;
+      src.connect(audioCtx.destination);
+      src.start();
+      activeSource = src;
     });
 }
 
-/* 🔊 WHOLE WORD SPEECH — FEMALE & CHEERFUL */
+/* 🔊 CLEAN WHOLE-WORD SPEECH */
 function speakWholeWord(word) {
   speechSynthesis.cancel();
 
   const utter = new SpeechSynthesisUtterance(word);
   utter.voice = femaleVoice;
-  utter.rate = 0.9;     // natural, friendly pace
-  utter.pitch = 1.3;    // cheerful tone
+  utter.rate = 0.85;
+  utter.pitch = 1.2;
   utter.volume = 1;
 
   speechSynthesis.speak(utter);
@@ -216,10 +215,10 @@ slider.oninput = () => {
 };
 
 /* ==============================
-   BLEND BUTTON
+   BLEND BUTTON (NATURAL WORD SPEECH)
 ================================ */
 
-blendBtn.onclick = () => {
+blendBtn.onclick = async () => {
   if (!letters.length || blending) return;
   blending = true;
 
@@ -239,13 +238,18 @@ blendBtn.onclick = () => {
     if (progress < 1) {
       requestAnimationFrame(animate);
     } else {
-      playContinuousBlend(currentWord);
+      // 🔊 play phoneme blend
+      playContinuousBlend(currentWord).then(endTime => {
 
-      setTimeout(() => {
-        speakWholeWord(currentWord);
-      }, 600);
+        // ⏸️ insert silence before speech
+        const delay = Math.max(250, (endTime - audioCtx.currentTime) * 1000);
 
-      blending = false;
+        setTimeout(() => {
+          stopAllAudio();       // 🔑 clear audio pipeline
+          speakWholeWord(currentWord); // 🗣️ natural word
+          blending = false;
+        }, delay);
+      });
     }
   }
 
