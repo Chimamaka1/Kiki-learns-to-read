@@ -46,38 +46,32 @@ body {
   margin-bottom: 18px;
 }
 
-/* 🚗 CAR AS THUMB (WEBKIT) */
+/* 🚗 CAR THUMB — WEBKIT (Chrome, Safari, Edge) */
 #blend-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 44px;
   height: 44px;
-  background: transparent;
   cursor: pointer;
-  position: relative;
+  background: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='44' height='44'>\
+<text x='50%' y='55%' font-size='28' text-anchor='middle'>🚗</text>\
+</svg>") no-repeat center;
+  background-size: contain;
+  border: none;
 }
 
-#blend-slider::-webkit-slider-thumb::before {
-  content: "🚗";
-  position: absolute;
-  font-size: 2rem;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -60%);
-}
-
-/* 🚗 CAR AS THUMB (FIREFOX) */
+/* 🚗 CAR THUMB — FIREFOX */
 #blend-slider::-moz-range-thumb {
   width: 44px;
   height: 44px;
-  background: transparent;
-  border: none;
   cursor: pointer;
-}
-
-#blend-slider::-moz-range-thumb::before {
-  content: "🚗";
-  font-size: 2rem;
+  background: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='44' height='44'>\
+<text x='50%' y='55%' font-size='28' text-anchor='middle'>🚗</text>\
+</svg>") no-repeat center;
+  background-size: contain;
+  border: none;
 }
 
 /* ==============================
@@ -122,4 +116,3 @@ button:hover {
 .hidden {
   display: none;
 }
-
