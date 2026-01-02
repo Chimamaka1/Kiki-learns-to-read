@@ -42,8 +42,10 @@ function showReward() {
 function newQuestion() {
   choicesDiv.innerHTML = "";
 
+  // choose target word
   correctWord = words[Math.floor(Math.random() * words.length)];
 
+  // build options
   let options = [correctWord];
   while (options.length < 3) {
     const w = words[Math.floor(Math.random() * words.length)];
@@ -56,6 +58,7 @@ function newQuestion() {
     const optionDiv = document.createElement("div");
     optionDiv.className = "word-option";
 
+    /* --- LETTER TILES (LISTEN ONLY) --- */
     const lettersDiv = document.createElement("div");
     lettersDiv.className = "letters";
 
@@ -64,17 +67,17 @@ function newQuestion() {
       tile.className = "letter-tile";
       tile.textContent = letter;
 
-      // play individual phoneme
-      tile.onclick = (e) => {
-        e.stopPropagation();
-        playLetter(letter);
-      };
+      tile.onclick = () => playLetter(letter);
 
       lettersDiv.appendChild(tile);
     });
 
-    // choosing the whole word
-    optionDiv.onclick = () => {
+    /* --- CHOOSE BUTTON (ANSWER) --- */
+    const chooseBtn = document.createElement("button");
+    chooseBtn.className = "choose-btn";
+    chooseBtn.textContent = "Choose";
+
+    chooseBtn.onclick = () => {
       if (word === correctWord) {
         showReward();
         speakWord("Well done");
@@ -84,11 +87,12 @@ function newQuestion() {
     };
 
     optionDiv.appendChild(lettersDiv);
+    optionDiv.appendChild(chooseBtn);
     choicesDiv.appendChild(optionDiv);
   });
 
-  // auto say the target word
-  setTimeout(() => speakWord(correctWord), 500);
+  // auto-play the target word
+  setTimeout(() => speakWord(correctWord), 600);
 }
 
 /* ---------- EVENTS ---------- */
