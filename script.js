@@ -116,6 +116,21 @@ function renderWord(word) {
 
   slider.max = letters.length - 1;
   slider.value = 0;
+
+  /* 🔧 IMPROVEMENT: resize slider to match word width */
+  requestAnimationFrame(() => {
+    const wordWidth = wordDisplay.offsetWidth;
+
+    const minWidth = 120; // prevents too-small slider
+    const maxWidth = 320; // prevents overly long slider
+
+    const finalWidth = Math.min(
+      maxWidth,
+      Math.max(minWidth, wordWidth)
+    );
+
+    slider.style.width = `${finalWidth}px`;
+  });
 }
 
 /* ==============================
