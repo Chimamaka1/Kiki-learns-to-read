@@ -1,177 +1,103 @@
-/* ==============================
-   GLOBAL RESET
-================================ */
-
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: "Comic Sans MS", "Baloo 2", system-ui, sans-serif;
+  font-family: "Comic Sans MS", system-ui, sans-serif;
   background: linear-gradient(135deg, #ffe4f1, #ffc1dd);
 }
 
-/* ==============================
-   APP CONTAINER
-================================ */
+/* AUDIO GATE */
+#audio-gate {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 182, 213, 0.96);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
 
+#start-audio {
+  font-size: 1.4rem;
+  padding: 18px 26px;
+  border-radius: 26px;
+  border: none;
+  background: #ff4da6;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 6px 0 #c2185b;
+}
+
+/* APP */
 #app-container {
   max-width: 420px;
   margin: 20px auto;
-  padding: 20px 16px 28px;
+  padding: 20px;
   background: #fff0f7;
   border-radius: 24px;
-  box-shadow: 0 10px 25px rgba(255, 105, 180, 0.25);
+  box-shadow: 0 10px 25px rgba(255,105,180,.25);
   text-align: center;
 }
 
-/* ==============================
-   TITLE
-================================ */
-
-h1 {
-  margin-top: 0;
-  margin-bottom: 16px;
-  font-size: 2rem;
-  color: #ff4da6;
-  text-shadow: 1px 1px 0 #fff;
-}
-
-/* ==============================
-   WORD DISPLAY
-================================ */
+h1 { color: #ff4da6; }
 
 #word-display {
   display: flex;
   justify-content: center;
-  align-items: center;
   gap: 14px;
-  margin: 18px 0 12px;
+  margin: 18px 0;
 }
 
 .letter {
   font-size: 2.6rem;
   font-weight: bold;
-  color: #ff69b4;
-  background: #ffffff;
-  border-radius: 14px;
+  background: white;
   padding: 6px 12px;
+  border-radius: 14px;
+  color: #ff69b4;
   box-shadow: 0 4px 0 #ffc1dd;
   cursor: pointer;
-  transition: transform 0.1s ease, background 0.2s ease;
-}
-
-.letter:active {
-  transform: scale(0.95);
 }
 
 .letter.active {
   background: #ffb3d9;
-  color: #ffffff;
+  color: white;
 }
 
-/* ==============================
-   SLIDER (TRACK)
-================================ */
-
+/* SLIDER */
 #blend-slider {
   -webkit-appearance: none;
   appearance: none;
   height: 16px;
   border-radius: 999px;
   background: linear-gradient(to right, #ff9acb, #ff4da6);
-  margin: 8px auto 16px;
-  outline: none;
+  margin: 10px auto 18px;
 }
 
-/* ==============================
-   🚗 PURPLE CAR THUMB (HIGH CONTRAST)
-================================ */
-
-/* Chrome / Safari / Edge */
+/* PURPLE CAR */
 #blend-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  appearance: none;
   width: 48px;
   height: 32px;
-  background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iOCIgeT0iMTAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIxMiIgcng9IjMiIGZpbGw9IiM4YjVjZjYiLz4KPGNpcmNsZSBjeD0iMTQiIGN5PSIyNiIgcj0iNCIgZmlsbD0iI2ZmZmZmZiIvPgo8Y2lyY2xlIGN4PSIzNCIgY3k9IjI2IiByPSI0IiBmaWxsPSIjZmZmZmZmIi8+Cjwvc3ZnPg==")
-    no-repeat center;
-  background-size: contain;
-  border: none;
-  cursor: pointer;
-  margin-top: -8px;
+  background: purple;
+  border-radius: 8px;
 }
 
-/* Firefox */
 #blend-slider::-moz-range-thumb {
   width: 48px;
   height: 32px;
-  background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iOCIgeT0iMTAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIxMiIgcng9IjMiIGZpbGw9IiM4YjVjZjYiLz4KPGNpcmNsZSBjeD0iMTQiIGN5PSIyNiIgcj0iNCIgZmlsbD0iI2ZmZmZmZiIvPgo8Y2lyY2xlIGN4PSIzNCIgY3k9IjI2IiByPSI0IiBmaWxsPSIjZmZmZmZmIi8+Cjwvc3ZnPg==")
-    no-repeat center;
-  background-size: contain;
-  border: none;
-  cursor: pointer;
+  background: purple;
+  border-radius: 8px;
 }
 
-/* ==============================
-   BUTTONS
-================================ */
-
 button {
-  font-family: inherit;
-  margin: 6px 4px;
+  margin: 6px;
   padding: 10px 14px;
   border-radius: 18px;
   border: none;
   background: linear-gradient(#ffb3d9, #ff69b4);
-  color: #ffffff;
-  font-size: 0.95rem;
+  color: white;
   font-weight: bold;
-  box-shadow: 0 4px 0 #ff4da6;
-  cursor: pointer;
-  transition: transform 0.1s ease;
 }
 
-button:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 #ff4da6;
-}
-
-#vc-button,
-#cv-button,
-#cvc-button {
-  font-size: 0.85rem;
-  padding: 8px 12px;
-}
-
-/* ==============================
-   INSTRUCTION TEXT
-================================ */
-
-.instruction {
-  margin-top: 14px;
-  font-size: 0.9rem;
-  color: #b03060;
-}
-
-/* ==============================
-   REWARD
-================================ */
-
-#reward {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #fff;
-  color: #ff4da6;
-  font-size: 1.6rem;
-  padding: 10px 18px;
-  border-radius: 22px;
-  box-shadow: 0 6px 20px rgba(255, 77, 166, 0.35);
-}
-
-.hidden {
-  display: none;
-}
+.instruction { color: #b03060; }
