@@ -4,11 +4,26 @@
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-document.body.addEventListener("click", () => {
-  if (audioCtx.state === "suspended") audioCtx.resume();
-}, { once: true });
-
+let audioUnlocked = false;
 let activeSource = null;
+
+/* 🔑 iOS / iPad AUDIO UNLOCK (REQUIRED) */
+function unlockAudioIOS() {
+  if (audioUnlocked) return;
+
+  // Unlock Web Audio
+  const buffer = audioCtx.createBuffer(1, 1, 22050);
+  const source = audioCtx.createBufferSource();
+  source.buffer = buffer;
+  source.connect(audioCtx.destination);
+  source.start(0);
+
+  // Unlock Speech Synthesis
+  const utter = new SpeechSynthesisUtterance("");
+  speechSynthesis.speak(utter);
+
+  audioUnlocked = true;
+}
 
 /* ==============================
    TTS VOICE (FEMALE, CHEERFUL)
@@ -83,15 +98,18 @@ let currentWord = "";
 let letters = [];
 let blending = false;
 
-/* 🔒 HARD AUDIO LOCK */
+/* 🔒 HARD LOCK FOR SLIDER SOUNDS */
 let sliderSoundEnabled = true;
 
 /* ==============================
    AUDIO HELPERS
 ================================ */
 
+/* Letter sound (tap only) */
 function playSound(name) {
   if (!sliderSoundEnabled) return;
+
+  unlockAudioIOS(); // 🔑 iPad requirement
 
   if (activeSource) {
     try { activeSource.stop(); } catch {}
@@ -110,7 +128,10 @@ function playSound(name) {
     });
 }
 
+/* Full word speech ONLY */
 function speakWholeWord(word) {
+  unlockAudioIOS(); // 🔑 iPad requirement
+
   speechSynthesis.cancel();
 
   const utter = new SpeechSynthesisUtterance(word);
@@ -142,12 +163,11 @@ function renderWord(word) {
   slider.max = letters.length - 1;
   slider.value = 0;
 
-  // ✅ NEW: adjust slider width to match word width
   requestAnimationFrame(adjustSliderToWord);
 }
 
 /* ==============================
-   ADJUST SLIDER WIDTH (NEW)
+   SLIDER WIDTH (PIXEL-PERFECT)
 ================================ */
 
 function adjustSliderToWord() {
@@ -157,14 +177,12 @@ function adjustSliderToWord() {
   const last  = letters[letters.length - 1].getBoundingClientRect();
   const parent = wordDisplay.getBoundingClientRect();
 
-  // Distance from centre of first letter to centre of last letter
   const sliderWidth =
     (last.left + last.width / 2) -
     (first.left + first.width / 2);
 
   slider.style.width = sliderWidth + "px";
 
-  // Center slider under the word
   const sliderOffset =
     (first.left + last.right) / 2 - parent.left - sliderWidth / 2;
 
@@ -172,12 +190,13 @@ function adjustSliderToWord() {
   slider.style.marginRight = "0";
 }
 
-
 /* ==============================
    MODE SWITCHING
 ================================ */
 
 function setMode(newMode) {
+  unlockAudioIOS(); // 🔑 unlock on tap
+
   mode = newMode;
 
   if (mode === "VC")  activeWords = vcWords;
@@ -196,6 +215,8 @@ cvcBtn.onclick = () => setMode("CVC");
 ================================ */
 
 function newWord() {
+  unlockAudioIOS(); // 🔑 unlock on tap
+
   currentWord = activeWords[Math.floor(Math.random() * activeWords.length)];
   renderWord(currentWord);
 }
@@ -203,7 +224,7 @@ function newWord() {
 newWordBtn.onclick = newWord;
 
 /* ==============================
-   SLIDER
+   SLIDER (MANUAL DRAG ONLY)
 ================================ */
 
 slider.oninput = () => {
@@ -218,9 +239,13 @@ slider.oninput = () => {
 
 /* ==============================
    BLEND BUTTON
+   → VISUAL ONLY
+   → FULL WORD SPEECH
 ================================ */
 
 blendBtn.onclick = () => {
+  unlockAudioIOS(); // 🔑 unlock on tap
+
   if (!letters.length || blending) return;
 
   blending = true;
@@ -246,7 +271,7 @@ blendBtn.onclick = () => {
         speakWholeWord(currentWord);
         blending = false;
         sliderSoundEnabled = true;
-      }, 150);
+      }, 100);
     }
   }
 
