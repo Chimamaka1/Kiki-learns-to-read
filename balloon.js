@@ -74,10 +74,9 @@ function createBalloon(letter, index, total) {
   const balloon = document.createElement("div");
   balloon.className = "balloon";
 
-// randomly choose uppercase or lowercase for display
-const isUpper = Math.random() < 0.5;
-balloon.textContent = isUpper ? letter.toUpperCase() : letter;
-
+  // mix uppercase / lowercase display
+  const isUpper = Math.random() < 0.5;
+  balloon.textContent = isUpper ? letter.toUpperCase() : letter;
 
   // evenly space balloons
   const spacing = 100 / (total + 1);
@@ -89,25 +88,20 @@ balloon.textContent = isUpper ? letter.toUpperCase() : letter;
   balloon.style.background = color;
   balloon.style.setProperty("--balloon-color", color);
 
-balloon.onclick = () => {
-  // 💥 POP SOUND
-  popSound.currentTime = 0;
-  popSound.play().catch(() => {});
+  balloon.onclick = () => {
+    // 💥 pop sound
+    popSound.currentTime = 0;
+    popSound.play().catch(() => {});
 
-  // 🔊 letter sound
-  playLetter(letter);
+    // 🔊 letter sound
+    playLetter(letter);
 
-  if (letter === targetLetter) {
-    if (roundTimeout) {
-      clearTimeout(roundTimeout);
-      roundTimeout = null;
-    }
-
-    balloon.remove();
-    showReward();
-    setTimeout(startRound, 800);
-  }
-};
+    // correct balloon
+    if (letter === targetLetter) {
+      if (roundTimeout) {
+        clearTimeout(roundTimeout);
+        roundTimeout = null;
+      }
 
       balloon.remove();
       showReward();
@@ -117,6 +111,7 @@ balloon.onclick = () => {
 
   sky.appendChild(balloon);
 
+  // auto-remove if not clicked
   setTimeout(() => balloon.remove(), 6000);
 }
 
