@@ -8,6 +8,8 @@ const playBtn = document.getElementById("play-sound");
 const reward = document.getElementById("reward");
 
 let targetLetter = "";
+let roundTimeout = null;
+
 
 /* ---------- PLAY LETTER SOUND ---------- */
 function playLetter(letter) {
@@ -36,11 +38,19 @@ balloon.style.left = leftPosition + "%";
     [Math.floor(Math.random() * 4)];
 
   balloon.onclick = () => {
-    if (letter === targetLetter) {
-      balloon.remove();
-      showReward();
-      playLetter(letter);
-      setTimeout(startRound, 800);
+if (letter === targetLetter) {
+  if (roundTimeout) {
+    clearTimeout(roundTimeout);
+    roundTimeout = null;
+  }
+
+  balloon.remove();
+  showReward();
+  playLetter(letter);
+
+  setTimeout(startRound, 800);
+}
+
     } else {
       playLetter(letter);
     }
@@ -55,8 +65,15 @@ balloon.style.left = leftPosition + "%";
 function startRound() {
   sky.innerHTML = "";
 
+  // clear any previous timer
+  if (roundTimeout) {
+    clearTimeout(roundTimeout);
+    roundTimeout = null;
+  }
+
   targetLetter = letters[Math.floor(Math.random() * letters.length)];
 
+  // play target sound
   setTimeout(() => playLetter(targetLetter), 500);
 
   let options = [targetLetter];
@@ -65,9 +82,16 @@ function startRound() {
     if (!options.includes(l)) options.push(l);
   }
 
- options.forEach((l, index) => {
-  createBalloon(l, index, options.length);
-});
+  options.forEach((l, index) => {
+    createBalloon(l, index, options.length);
+  });
+
+  // ⭐ AUTO-START NEXT ROUND EVEN IF NO CLICK
+  roundTimeout = setTimeout(() => {
+    startRound();
+  }, 7000); // slightly longer than balloon float time
+}
+
 
 }
 
