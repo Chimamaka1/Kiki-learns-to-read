@@ -36,7 +36,6 @@ function getNextTargetLetter() {
 
   let next = letterBag.pop();
 
-  // avoid immediate repeat
   if (next === lastLetter && letterBag.length > 0) {
     const swap = letterBag.pop();
     letterBag.unshift(next);
@@ -72,8 +71,9 @@ function showReward() {
 function createBalloon(letter, index, total) {
   const balloon = document.createElement("div");
   balloon.className = "balloon";
- balloon.textContent = letter.toUpperCase();
 
+  // 🔠 DISPLAY CAPITAL LETTER
+  balloon.textContent = letter.toUpperCase();
 
   // evenly space balloons
   const spacing = 100 / (total + 1);
@@ -102,7 +102,6 @@ function createBalloon(letter, index, total) {
 
   sky.appendChild(balloon);
 
-  // remove balloon after float
   setTimeout(() => balloon.remove(), 6000);
 }
 
@@ -118,13 +117,10 @@ function startRound() {
     roundTimeout = null;
   }
 
-  // get fair next letter
   targetLetter = getNextTargetLetter();
 
-  // play target sound
   setTimeout(() => playLetter(targetLetter), 500);
 
-  // build options
   let options = [targetLetter];
   while (options.length < 3) {
     const l = letters[Math.floor(Math.random() * letters.length)];
@@ -135,7 +131,6 @@ function startRound() {
     createBalloon(l, index, options.length);
   });
 
-  // auto-continue even if no click
   roundTimeout = setTimeout(startRound, 7000);
 }
 
