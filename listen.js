@@ -2,12 +2,29 @@
    LISTEN & CHOOSE (PHONICS)
 ========================= */
 
-const words = [
-  "cat","dog","sun","hat","mat","bat","rat",
-  "bed","pen","hen",
-  "pin","bin","tin",
-  "cot","pot","hot",
-  "bug","hug","mug"
+const words = ["bat","cat","fat","hat","mat","pat","rat","sat","vat",
+  "bad","dad","had","mad","pad","sad",
+  "bag","lag","rag","tag","wag",
+  "cap","gap","lap","map","nap","sap","tap","zap",
+  "jam","ham","ram","yam",
+  "man","fan","can","pan","ran","tan",
+  "bed","fed","led","red","wed",
+  "beg","leg","peg",
+  "hen","men","pen","ten","den",
+  "jet","net","pet","vet","get",
+  "web","keg","bin","din","fin","pin","tin","win",
+  "big","dig","fig","pig","wig",
+  "hit","kit","lit","pit","sit","fit",
+  "lip","sip","dip","hip","tip",
+  "mix","six","fix","cot","dot","hot","lot","not","pot","rot",
+  "dog","fog","hog","log",
+  "box","fox",
+  "top","mop","hop","pop",
+  "job","sob","rob",
+  "bug","hug","jug","mug","rug",
+  "bun","fun","run","sun",
+  "cup","pup","tub","rub",
+  "mud","bud"
 ];
 
 const playBtn = document.getElementById("play-word");
