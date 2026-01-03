@@ -255,3 +255,43 @@ button:active {
   from { bottom: -100px; }
   to { bottom: 420px; }
 }
+
+/* ===============================
+   CRACK THE EGG
+================================ */
+
+#egg-area {
+  margin: 20px 0;
+  position: relative;
+}
+
+.egg {
+  width: 160px;
+  height: 200px;
+  margin: 0 auto;
+  background: radial-gradient(circle at top, #fff, #f5c16c);
+  border-radius: 50% 50% 45% 45%;
+  cursor: pointer;
+  position: relative;
+}
+
+.egg.cracked {
+  animation: crack 0.4s forwards;
+}
+
+@keyframes crack {
+  0% { transform: scale(1); }
+  100% { transform: scale(0.9) rotate(-5deg); }
+}
+
+#egg-image {
+  width: 160px;
+  border-radius: 20px;
+  margin-top: -180px;
+  position: relative;
+  z-index: 2;
+}
+
+.hidden {
+  display: none;
+}
