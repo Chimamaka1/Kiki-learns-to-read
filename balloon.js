@@ -2,24 +2,47 @@
    POP THE BALLOON GAME
 ========================= */
 
-const popSound = new Audio("sounds_clean/pop.mp3");
-
+/* ---------- LETTER SET ---------- */
 const letters = [
   "a","b","c","d","e","f","g","h","i","j","k","l",
   "m","n","o","p","q","r","s","t","u","v","w","x","y","z"
 ];
 
+/* ---------- DOM ---------- */
 const sky = document.getElementById("sky");
 const playBtn = document.getElementById("play-sound");
 const reward = document.getElementById("reward");
 
+/* ---------- STATE ---------- */
 let targetLetter = "";
 let roundTimeout = null;
 
-/* =========================
-   FAIR RANDOMISATION
-========================= */
+/* ---------- AUDIO ---------- */
+const popSound = new Audio("sounds_clean/pop.mp3");
+let audioUnlocked = false;
 
+/* Unlock audio on first user interaction (required for mobile & GitHub Pages) */
+function unlockAudio() {
+  if (audioUnlocked) return;
+
+  popSound.play()
+    .then(() => {
+      popSound.pause();
+      popSound.currentTime = 0;
+      audioUnlocked = true;
+    })
+    .catch(() => {});
+}
+
+document.addEventListener("click", unlockAudio, { once: true });
+document.addEventListener("touchstart", unlockAudio, { once: true });
+
+function playLetter(letter) {
+  const audio = new Audio(`sounds_clean/${letter}.mp3`);
+  audio.play().catch(() => {});
+}
+
+/* ---------- FAIR RANDOMISATION ---------- */
 let letterBag = [];
 let lastLetter = null;
 
@@ -48,37 +71,22 @@ function getNextTargetLetter() {
   return next;
 }
 
-/* =========================
-   AUDIO
-========================= */
-
-function playLetter(letter) {
-  const audio = new Audio(`sounds_clean/${letter}.mp3`);
-  audio.play().catch(() => {});
-}
-
-/* =========================
-   REWARD
-========================= */
-
+/* ---------- REWARD ---------- */
 function showReward() {
   reward.classList.remove("hidden");
   setTimeout(() => reward.classList.add("hidden"), 1000);
 }
 
-/* =========================
-   CREATE BALLOON
-========================= */
-
+/* ---------- CREATE BALLOON ---------- */
 function createBalloon(letter, index, total) {
   const balloon = document.createElement("div");
   balloon.className = "balloon";
 
-  // mix uppercase / lowercase display
+  // random uppercase / lowercase display
   const isUpper = Math.random() < 0.5;
   balloon.textContent = isUpper ? letter.toUpperCase() : letter;
 
-  // evenly space balloons
+  // even spacing
   const spacing = 100 / (total + 1);
   balloon.style.left = spacing * (index + 1) + "%";
 
@@ -86,12 +94,13 @@ function createBalloon(letter, index, total) {
   const color = ["#ffb6c1","#b39ddb","#81d4fa","#a5d6a7"]
     [Math.floor(Math.random() * 4)];
   balloon.style.background = color;
-  balloon.style.setProperty("--balloon-color", color);
 
   balloon.onclick = () => {
     // 💥 pop sound
-    popSound.currentTime = 0;
-    popSound.play().catch(() => {});
+    if (audioUnlocked) {
+      popSound.currentTime = 0;
+      popSound.play().catch(() => {});
+    }
 
     // 🔊 letter sound
     playLetter(letter);
@@ -115,10 +124,7 @@ function createBalloon(letter, index, total) {
   setTimeout(() => balloon.remove(), 6000);
 }
 
-/* =========================
-   START ROUND
-========================= */
-
+/* ---------- START ROUND ---------- */
 function startRound() {
   sky.innerHTML = "";
 
@@ -129,6 +135,7 @@ function startRound() {
 
   targetLetter = getNextTargetLetter();
 
+  // play target sound
   setTimeout(() => playLetter(targetLetter), 500);
 
   let options = [targetLetter];
@@ -141,17 +148,12 @@ function startRound() {
     createBalloon(l, index, options.length);
   });
 
+  // auto-continue even if no click
   roundTimeout = setTimeout(startRound, 7000);
 }
 
-/* =========================
-   EVENTS
-========================= */
-
+/* ---------- EVENTS ---------- */
 playBtn.onclick = () => playLetter(targetLetter);
 
-/* =========================
-   START GAME
-========================= */
-
+/* ---------- START GAME ---------- */
 startRound();
