@@ -2,7 +2,10 @@
    POP THE BALLOON GAME
 ========================= */
 
-const letters = ["a","A","b","B","c","C","d","D","e","E","f","F","g","G","h","H","i","I","j","J","k","K","l","L","M","m","n","N","O","o","p","P","q","Q","r","R","S","s","T","t","u","U","v","V","w","W","X","x","Y","y","Z","z"];
+const letters = [
+  "a","b","c","d","e","f","g","h","i","j","k","l",
+  "m","n","o","p","q","r","s","t","u","v","w","x","y","z"
+];
 
 const sky = document.getElementById("sky");
 const playBtn = document.getElementById("play-sound");
