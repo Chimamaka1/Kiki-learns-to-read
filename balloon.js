@@ -2,7 +2,7 @@
    POP THE BALLOON GAME
 ========================= */
 
-const letters = ["a","A","b","B","c","C","d","D","e","E","f","F","g","G","h","H","i","I","j","J","k","K","l","L","M""m","n","N","O","o","p","P","q","Q","r","R","s","s","T","t","u","U","v","V","w","W","X","x","Y","y","Z","z"];
+const letters = ["a","A","b","B","c","C","d","D","e","E","f","F","g","G","h","H","i","I","j","J","k","K","l","L","M","m","n","N","O","o","p","P","q","Q","r","R","S","s","T","t","u","U","v","V","w","W","X","x","Y","y","Z","z"];
 
 const sky = document.getElementById("sky");
 const playBtn = document.getElementById("play-sound");
@@ -69,7 +69,8 @@ function showReward() {
 function createBalloon(letter, index, total) {
   const balloon = document.createElement("div");
   balloon.className = "balloon";
-  balloon.textContent = letter;
+ balloon.textContent = letter.toUpperCase();
+
 
   // evenly space balloons
   const spacing = 100 / (total + 1);
