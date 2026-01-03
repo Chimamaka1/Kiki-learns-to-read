@@ -22,12 +22,16 @@ function showReward() {
 }
 
 /* ---------- CREATE BALLOON ---------- */
-function createBalloon(letter) {
+function createBalloon(letter,index,total) {
   const balloon = document.createElement("div");
   balloon.className = "balloon";
   balloon.textContent = letter;
 
-  balloon.style.left = Math.random() * 80 + "%";
+   const spacing = 100 / (total + 1);
+const leftPosition = spacing * (index + 1);
+
+balloon.style.left = leftPosition + "%";
+
   balloon.style.background = ["#ffb6c1","#b39ddb","#81d4fa","#a5d6a7"]
     [Math.floor(Math.random() * 4)];
 
@@ -61,7 +65,10 @@ function startRound() {
     if (!options.includes(l)) options.push(l);
   }
 
-  options.forEach(l => createBalloon(l));
+ options.forEach((l, index) => {
+  createBalloon(l, index, options.length);
+});
+
 }
 
 /* ---------- EVENTS ---------- */
