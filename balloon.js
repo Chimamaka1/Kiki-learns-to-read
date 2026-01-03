@@ -2,6 +2,8 @@
    POP THE BALLOON GAME
 ========================= */
 
+const popSound = new Audio("sounds_clean/pop.mp3");
+
 const letters = [
   "a","b","c","d","e","f","g","h","i","j","k","l",
   "m","n","o","p","q","r","s","t","u","v","w","x","y","z"
@@ -87,14 +89,25 @@ balloon.textContent = isUpper ? letter.toUpperCase() : letter;
   balloon.style.background = color;
   balloon.style.setProperty("--balloon-color", color);
 
-  balloon.onclick = () => {
-    playLetter(letter);
+balloon.onclick = () => {
+  // 💥 POP SOUND
+  popSound.currentTime = 0;
+  popSound.play().catch(() => {});
 
-    if (letter === targetLetter) {
-      if (roundTimeout) {
-        clearTimeout(roundTimeout);
-        roundTimeout = null;
-      }
+  // 🔊 letter sound
+  playLetter(letter);
+
+  if (letter === targetLetter) {
+    if (roundTimeout) {
+      clearTimeout(roundTimeout);
+      roundTimeout = null;
+    }
+
+    balloon.remove();
+    showReward();
+    setTimeout(startRound, 800);
+  }
+};
 
       balloon.remove();
       showReward();
