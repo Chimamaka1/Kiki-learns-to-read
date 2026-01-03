@@ -72,8 +72,10 @@ function createBalloon(letter, index, total) {
   const balloon = document.createElement("div");
   balloon.className = "balloon";
 
-  // 🔠 DISPLAY CAPITAL LETTER
-  balloon.textContent = letter.toUpperCase();
+// randomly choose uppercase or lowercase for display
+const isUpper = Math.random() < 0.5;
+balloon.textContent = isUpper ? letter.toUpperCase() : letter;
+
 
   // evenly space balloons
   const spacing = 100 / (total + 1);
