@@ -10,7 +10,6 @@ const reward = document.getElementById("reward");
 let targetLetter = "";
 let roundTimeout = null;
 
-
 /* ---------- PLAY LETTER SOUND ---------- */
 function playLetter(letter) {
   const audio = new Audio(`sounds_clean/${letter}.mp3`);
@@ -24,40 +23,42 @@ function showReward() {
 }
 
 /* ---------- CREATE BALLOON ---------- */
-function createBalloon(letter,index,total) {
+function createBalloon(letter, index, total) {
   const balloon = document.createElement("div");
   balloon.className = "balloon";
   balloon.textContent = letter;
 
-   const spacing = 100 / (total + 1);
-const leftPosition = spacing * (index + 1);
+  // even spacing
+  const spacing = 100 / (total + 1);
+  balloon.style.left = spacing * (index + 1) + "%";
 
-balloon.style.left = leftPosition + "%";
-
-  balloon.style.background = ["#ffb6c1","#b39ddb","#81d4fa","#a5d6a7"]
+  // random colour
+  const color = ["#ffb6c1","#b39ddb","#81d4fa","#a5d6a7"]
     [Math.floor(Math.random() * 4)];
+  balloon.style.background = color;
+  balloon.style.setProperty("--balloon-color", color);
 
   balloon.onclick = () => {
-if (letter === targetLetter) {
-  if (roundTimeout) {
-    clearTimeout(roundTimeout);
-    roundTimeout = null;
-  }
+    // always play the letter sound
+    playLetter(letter);
 
-  balloon.remove();
-  showReward();
-  playLetter(letter);
+    // correct balloon
+    if (letter === targetLetter) {
+      if (roundTimeout) {
+        clearTimeout(roundTimeout);
+        roundTimeout = null;
+      }
 
-  setTimeout(startRound, 800);
-}
+      balloon.remove();
+      showReward();
 
-    } else {
-      playLetter(letter);
+      setTimeout(startRound, 800);
     }
   };
 
   sky.appendChild(balloon);
 
+  // remove balloon after it floats away
   setTimeout(() => balloon.remove(), 6000);
 }
 
@@ -65,7 +66,7 @@ if (letter === targetLetter) {
 function startRound() {
   sky.innerHTML = "";
 
-  // clear any previous timer
+  // clear previous timer
   if (roundTimeout) {
     clearTimeout(roundTimeout);
     roundTimeout = null;
@@ -86,13 +87,8 @@ function startRound() {
     createBalloon(l, index, options.length);
   });
 
-  // ⭐ AUTO-START NEXT ROUND EVEN IF NO CLICK
-  roundTimeout = setTimeout(() => {
-    startRound();
-  }, 7000); // slightly longer than balloon float time
-}
-
-
+  // auto-continue even if no click
+  roundTimeout = setTimeout(startRound, 7000);
 }
 
 /* ---------- EVENTS ---------- */
