@@ -154,6 +154,22 @@ vcBtn.onclick = () => { words = vcWords; newWord(); };
 cvBtn.onclick = () => { words = cvWords; newWord(); };
 cvcBtn.onclick = () => { words = cvcWords; newWord(); };
 
+const musicBtn = document.getElementById("music-toggle");
+
+musicBtn.onclick = () => {
+  if (!musicUnlocked) return;
+
+  if (musicEnabled) {
+    bgMusic.pause();
+    musicEnabled = false;
+    musicBtn.textContent = "🎵 Music";
+  } else {
+    bgMusic.play().catch(() => {});
+    musicEnabled = true;
+    musicBtn.textContent = "⏸ Music";
+  }
+};
+
 /* ==============================
    START
 ================================ */
