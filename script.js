@@ -8,10 +8,19 @@ const startBtn = document.getElementById("start-audio");
 const audioGate = document.getElementById("audio-gate");
 
 startBtn.onclick = () => {
-  // MUST play audio inside user gesture
+  // unlock sound effects
   const test = new Audio("sounds_clean/a.mp3");
   test.play().catch(() => {});
 
+  // unlock background music (IMPORTANT)
+  bgMusic.play()
+    .then(() => {
+      bgMusic.pause();
+      bgMusic.currentTime = 0;
+    })
+    .catch(() => {});
+
+  // unlock speech
   speechSynthesis.cancel();
   speechSynthesis.speak(new SpeechSynthesisUtterance("Let's read!"));
 
