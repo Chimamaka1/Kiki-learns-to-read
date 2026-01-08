@@ -17,6 +17,31 @@ startBtn.onclick = () => {
   audioGate.style.display = "none";
 };
 
+/* ---------- BACKGROUND MUSIC ---------- */
+
+const bgMusic = new Audio("sounds_clean/music.mp3");
+bgMusic.loop = true;
+bgMusic.volume = 0.3; // gentle volume
+
+let musicEnabled = false;
+let musicUnlocked = false;
+
+// unlock music on first user interaction
+function unlockMusic() {
+  if (musicUnlocked) return;
+
+  bgMusic.play()
+    .then(() => {
+      bgMusic.pause();
+      bgMusic.currentTime = 0;
+      musicUnlocked = true;
+    })
+    .catch(() => {});
+}
+
+document.addEventListener("click", unlockMusic, { once: true });
+document.addEventListener("touchstart", unlockMusic, { once: true });
+
 /* ==============================
    DOM
 ================================ */
