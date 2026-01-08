@@ -144,9 +144,11 @@ function startRound() {
     if (!options.includes(l)) options.push(l);
   }
 
-  options.forEach((l, index) => {
-    createBalloon(l, index, options.length);
-  });
+  shuffleArray(options);
+
+options.forEach((l, index) => {
+  createBalloon(l, index, options.length);
+});
 
   // auto-continue even if no click
   roundTimeout = setTimeout(startRound, 7000);
