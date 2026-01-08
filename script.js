@@ -1,5 +1,5 @@
 /* ==============================
-   AUDIO GATE (iPAD REQUIRED)
+   AUDIO GATE (iPAD / iOS SAFE)
 ================================ */
 
 let audioReady = false;
@@ -8,39 +8,26 @@ const startBtn = document.getElementById("start-audio");
 const audioGate = document.getElementById("audio-gate");
 
 startBtn.onclick = () => {
-  // MUST play audio INSIDE this tap
+  // MUST play audio inside user gesture
   const test = new Audio("sounds_clean/a.mp3");
   test.play().catch(() => {});
+
+  speechSynthesis.cancel();
   speechSynthesis.speak(new SpeechSynthesisUtterance("Let's read!"));
 
   audioReady = true;
   audioGate.style.display = "none";
 };
 
-/* ---------- BACKGROUND MUSIC ---------- */
+/* ==============================
+   BACKGROUND MUSIC
+================================ */
 
 const bgMusic = new Audio("sounds_clean/music.mp3");
 bgMusic.loop = true;
-bgMusic.volume = 0.3; // gentle volume
+bgMusic.volume = 0.3;
 
 let musicEnabled = false;
-let musicUnlocked = false;
-
-// unlock music on first user interaction
-function unlockMusic() {
-  if (musicUnlocked) return;
-
-  bgMusic.play()
-    .then(() => {
-      bgMusic.pause();
-      bgMusic.currentTime = 0;
-      musicUnlocked = true;
-    })
-    .catch(() => {});
-}
-
-document.addEventListener("click", unlockMusic, { once: true });
-document.addEventListener("touchstart", unlockMusic, { once: true });
 
 /* ==============================
    DOM
@@ -55,16 +42,31 @@ const vcBtn = document.getElementById("vc-button");
 const cvBtn = document.getElementById("cv-button");
 const cvcBtn = document.getElementById("cvc-button");
 
+const musicBtn = document.getElementById("music-toggle");
+
 /* ==============================
-   WORDS
+   WORD LISTS
 ================================ */
 
-const vcWords = ["at","an","am","it","in","on","up","ab","ad","ag","am","an","ap","at","ax","ed","eg","em","en","et","ex","ib","id","ig","im","in","ip","it","ix","ob","od","og","om","on","op","ot","ox", "ub","ud","ug","um","un","up","ut"];
-const cvWords = ["ma","pa","no","go","ba","ca","da","fa","ga","ha","ja","ka","la","ma",
-  "na","pa","ra","sa","ta","va","ya","za","be","de","he","ke","le","me","ne","pe","se","te","we","bi","di","fi","hi","ki","li","mi","ni","pi","si","ti","vi","bo","co","do","fo","go","ho","jo","lo","mo","no",
-  "po","so","to","yo","bu","cu","du","fu","gu","hu","ju","lu","mu","nu",
-  "pu","ru","su","tu","vu"];
-const cvcWords = ["bat","cat","fat","hat","mat","pat","rat","sat","vat",
+const vcWords = [
+  "at","an","am","it","in","on","up",
+  "ed","eg","em","en","et","ex",
+  "ib","id","ig","im","ip","ix",
+  "ob","od","og","om","op","ot",
+  "ub","ud","ug","um","un","ut"
+];
+
+const cvWords = [
+  "ma","pa","no","go","ba","da","fa","ga","ha","ka","la",
+  "na","ra","sa","ta","va","ya",
+  "be","de","he","ke","le","me","ne","pe","se","te","we",
+  "bi","di","fi","hi","ki","li","mi","ni","pi","si","ti","vi",
+  "bo","co","do","fo","ho","jo","lo","mo","po","so","to","yo",
+  "bu","cu","du","fu","gu","hu","ju","lu","mu","nu","pu","ru","su","tu","vu"
+];
+
+const cvcWords = [
+  "bat","cat","fat","hat","mat","pat","rat","sat","vat",
   "bad","dad","had","mad","pad","sad",
   "bag","lag","rag","tag","wag",
   "cap","gap","lap","map","nap","sap","tap","zap",
@@ -74,11 +76,12 @@ const cvcWords = ["bat","cat","fat","hat","mat","pat","rat","sat","vat",
   "beg","leg","peg",
   "hen","men","pen","ten","den",
   "jet","net","pet","vet","get",
-  "web","keg","bin","din","fin","pin","tin","win",
+  "bin","din","fin","pin","tin","win",
   "big","dig","fig","pig","wig",
   "hit","kit","lit","pit","sit","fit",
   "lip","sip","dip","hip","tip",
-  "mix","six","fix","cot","dot","hot","lot","not","pot","rot",
+  "mix","six","fix",
+  "cot","dot","hot","lot","not","pot","rot",
   "dog","fog","hog","log",
   "box","fox",
   "top","mop","hop","pop",
@@ -89,13 +92,12 @@ const cvcWords = ["bat","cat","fat","hat","mat","pat","rat","sat","vat",
   "mud","bud"
 ];
 
-
 let words = vcWords;
 let currentWord = "";
 let letters = [];
 
 /* ==============================
-   HELPERS
+   AUDIO HELPERS
 ================================ */
 
 function playLetter(letter) {
@@ -112,20 +114,20 @@ function speakWord(word) {
 }
 
 /* ==============================
-   RENDER
+   RENDER WORD
 ================================ */
 
 function renderWord(word) {
   wordDisplay.innerHTML = "";
   letters = [];
 
-  [...word].forEach(l => {
-    const d = document.createElement("div");
-    d.className = "letter";
-    d.textContent = l;
-    d.onclick = () => playLetter(l);
-    wordDisplay.appendChild(d);
-    letters.push(d);
+  [...word].forEach(letter => {
+    const tile = document.createElement("div");
+    tile.className = "letter";
+    tile.textContent = letter;
+    tile.onclick = () => playLetter(letter);
+    wordDisplay.appendChild(tile);
+    letters.push(tile);
   });
 
   slider.max = letters.length - 1;
@@ -142,7 +144,7 @@ function newWord() {
 ================================ */
 
 slider.oninput = () => {
-  const i = Math.round(slider.value);
+  const i = Number(slider.value);
   letters.forEach(l => l.classList.remove("active"));
   letters[i]?.classList.add("active");
 };
@@ -154,10 +156,8 @@ vcBtn.onclick = () => { words = vcWords; newWord(); };
 cvBtn.onclick = () => { words = cvWords; newWord(); };
 cvcBtn.onclick = () => { words = cvcWords; newWord(); };
 
-const musicBtn = document.getElementById("music-toggle");
-
 musicBtn.onclick = () => {
-  if (!musicUnlocked) return;
+  if (!audioReady) return;
 
   if (musicEnabled) {
     bgMusic.pause();
