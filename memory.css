@@ -1,1 +1,43 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #fdf6ec;
+  text-align: center;
+}
+
+#app-container {
+  max-width: 420px;
+  margin: auto;
+  padding: 20px;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.tile {
+  width: 70px;
+  height: 70px;
+  border-radius: 16px;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: white;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+button {
+  padding: 12px 20px;
+  border-radius: 20px;
+  border: none;
+  font-size: 1rem;
+}
 
