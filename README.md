@@ -1,4 +1,4 @@
-# 🧸 Kiki Learns to Read - CVC Phonics Games
+# 🧸 Kiki Learns to Read - CVC Phonics Games 
 
 A collection of interactive educational games designed to help children learn phonics and reading through Consonant-Vowel-Consonant (CVC) patterns. The games use engaging visuals, audio feedback, and gamification to create an enjoyable learning experience.
 
