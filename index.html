@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CVC Phonics</title>
+  <meta name="description" content="Fun learning games for kids 2-4 years old. Learn phonics, reading, numbers, logic and creativity!" />
+  <title>Kiki Learns to Read - Fun Learning for Little Minds!</title>
   <link rel="stylesheet" href="css/style.css?v=final1">
 </head>
 <body>
@@ -14,45 +15,152 @@
 </div>
 
 <div id="app-container">
-  <h1>🧸 CVC Phonics</h1>
-
-  <div id="word-display"></div>
-
-  <input type="range" id="blend-slider" min="0" step="1" value="0"/>
-
-  <div>
-    <button id="new-word-button">New Word</button>
-    <button id="blend-word-button">Blend Word</button>
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <h1>🌟 Welcome to Kiki's Learning World! </h1>
+    <p class="subtitle">Where Little Minds Grow Big Dreams!</p>
+    <p class="age-range">Perfect for Ages 2-4 Years Old</p>
   </div>
 
-  <div>
-    <button id="vc-button">VC</button>
-    <button id="cv-button">CV</button>
-    <button id="cvc-button">CVC</button>
-    <button id="music-toggle">🎵 Music</button>
-
-    <a href="games/listen-choose/listen.html">
-  <button>👂 Listen & Choose</button>
-</a>
-
-    <a href="games/balloon-pop/balloon.html">
-  <button>🎈 Pop the Balloon</button>
-</a>
-
-    <a href="games/egg-match/egg-match.html">
-  <button>🥚 Crack the Egg</button>
-</a>
-
-    <a href="games/memory-game/memory.html">
-  <button>🧠 Memory Game</button>
-</a>
-
+  <!-- Description Section -->
+  <div class="description-section">
+    <p class="main-description">
+      Join Kiki on an amazing adventure to build the foundation for becoming 
+      <strong>intelligent</strong>, <strong>innovative</strong>, and <strong>caring</strong> little learners!
+    </p>
   </div>
 
-  <p class="instruction">Tap a letter to hear its sound</p>
+  <!-- Skills Section -->
+  <div class="skills-section">
+    <h2>🎯 What Your Child Will Learn</h2>
+    <div class="skills-grid">
+      <div class="skill-card reading" onclick="showReadingSection()">
+        <div class="skill-icon">📚</div>
+        <h3>Reading Skills</h3>
+        <p>Phonics, letter sounds, and word building</p>
+      </div>
+      <div class="skill-card numbers">
+        <div class="skill-icon">🔢</div>
+        <h3>Numbers & Maths</h3>
+        <p>Fun with counting and patterns</p>
+      </div>
+      <div class="skill-card logic">
+        <div class="skill-icon">🧩</div>
+        <h3>Logic & Thinking</h3>
+        <p>Problem-solving adventures</p>
+      </div>
+      <div class="skill-card creativity">
+        <div class="skill-icon">🎨</div>
+        <h3>Creativity</h3>
+        <p>Imagination and self-expression</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reading Skills Section (Hidden by default) -->
+  <div id="reading-section" class="reading-section" style="display: none;">
+    <div class="section-header">
+      <button class="back-button" onclick="showHomepage()">← Back to Homepage</button>
+      <h2>📚 Reading Skills & Phonics Games</h2>
+    </div>
+
+    <!-- CVC Phonics Quick Play -->
+    <div class="quick-play-section">
+      <h3>🎯 Phonics Practice</h3>
+      <div id="word-display"></div>
+      <input type="range" id="blend-slider" min="0" step="1" value="0"/>
+      <div class="phonics-controls">
+        <button id="new-word-button">New Word</button>
+        <button id="blend-word-button">Blend Word</button>
+      </div>
+      <div class="phonics-options">
+        <button id="vc-button">VC</button>
+        <button id="cv-button">CV</button>
+        <button id="cvc-button">CVC</button>
+        <button id="music-toggle">🎵 Music</button>
+      </div>
+      <p class="instruction">Tap a letter to hear its sound</p>
+    </div>
+
+    <!-- Games Section -->
+    <div class="games-section">
+      <h3>🎮 Reading Games</h3>
+      <div class="games-grid">
+        <a href="games/listen-choose/listen.html" class="game-card">
+          <div class="game-icon">👂</div>
+          <h3>Listen & Choose</h3>
+          <p>Train your ears with sounds</p>
+        </a>
+        
+        <a href="games/balloon-pop/balloon.html" class="game-card">
+          <div class="game-icon">🎈</div>
+          <h3>Pop the Balloon</h3>
+          <p>Pop balloons to learn letters</p>
+        </a>
+        
+        <a href="games/egg-match/egg-match.html" class="game-card">
+          <div class="game-icon">🥚</div>
+          <h3>Crack the Egg</h3>
+          <p>Surprise discoveries inside!</p>
+        </a>
+        
+        <a href="games/memory-game/memory.html" class="game-card">
+          <div class="game-icon">🧠</div>
+          <h3>Memory Game</h3>
+          <p>Remember and match pairs</p>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Homepage Sections -->
+  <div id="homepage-sections">
+    <!-- This will contain the welcome, description, skills, and footer when on homepage -->
+  </div>
+
+  <!-- Footer Message -->
+  <div class="footer-message">
+    <p>✨ Learning is an adventure - let's explore together! ✨</p>
+  </div>
 </div>
 
 <script src="config.js"></script>
 <script src="script.js?v=final1"></script>
+<script>
+// Functions to handle section switching
+function showReadingSection() {
+  // Hide homepage sections
+  const heroSection = document.querySelector('.hero-section');
+  const descriptionSection = document.querySelector('.description-section');
+  const skillsSection = document.querySelector('.skills-section');
+  const footerMessage = document.querySelector('.footer-message');
+  
+  if (heroSection) heroSection.style.display = 'none';
+  if (descriptionSection) descriptionSection.style.display = 'none';
+  if (skillsSection) skillsSection.style.display = 'none';
+  if (footerMessage) footerMessage.style.display = 'none';
+  
+  // Show reading section
+  const readingSection = document.getElementById('reading-section');
+  if (readingSection) readingSection.style.display = 'block';
+}
+
+function showHomepage() {
+  // Show homepage sections
+  const heroSection = document.querySelector('.hero-section');
+  const descriptionSection = document.querySelector('.description-section');
+  const skillsSection = document.querySelector('.skills-section');
+  const footerMessage = document.querySelector('.footer-message');
+  
+  if (heroSection) heroSection.style.display = 'block';
+  if (descriptionSection) descriptionSection.style.display = 'block';
+  if (skillsSection) skillsSection.style.display = 'block';
+  if (footerMessage) footerMessage.style.display = 'block';
+  
+  // Hide reading section
+  const readingSection = document.getElementById('reading-section');
+  if (readingSection) readingSection.style.display = 'none';
+}
+</script>
 </body>
 </html>
