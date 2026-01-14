@@ -18,7 +18,7 @@ let targetLetter = "";
 let roundTimeout = null;
 
 /* ---------- AUDIO ---------- */
-const popSound = new Audio("sounds_clean/pop.mp3");
+const popSound = new Audio("../../assets/sounds/pop.mp3");
 let audioUnlocked = false;
 
 /* ---------- AUDIO UNLOCK (MOBILE SAFE) ---------- */
@@ -38,7 +38,7 @@ document.addEventListener("click", unlockAudio, { once: true });
 document.addEventListener("touchstart", unlockAudio, { once: true });
 
 function playLetter(letter) {
-  const audio = new Audio(`sounds_clean/${letter}.mp3`);
+  const audio = new Audio(`../../assets/sounds/${letter}.mp3`);
   audio.play().catch(() => {});
 }
 

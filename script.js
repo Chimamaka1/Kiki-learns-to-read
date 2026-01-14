@@ -9,8 +9,8 @@ const audioGate = document.getElementById("audio-gate");
 
 startBtn.onclick = () => {
   // unlock sound effects
-  const test = new Audio("sounds_clean/a.mp3");
-  test.play().catch(() => {});
+  //const test = new Audio("assets/sounds/a.mp3");
+  //test.play().catch(() => {});
 
   // unlock background music (IMPORTANT)
   bgMusic.play()
@@ -32,7 +32,7 @@ startBtn.onclick = () => {
    BACKGROUND MUSIC
 ================================ */
 
-const bgMusic = new Audio("sounds_clean/music.mp3");
+const bgMusic = new Audio("assets/sounds/music.mp3");
 bgMusic.loop = true;
 bgMusic.volume = 0.3;
 
@@ -109,17 +109,65 @@ let letters = [];
    AUDIO HELPERS
 ================================ */
 
+// Get API credentials from config
+const elevenLabsApiKey = window.config?.elevenLabs?.apiKey || '';
+const voiceId = window.config?.elevenLabs?.voiceId || '';
+
 function playLetter(letter) {
   if (!audioReady) return;
-  const a = new Audio(`sounds_clean/${letter}.mp3`);
+  const a = new Audio(`assets/sounds/${letter}.mp3`);
   a.currentTime = 0;
   a.play().catch(() => {});
 }
 
-function speakWord(word) {
+async function speakWord(word) {
   if (!audioReady) return;
-  speechSynthesis.cancel();
-  speechSynthesis.speak(new SpeechSynthesisUtterance(word));
+  
+  // Check if ElevenLabs credentials are available
+  if (!elevenLabsApiKey || !voiceId) {
+    console.warn('ElevenLabs credentials not configured, using fallback speech synthesis');
+    speechSynthesis.cancel();
+    speechSynthesis.speak(new SpeechSynthesisUtterance(word));
+    return;
+  }
+  
+  try {
+    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'audio/mpeg',
+        'Content-Type': 'application/json',
+        'xi-api-key': elevenLabsApiKey
+      },
+      body: JSON.stringify({
+        text: word,
+        model_id: "eleven_monolingual_v1",
+        voice_settings: {
+          stability: 0.5,
+          similarity_boost: 0.5
+        }
+      })
+    });
+
+    if (response.ok) {
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      audio.play().catch(() => {});
+      
+      // Clean up the object URL after playback
+      audio.onended = () => URL.revokeObjectURL(audioUrl);
+    } else {
+      // Fallback to speech synthesis if ElevenLabs fails
+      speechSynthesis.cancel();
+      speechSynthesis.speak(new SpeechSynthesisUtterance(word));
+    }
+  } catch (error) {
+    console.error('ElevenLabs API error:', error);
+    // Fallback to speech synthesis
+    speechSynthesis.cancel();
+    speechSynthesis.speak(new SpeechSynthesisUtterance(word));
+  }
 }
 
 /* ==============================
