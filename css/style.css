@@ -6,6 +6,12 @@
   box-sizing: border-box;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  font-style: normal !important;
+}
+
+/* Ensure all text is clearly visible and never italicized */
+body, h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, textarea {
+  font-style: normal !important;
 }
 
 /* ===============================
@@ -29,13 +35,15 @@
   padding: 20px 40px;
   font-size: 24px;
   background: #4caf50;
-  color: white;
+  color: black;
   border: none;
   border-radius: 15px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 900;
+  font-style: normal;
   box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
   transition: all 0.3s ease;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.6);
 }
 
 #start-audio:hover {
@@ -58,6 +66,7 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  font-style: normal;
 }
 
 /* ===============================
@@ -105,6 +114,8 @@ body {
 
 h1 {
   margin-bottom: 20px;
+  font-style: normal;
+  font-weight: 900;
 }
 
 /* ===============================
@@ -183,9 +194,12 @@ button {
   border-radius: 30px;
   border: none;
   font-size: 1.1rem;
-  font-weight: bold;
+  font-weight: 900;
+  font-style: normal;
   cursor: pointer;
   transition: transform 0.1s ease, box-shadow 0.1s ease;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  color: black;
 }
 
 /* Responsive button sizes */
@@ -217,33 +231,44 @@ button:active {
 }
 
 #new-word-button {
-  background: #4caf50;
-  color: white;
+  background: #388e3c;
+  color: black;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  border: 2px solid #2e7d2e;
 }
 
 #blend-word-button {
-  background: #2196f3;
-  color: white;
+  background: #1976d2;
+  color: black;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  border: 2px solid #1565c0;
 }
 
 #play-word {
-  background: #ff9800;
-  color: white;
+  background: #f57c00;
+  color: black;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  border: 2px solid #ef6c00;
 }
 
 #next-question {
-  background: #673ab7;
-  color: white;
+  background: #512da8;
+  color: black;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  border: 2px solid #4527a0;
 }
 
 .choose-btn {
   margin-top: 12px;
   padding: 10px 18px;
   border-radius: 20px;
-  background: #4caf50;
-  color: white;
+  background: #388e3c;
+  color: black;
   font-size: 1rem;
-  font-weight: bold;
+  font-weight: 900;
+  font-style: normal;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  border: 2px solid #2e7d2e;
 }
 
 /* ===============================
@@ -494,7 +519,7 @@ button:active {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 15px 10px;
   border-radius: 15px;
-  color: white;
+  color: black;
   text-align: center;
   transition: transform 0.3s ease;
   border: 3px solid transparent;
@@ -519,14 +544,19 @@ button:active {
 .skill-card h3 {
   font-size: 14px;
   margin: 8px 0 5px 0;
-  font-weight: bold;
+  font-weight: 900;
+  font-style: normal;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  color: black;
 }
 
 .skill-card p {
   font-size: 11px;
   margin: 0;
-  opacity: 0.9;
+  opacity: 1;
   line-height: 1.3;
+  color: black;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6);
 }
 
 /* Quick Play Section */
@@ -551,14 +581,17 @@ button:active {
 .phonics-controls button {
   margin: 5px;
   padding: 10px 15px;
-  background: #48bb78;
-  color: white;
+  background: #38a169;
+  color: black;
   border: none;
   border-radius: 10px;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 900;
+  font-style: normal;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  border: 2px solid #2f855a;
 }
 
 .phonics-controls button:hover {
@@ -573,13 +606,17 @@ button:active {
 .phonics-options button {
   margin: 3px;
   padding: 8px 12px;
-  background: #ed8936;
-  color: white;
+  background: #dd6b20;
+  color: black;
   border: none;
   border-radius: 8px;
   font-size: 12px;
+  font-weight: 900;
+  font-style: normal;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  border: 2px solid #c05621;
 }
 
 .phonics-options button:hover {
@@ -611,7 +648,7 @@ button:active {
   background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   padding: 15px 10px;
   border-radius: 15px;
-  color: white;
+  color: black;
   text-align: center;
   transition: transform 0.3s ease;
   border: 3px solid transparent;
@@ -621,7 +658,7 @@ button:active {
   transform: translateY(-5px);
   border-color: #ffd700;
   text-decoration: none;
-  color: white;
+  color: black;
 }
 
 .game-icon {
@@ -632,14 +669,19 @@ button:active {
 .game-card h3 {
   font-size: 14px;
   margin: 8px 0 5px 0;
-  font-weight: bold;
+  font-weight: 900;
+  font-style: normal;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  color: black;
 }
 
 .game-card p {
   font-size: 11px;
   margin: 0;
-  opacity: 0.9;
+  opacity: 1;
   line-height: 1.3;
+  color: black;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6);
 }
 
 /* Footer Message */
@@ -766,6 +808,513 @@ button:active {
    READING SECTION SPECIFIC STYLES
 ================================ */
 
+/* Missing Letter Game */
+.missing-letter-section {
+  margin: 25px 0;
+  padding: 20px;
+  background: #f0f8ff;
+  border-radius: 15px;
+  border: 2px solid #4682b4;
+  width: 100%;
+  min-height: 80vh;
+}
+
+/* Progress Tracking Styles */
+.progress-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 15px;
+  margin: 20px 0;
+  border: 2px solid #e0e6ed;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.progress-section h4 {
+  margin: 0 0 15px 0;
+  color: #2d3748;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.progress-stats {
+  display: flex;
+  justify-content: space-around;
+  margin: 15px 0;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  border-radius: 8px;
+  min-width: 80px;
+  text-align: center;
+}
+
+.correct-stat {
+  background: #e6ffe6;
+  border: 2px solid #4caf50;
+}
+
+.incorrect-stat {
+  background: #ffe6e6;
+  border: 2px solid #f44336;
+}
+
+.accuracy-stat {
+  background: #e6f3ff;
+  border: 2px solid #2196f3;
+}
+
+.stat-icon {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 3px;
+  color: #4a5568;
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: 900;
+  font-style: normal;
+  color: #2d3748;
+}
+
+.progress-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.progress-controls button {
+  padding: 8px 15px !important;
+  font-size: 12px !important;
+  background: #6c757d !important;
+  color: black !important;
+  border: 2px solid #545b62 !important;
+  border-radius: 15px !important;
+  font-weight: 900 !important;
+  font-style: normal !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5) !important;
+}
+
+.progress-controls button:hover {
+  background: #7d8491 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Progress Modal Styles */
+.progress-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.progress-modal-content {
+  background: white;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.progress-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 2px solid #e0e6ed;
+}
+
+.progress-modal-header h3 {
+  margin: 0;
+  color: #2d3748;
+  font-size: 18px;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.close-modal {
+  background: #dc3545 !important;
+  color: black !important;
+  border: 2px solid #c82333 !important;
+  padding: 8px 12px !important;
+  border-radius: 50% !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  font-style: normal !important;
+  cursor: pointer !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5) !important;
+}
+
+.progress-modal-body {
+  padding: 20px;
+}
+
+.progress-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.summary-card {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 15px;
+  border: 2px solid #e9ecef;
+}
+
+.summary-card h4 {
+  margin: 0 0 10px 0;
+  color: #2d3748;
+  font-size: 14px;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.summary-card p {
+  margin: 5px 0;
+  font-size: 13px;
+  color: #4a5568;
+}
+
+.progress-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.progress-actions button {
+  padding: 10px 15px !important;
+  font-size: 12px !important;
+  border-radius: 15px !important;
+  font-weight: 900 !important;
+  font-style: normal !important;
+  color: black !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5) !important;
+  border: 2px solid #495057 !important;
+}
+
+#recent-words {
+  max-height: 150px;
+  overflow-y: auto;
+  font-size: 12px;
+}
+
+.word-attempt {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+  margin: 3px 0;
+  border-radius: 5px;
+  background: #fff;
+  border: 1px solid #dee2e6;
+}
+
+.word-attempt.correct {
+  border-left: 4px solid #4caf50;
+}
+
+.word-attempt.incorrect {
+  border-left: 4px solid #f44336;
+}
+
+/* Responsive Progress Styles */
+@media (max-width: 768px) {
+  .progress-stats {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .stat-item {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 200px;
+  }
+  
+  .progress-modal-content {
+    width: 95%;
+    margin: 10px;
+  }
+}
+
+/* When missing letter game is standalone */
+#missing-letter-game {
+  margin: 0;
+  padding: 30px;
+  border-radius: 0;
+  min-height: 100vh;
+}
+
+/* Desktop styles for standalone missing letter game */
+@media (min-width: 768px) {
+  #missing-letter-game {
+    max-width: 900px;
+    margin: 20px auto;
+    border-radius: 22px;
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    min-height: auto;
+    padding: 40px;
+  }
+}
+
+.missing-letter-section h3 {
+  color: #2d3748;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+#missing-word-display {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 25px 0;
+  flex-wrap: wrap;
+}
+
+.missing-letter {
+  width: 70px;
+  height: 70px;
+  border-radius: 16px;
+  background: #e6f3ff;
+  border: 3px solid #4682b4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  font-style: normal;
+  color: black;
+  transition: all 0.2s ease;
+}
+
+.missing-letter:not(.blank):hover {
+  background: #b3d9ff;
+  transform: translateY(-2px);
+  border-color: #2e5090;
+  box-shadow: 0 4px 8px rgba(70, 130, 180, 0.3);
+}
+
+.missing-letter.blank {
+  background: #fff;
+  border: 3px dashed #4682b4;
+  position: relative;
+}
+
+.missing-letter.blank::after {
+  content: "?";
+  color: #4682b4;
+  font-size: 2rem;
+  opacity: 0.5;
+}
+
+.missing-letter.filled {
+  background: #90ee90;
+  border-color: #228b22;
+  animation: fillSuccess 0.5s ease;
+}
+
+@keyframes fillSuccess {
+  0% { transform: scale(1); background: #fff; }
+  50% { transform: scale(1.2); background: #90ee90; }
+  100% { transform: scale(1); background: #90ee90; }
+}
+
+.missing-controls {
+  margin: 15px 0;
+}
+
+.missing-controls button {
+  margin: 5px;
+  padding: 10px 15px;
+  background: #4682b4;
+  color: black;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 900;
+  font-style: normal;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  border: 2px solid #2f4f4f;
+}
+
+.missing-controls button:hover {
+  background: #5a9bd4;
+  transform: translateY(-2px);
+}
+
+/* Game Exit Button */
+.game-exit-header {
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.exit-game-button {
+  background: #dc3545 !important;
+  color: black !important;
+  border: 2px solid #c82333 !important;
+  padding: 8px 16px !important;
+  font-size: 12px !important;
+  border-radius: 20px !important;
+  font-weight: 900 !important;
+  font-style: normal !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5) !important;
+}
+
+.exit-game-button:hover {
+  background: #e85d6b !important;
+  transform: translateY(-2px) !important;
+}
+
+#close-missing-game {
+  background: #dc3545 !important;
+  color: black !important;
+  border: 2px solid #c82333 !important;
+}
+
+#close-missing-game:hover {
+  background: #e85d6b !important;
+}
+
+.letter-choices {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 25px 0;
+  flex-wrap: wrap;
+}
+
+.choice-letter {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  background: #ffe4b5;
+  border: 3px solid #daa520;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  font-weight: 900;
+  font-style: normal;
+  color: black;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.choice-letter:hover {
+  background: #ffd700;
+  transform: translateY(-3px);
+  border-color: #b8860b;
+}
+
+.choice-letter.correct {
+  background: #90ee90;
+  border-color: #228b22;
+  animation: correctChoice 0.6s ease;
+}
+
+.choice-letter.incorrect {
+  background: #ffa0a0;
+  border-color: #cd5c5c;
+  animation: shake 0.5s ease;
+}
+
+@keyframes correctChoice {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.missing-instruction {
+  color: #4a5568;
+  font-size: 14px;
+  margin: 10px 0;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Responsive missing letter sizes */
+@media (max-width: 768px) {
+  .missing-letter {
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
+  }
+  
+  .choice-letter {
+    width: 50px;
+    height: 50px;
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .missing-letter {
+    width: 50px;
+    height: 50px;
+    font-size: 1.8rem;
+  }
+  
+  .choice-letter {
+    width: 45px;
+    height: 45px;
+    font-size: 1.6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .missing-letter {
+    width: 80px;
+    height: 80px;
+    font-size: 3rem;
+  }
+  
+  .choice-letter {
+    width: 70px;
+    height: 70px;
+    font-size: 2.2rem;
+  }
+}
+
+/* ===============================
+   READING SECTION SPECIFIC STYLES
+================================ */
+
 /* Reading Section */
 .reading-section {
   margin: 20px 0;
@@ -777,17 +1326,20 @@ button:active {
 }
 
 .back-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, #5a67d8 0%, #667eea 100%);
+  color: black;
   border: none;
   padding: 12px 20px;
   border-radius: 25px;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 900;
+  font-style: normal;
   cursor: pointer;
   margin-bottom: 15px;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.6);
+  border: 2px solid #4c51bf;
 }
 
 .back-button:hover {
@@ -837,4 +1389,84 @@ button:active {
   grid-template-columns: repeat(2, 1fr);
   gap: 15px;
   margin: 15px 0 30px 0;
+}
+
+/* ===============================
+   NUMBERS & MATHS SECTION
+================================ */
+
+.numbers-section {
+  min-height: 100vh;
+  padding: 20px;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  color: #2d3748;
+}
+
+.skill-card.numbers {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.skill-card.numbers:hover {
+  transform: translateY(-8px);
+  border-color: #ffd700;
+  box-shadow: 0 8px 25px rgba(255, 193, 7, 0.4);
+}
+
+.skill-card.numbers::after {
+  content: "👆 Click to explore!";
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: #4a5568;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.skill-card.numbers:hover::after {
+  opacity: 1;
+}
+
+/* ===============================
+   CREATIVITY SECTION
+================================ */
+
+.creativity-section {
+  min-height: 100vh;
+  padding: 20px;
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+  color: #2d3748;
+}
+
+.skill-card.creativity {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.skill-card.creativity:hover {
+  transform: translateY(-8px);
+  border-color: #ffd700;
+  box-shadow: 0 8px 25px rgba(255, 154, 158, 0.4);
+}
+
+.skill-card.creativity::after {
+  content: "👆 Click to explore!";
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: #4a5568;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.skill-card.creativity:hover::after {
+  opacity: 1;
 }

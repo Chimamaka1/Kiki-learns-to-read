@@ -1,0 +1,256 @@
+/* ===============================
+   COUNTING GAME STYLES
+================================ */
+
+.counting-game-container {
+  min-height: 100vh;
+  padding: 20px;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  color: #2d3748;
+}
+
+.game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.game-header h1 {
+  color: #2d3748;
+  font-size: 28px;
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.back-button {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.back-button:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+}
+
+.counting-game-container > div:not(.game-header) {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.counting-progress {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: 20px 0;
+  padding: 15px;
+  background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+  border-radius: 15px;
+  border: 2px solid #007bff;
+}
+
+.progress-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progress-label {
+  font-weight: bold;
+  color: #495057;
+  font-size: 16px;
+}
+
+.progress-value {
+  background: #007bff;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 18px;
+  min-width: 40px;
+  text-align: center;
+}
+
+.counting-question {
+  margin: 30px 0;
+}
+
+.counting-question h2 {
+  color: #2d3748;
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.objects-display {
+  min-height: 120px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  background: linear-gradient(45deg, #fff9c4, #f7f3ff);
+  border-radius: 15px;
+  border: 3px dashed #007bff;
+  margin: 20px 0;
+}
+
+.counting-object {
+  animation: bounceIn 0.5s ease-out;
+  font-size: 2rem;
+  margin: 0.2rem;
+  display: inline-block;
+}
+
+.counting-controls {
+  margin: 30px 0;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.counting-controls button {
+  background: linear-gradient(45deg, #28a745, #20c997);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.counting-controls button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+}
+
+.counting-controls button:active {
+  transform: translateY(0);
+}
+
+.number-choices {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 30px 0;
+  flex-wrap: wrap;
+}
+
+.number-choice {
+  font-size: 2rem;
+  padding: 15px 25px;
+  margin: 10px;
+  border: 3px solid #007bff;
+  background: white;
+  color: #007bff;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  min-width: 80px;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+}
+
+.number-choice:hover {
+  background: #f8f9fa;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.3);
+}
+
+.counting-instruction {
+  font-size: 18px;
+  color: #6c757d;
+  margin-top: 20px;
+  font-style: italic;
+}
+
+/* Animations for counting game */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Responsive design for counting game */
+@media (max-width: 768px) {
+  .counting-progress {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .counting-controls {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .counting-controls button {
+    width: 200px;
+  }
+  
+  .number-choices {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 300px;
+    margin: 20px auto;
+  }
+  
+  .number-choice {
+    font-size: 1.5rem;
+    padding: 12px 20px;
+    margin: 5px;
+  }
+
+  .game-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .game-header h1 {
+    font-size: 24px;
+  }
+}

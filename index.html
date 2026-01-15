@@ -39,7 +39,7 @@
         <h3>Reading Skills</h3>
         <p>Phonics, letter sounds, and word building</p>
       </div>
-      <div class="skill-card numbers">
+      <div class="skill-card numbers" onclick="showNumbersSection()">
         <div class="skill-icon">🔢</div>
         <h3>Numbers & Maths</h3>
         <p>Fun with counting and patterns</p>
@@ -49,7 +49,7 @@
         <h3>Logic & Thinking</h3>
         <p>Problem-solving adventures</p>
       </div>
-      <div class="skill-card creativity">
+      <div class="skill-card creativity" onclick="showCreativitySection()">
         <div class="skill-icon">🎨</div>
         <h3>Creativity</h3>
         <p>Imagination and self-expression</p>
@@ -66,6 +66,9 @@
 
     <!-- CVC Phonics Quick Play -->
     <div class="quick-play-section">
+      <div class="game-exit-header">
+        <button class="exit-game-button" onclick="showReadingSection()">✖ Exit Game</button>
+      </div>
       <h3>🎯 Phonics Practice</h3>
       <div id="word-display"></div>
       <input type="range" id="blend-slider" min="0" step="1" value="0"/>
@@ -109,6 +112,56 @@
           <h3>Memory Game</h3>
           <p>Remember and match pairs</p>
         </a>
+        
+        <a href="games/missing-letter/missing-letter.html" class="game-card">
+          <div class="game-icon">🔤</div>
+          <h3>Missing Letter</h3>
+          <p>Fill in the missing letters!</p>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Numbers & Maths Section (Hidden by default) -->
+  <div id="numbers-section" class="numbers-section" style="display: none;">
+    <div class="section-header">
+      <button class="back-button" onclick="showHomepage()">← Back to Homepage</button>
+      <h2>🔢 Numbers & Maths Games</h2>
+    </div>
+
+    <!-- Games Grid -->
+    <div class="games-section">
+      <div class="games-grid">
+        <a href="games/counting-game/counting-game.html" class="game-card">
+          <div class="game-icon">🎯</div>
+          <h3>Counting Practice</h3>
+          <p>Count objects and choose the right number!</p>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Creativity Section (Hidden by default) -->
+  <div id="creativity-section" class="creativity-section" style="display: none;">
+    <div class="section-header">
+      <button class="back-button" onclick="showHomepage()">← Back to Homepage</button>
+      <h2>🎨 Creativity & Art Games</h2>
+    </div>
+
+    <!-- Games Grid -->
+    <div class="games-section">
+      <div class="games-grid">
+        <a href="games/creative-canvas/creative-canvas.html" class="game-card">
+          <div class="game-icon">🎨</div>
+          <h3>Creative Canvas</h3>
+          <p>Draw, paint and create amazing art!</p>
+        </a>
+        
+        <a href="games/shape-puzzle/shape-puzzle.html" class="game-card">
+          <div class="game-icon">🧩</div>
+          <h3>Shape Puzzle</h3>
+          <p>Rebuild objects from scattered pieces!</p>
+        </a>
       </div>
     </div>
   </div>
@@ -134,15 +187,82 @@ function showReadingSection() {
   const descriptionSection = document.querySelector('.description-section');
   const skillsSection = document.querySelector('.skills-section');
   const footerMessage = document.querySelector('.footer-message');
+  const numbersSection = document.getElementById('numbers-section');
+  const creativitySection = document.getElementById('creativity-section');
   
   if (heroSection) heroSection.style.display = 'none';
   if (descriptionSection) descriptionSection.style.display = 'none';
   if (skillsSection) skillsSection.style.display = 'none';
   if (footerMessage) footerMessage.style.display = 'none';
+  if (numbersSection) numbersSection.style.display = 'none';
+  if (creativitySection) creativitySection.style.display = 'none';
   
   // Show reading section
   const readingSection = document.getElementById('reading-section');
   if (readingSection) readingSection.style.display = 'block';
+}
+
+function showNumbersSection() {
+  // Hide homepage sections
+  const heroSection = document.querySelector('.hero-section');
+  const descriptionSection = document.querySelector('.description-section');
+  const skillsSection = document.querySelector('.skills-section');
+  const footerMessage = document.querySelector('.footer-message');
+  const readingSection = document.getElementById('reading-section');
+  const creativitySection = document.getElementById('creativity-section');
+  
+  if (heroSection) heroSection.style.display = 'none';
+  if (descriptionSection) descriptionSection.style.display = 'none';
+  if (skillsSection) skillsSection.style.display = 'none';
+  if (footerMessage) footerMessage.style.display = 'none';
+  if (readingSection) readingSection.style.display = 'none';
+  if (creativitySection) creativitySection.style.display = 'none';
+  
+  // Show numbers section
+  const numbersSection = document.getElementById('numbers-section');
+  if (numbersSection) numbersSection.style.display = 'block';
+}
+
+function showCreativitySection() {
+  // Hide homepage sections
+  const heroSection = document.querySelector('.hero-section');
+  const descriptionSection = document.querySelector('.description-section');
+  const skillsSection = document.querySelector('.skills-section');
+  const footerMessage = document.querySelector('.footer-message');
+  const readingSection = document.getElementById('reading-section');
+  const numbersSection = document.getElementById('numbers-section');
+  
+  if (heroSection) heroSection.style.display = 'none';
+  if (descriptionSection) descriptionSection.style.display = 'none';
+  if (skillsSection) skillsSection.style.display = 'none';
+  if (footerMessage) footerMessage.style.display = 'none';
+  if (readingSection) readingSection.style.display = 'none';
+  if (numbersSection) numbersSection.style.display = 'none';
+  
+  // Show creativity section
+  const creativitySection = document.getElementById('creativity-section');
+  if (creativitySection) creativitySection.style.display = 'block';
+}
+
+function showCreativitySection() {
+  // Hide homepage sections
+  const heroSection = document.querySelector('.hero-section');
+  const descriptionSection = document.querySelector('.description-section');
+  const skillsSection = document.querySelector('.skills-section');
+  const footerMessage = document.querySelector('.footer-message');
+  const readingSection = document.getElementById('reading-section');
+  const numbersSection = document.getElementById('numbers-section');
+  
+  if (heroSection) heroSection.style.display = 'none';
+  if (descriptionSection) descriptionSection.style.display = 'none';
+  if (skillsSection) skillsSection.style.display = 'none';
+  if (footerMessage) footerMessage.style.display = 'none';
+  if (readingSection) readingSection.style.display = 'none';
+  if (numbersSection) numbersSection.style.display = 'none';
+  
+  // Show creativity section
+  const creativitySection = document.getElementById('creativity-section');
+  if (creativitySection) creativitySection.style.display = 'block';
 }
 
 function showHomepage() {
@@ -157,10 +277,16 @@ function showHomepage() {
   if (skillsSection) skillsSection.style.display = 'block';
   if (footerMessage) footerMessage.style.display = 'block';
   
-  // Hide reading section
+  // Hide all game sections
   const readingSection = document.getElementById('reading-section');
+  const numbersSection = document.getElementById('numbers-section');
+  const creativitySection = document.getElementById('creativity-section');
   if (readingSection) readingSection.style.display = 'none';
+  if (numbersSection) numbersSection.style.display = 'none';
+  if (creativitySection) creativitySection.style.display = 'none';
 }
+
+
 </script>
 </body>
 </html>

@@ -1,0 +1,248 @@
+/* Missing Letter Game Specific Styles */
+
+/* Override app container for game-specific layout */
+#app-container {
+  background: white;
+  padding: 20px;
+  border-radius: 0;
+  width: 100%;
+  min-height: 100vh;
+  text-align: center;
+  margin: 0;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Desktop and Laptop styles */
+@media (min-width: 768px) {
+  #app-container {
+    max-width: 900px;
+    min-height: auto;
+    border-radius: 22px;
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    margin: 20px auto;
+    padding: 40px;
+  }
+}
+
+/* Missing Letter Game */
+.missing-letter-section {
+  margin: 0;
+  padding: 20px;
+  background: #f0f8ff;
+  border-radius: 15px;
+  border: 2px solid #4682b4;
+  width: 100%;
+  min-height: 80vh;
+}
+
+/* When missing letter game is standalone */
+.missing-letter-section {
+  margin: 0;
+  padding: 30px;
+  border-radius: 15px;
+  min-height: auto;
+}
+
+/* Desktop styles for standalone missing letter game */
+@media (min-width: 768px) {
+  .missing-letter-section {
+    padding: 40px;
+  }
+}
+
+.missing-letter-section h2 {
+  color: #2d3748;
+  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: 900;
+  font-style: normal;
+}
+
+#missing-word-display {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 25px 0;
+  flex-wrap: wrap;
+}
+
+.missing-letter {
+  width: 70px;
+  height: 70px;
+  border-radius: 16px;
+  background: #e6f3ff;
+  border: 3px solid #4682b4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  font-style: normal;
+  color: black;
+  transition: all 0.2s ease;
+}
+
+.missing-letter:not(.blank):hover {
+  background: #b3d9ff;
+  transform: translateY(-2px);
+  border-color: #2e5090;
+  box-shadow: 0 4px 8px rgba(70, 130, 180, 0.3);
+}
+
+.missing-letter.blank {
+  background: #fff;
+  border: 3px dashed #4682b4;
+  position: relative;
+}
+
+.missing-letter.blank::after {
+  content: "?";
+  color: #4682b4;
+  font-size: 2rem;
+  opacity: 0.5;
+}
+
+.missing-letter.filled {
+  background: #90ee90;
+  border-color: #228b22;
+  animation: fillSuccess 0.5s ease;
+}
+
+@keyframes fillSuccess {
+  0% { transform: scale(1); background: #fff; }
+  50% { transform: scale(1.2); background: #90ee90; }
+  100% { transform: scale(1); background: #90ee90; }
+}
+
+.missing-controls {
+  margin: 15px 0;
+}
+
+.missing-controls button {
+  margin: 5px;
+  padding: 10px 15px;
+  background: #4682b4;
+  color: black;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 900;
+  font-style: normal;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  border: 2px solid #2f4f4f;
+}
+
+.missing-controls button:hover {
+  background: #5a9bd4;
+  transform: translateY(-2px);
+}
+
+.letter-choices {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 25px 0;
+  flex-wrap: wrap;
+}
+
+.choice-letter {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  background: #ffe4b5;
+  border: 3px solid #daa520;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  font-weight: 900;
+  font-style: normal;
+  color: black;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.choice-letter:hover {
+  background: #ffd700;
+  transform: translateY(-3px);
+  border-color: #b8860b;
+}
+
+.choice-letter.correct {
+  background: #90ee90;
+  border-color: #228b22;
+  animation: correctChoice 0.6s ease;
+}
+
+.choice-letter.incorrect {
+  background: #ffa0a0;
+  border-color: #cd5c5c;
+  animation: shake 0.5s ease;
+}
+
+@keyframes correctChoice {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.missing-instruction {
+  color: #4a5568;
+  font-size: 14px;
+  margin: 10px 0;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Responsive missing letter sizes */
+@media (max-width: 768px) {
+  .missing-letter {
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
+  }
+  
+  .choice-letter {
+    width: 50px;
+    height: 50px;
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .missing-letter {
+    width: 50px;
+    height: 50px;
+    font-size: 1.8rem;
+  }
+  
+  .choice-letter {
+    width: 45px;
+    height: 45px;
+    font-size: 1.6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .missing-letter {
+    width: 80px;
+    height: 80px;
+    font-size: 3rem;
+  }
+  
+  .choice-letter {
+    width: 70px;
+    height: 70px;
+    font-size: 2.2rem;
+  }
+}
