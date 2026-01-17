@@ -10,8 +10,8 @@ function goBack() {
 }
 
 function generateCountingQuestion() {
-  // Generate a number between 1 and Math.min(10, level + 4)
-  const maxCount = Math.min(10, countingLevel + 4);
+  // Generate a number between 1 and Math.min(50, level * 10)
+  const maxCount = Math.min(50, countingLevel * 10);
   currentCountingAnswer = Math.floor(Math.random() * maxCount) + 1;
   
   // Select a random object emoji
@@ -46,7 +46,7 @@ function generateNumberChoices() {
   
   // Add 3 other numbers
   while (choices.size < 4) {
-    const choice = Math.floor(Math.random() * Math.min(10, countingLevel + 4)) + 1;
+    const choice = Math.floor(Math.random() * Math.min(50, countingLevel * 10)) + 1;
     choices.add(choice);
   }
   
@@ -95,7 +95,7 @@ function checkCountingAnswer(selectedNumber, buttonElement) {
       // Re-enable buttons
       const newButtons = document.querySelectorAll('.number-choice');
       newButtons.forEach(btn => btn.style.pointerEvents = 'auto');
-    }, 2000);
+    }, 500);
   } else {
     buttonElement.style.background = '#dc3545';
     buttonElement.style.color = 'white';

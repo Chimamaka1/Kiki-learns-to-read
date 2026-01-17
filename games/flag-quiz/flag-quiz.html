@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flags & Countries - Kiki Learns Geography</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="flag-quiz.css">
+</head>
+<body>
+  <div class="container">
+    <div class="flag-quiz-container">
+      <div class="game-header">
+        <button class="back-button" onclick="goBack()">← Back</button>
+        <h1>🌍 Flags & Countries</h1>
+      </div>
+
+      <div class="quiz-progress">
+        <div class="progress-item">
+          <span class="progress-label">Score:</span>
+          <span class="progress-value" id="flag-score">0</span>
+        </div>
+        <div class="progress-item">
+          <span class="progress-label">Streak:</span>
+          <span class="progress-value" id="flag-streak">0</span>
+        </div>
+      </div>
+
+      <div class="quiz-card">
+        <p class="prompt">Which country does this flag belong to?</p>
+        <div id="flag-display" class="flag-display">🏳️</div>
+        <div class="controls">
+          <button id="hear-flag" class="primary-btn">🔊 Hear the name</button>
+          <button id="next-flag" class="secondary-btn">🔄 Next</button>
+        </div>
+      </div>
+
+      <div id="choices" class="choices-grid"></div>
+      <p class="hint">Tip: Listen and match the flag to the country.</p>
+    </div>
+  </div>
+
+  <script src="flag-quiz.js"></script>
+</body>
+</html>

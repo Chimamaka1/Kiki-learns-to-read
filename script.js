@@ -170,6 +170,13 @@ async function speakWord(word) {
   }
 }
 
+// Text-to-speech function for games
+function speakText(text) {
+  if (!audioReady) return;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(new SpeechSynthesisUtterance(String(text)));
+}
+
 /* ==============================
    RENDER WORD
 ================================ */

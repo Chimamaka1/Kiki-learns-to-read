@@ -102,10 +102,12 @@
 
 .objects-display {
   min-height: 120px;
+  max-height: 400px;
+  overflow-y: auto;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   padding: 20px;
   background: linear-gradient(45deg, #fff9c4, #f7f3ff);
@@ -116,8 +118,8 @@
 
 .counting-object {
   animation: bounceIn 0.5s ease-out;
-  font-size: 2rem;
-  margin: 0.2rem;
+  font-size: 1.5rem;
+  margin: 0.1rem;
   display: inline-block;
 }
 
