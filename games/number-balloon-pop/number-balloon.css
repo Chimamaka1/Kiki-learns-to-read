@@ -2,6 +2,15 @@
    NUMBER BALLOON POP STYLES
 ================================ */
 
+/* Prevent italic rendering on all devices */
+* {
+  font-style: normal !important;
+}
+
+em, i, cite, dfn, var {
+  font-style: normal !important;
+}
+
 .balloon-game-container {
   min-height: 100vh;
   padding: 20px;

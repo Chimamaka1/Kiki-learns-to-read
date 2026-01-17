@@ -10,8 +10,14 @@
 }
 
 /* Ensure all text is clearly visible and never italicized */
-body, h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, textarea {
+body, h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, textarea, em, i, li, label {
   font-style: normal !important;
+}
+
+/* Override all elements to prevent italic rendering on mobile */
+em, i, cite, dfn, var {
+  font-style: normal !important;
+  font-weight: inherit;
 }
 
 /* ===============================
