@@ -67,12 +67,12 @@ em, i, cite, dfn, var {
 }
 
 body {
-  font-family: 'Comic Sans MS', cursive, Arial, sans-serif;
+  font-family: Arial, Calibri, 'Times New Roman', sans-serif;
   background: linear-gradient(135deg, #fff3e6 0%, #ffe0f0 50%, #e6f3ff 100%);
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  font-style: normal;
+  font-style: normal !important;
 }
 
 /* ===============================

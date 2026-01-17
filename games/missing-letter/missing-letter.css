@@ -1,3 +1,12 @@
+/* Prevent italic rendering on all devices */
+* {
+  font-style: normal !important;
+}
+
+em, i, cite, dfn, var {
+  font-style: normal !important;
+}
+
 /* Missing Letter Game Specific Styles */
 
 /* Override app container for game-specific layout */

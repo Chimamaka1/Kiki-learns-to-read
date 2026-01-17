@@ -2,6 +2,15 @@
    PATTERN MASTER - CSS STYLES
 =========================================== */
 
+/* Prevent italic rendering on all devices */
+* {
+  font-style: normal !important;
+}
+
+em, i, cite, dfn, var {
+  font-style: normal !important;
+}
+
 .pattern-master-container {
   max-width: 900px;
   margin: 0 auto;

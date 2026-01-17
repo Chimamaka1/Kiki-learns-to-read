@@ -2,6 +2,15 @@
    STORYBOOK STYLES
 ================================ */
 
+/* Prevent italic rendering on all devices */
+* {
+  font-style: normal !important;
+}
+
+em, i, cite, dfn, var {
+  font-style: normal !important;
+}
+
 .storybook-container {
   min-height: 100vh;
   padding: 20px;
