@@ -2,37 +2,70 @@
    LISTEN & CHOOSE (PHONICS)
 ========================= */
 
-const words = ["bat","cat","fat","hat","mat","pat","rat","sat","vat",
+// Phonics CVC words (kid-friendly selection)
+const cvcWords = [
+  "bat","cat","hat","mat","sat",
   "bad","dad","had","mad","pad","sad",
-  "bag","lag","rag","tag","wag",
-  "cap","gap","lap","map","nap","sap","tap","zap",
-  "jam","ham","ram","yam",
-  "man","fan","can","pan","ran","tan",
-  "bed","fed","led","red","wed",
-  "beg","leg","peg",
-  "hen","men","pen","ten","den",
-  "jet","net","pet","vet","get",
-  "web","keg","bin","din","fin","pin","tin","win",
-  "big","dig","fig","pig","wig",
-  "hit","kit","lit","pit","sit","fit",
-  "lip","sip","dip","hip","tip",
-  "mix","six","fix","cot","dot","hot","lot","not","pot","rot",
-  "dog","fog","hog","log",
+  "bag","tag","wag",
+  "cap","lap","map","nap","tap",
+  "jam","ham",
+  "man","fan","pan","ran","tan",
+  "bed","red",
+  "hen","pen","ten",
+  "jet","pet","vet",
+  "bin","pin","win",
+  "big","pig",
+  "sit","fit",
+  "lip","sip","dip",
+  "six","fix",
+  "cot","dot","hot","lot","not","pot",
+  "dog","log",
   "box","fox",
   "top","mop","hop","pop",
-  "job","sob","rob",
   "bug","hug","jug","mug","rug",
-  "bun","fun","run","sun",
+  "fun","run","sun",
   "cup","pup","tub","rub",
   "mud","bud"
 ];
+
+// Tricky sight words (Pre‑Primer/Primer focus)
+const trickyWords = [
+  "the","to","and","a","I","you","it","in","is","we","me","be","go","no","so",
+  "he","she","was","said","are","come","some","here","there","where",
+  "want","have","do","for","my","not","one","two","up","see","look","play"
+];
+
+// Smart distractors (kept simple for young readers)
+const trickyDistractors = {
+  to: ["too","two"],
+  the: ["then","tee"],
+  was: ["has","saw"],
+  said: ["sad","say"],
+  are: ["our","or"],
+  you: ["u","yoo"],
+  come: ["some","cone"],
+  some: ["come","sum"],
+  have: ["has"],
+  here: ["hear","there"],
+  there: ["here","where"],
+  where: ["were","here"],
+  do: ["to","go"],
+  for: ["four","far"],
+  one: ["two","on"],
+  two: ["to","too"],
+  see: ["sea"],
+  look: ["lock","book"],
+};
 
 const playBtn = document.getElementById("play-word");
 const choicesDiv = document.getElementById("choices");
 const nextBtn = document.getElementById("next-question");
 const reward = document.getElementById("reward");
+const modeSelect = document.getElementById("mode");
 
 let correctWord = "";
+let mode = (modeSelect && modeSelect.value) || "cvc";
+let reviewQueue = []; // simple spaced repetition: requeue missed words
 let currentAudio = null; // Track current playing audio
 
 /* ---------- SPEAK FULL WORD ---------- */
@@ -125,20 +158,47 @@ function showReward() {
 }
 
 /* ---------- NEW QUESTION ---------- */
+function pickTarget() {
+  if (mode === "tricky") {
+    // If we have missed items queued, surface them first
+    if (reviewQueue.length > 0 && Math.random() < 0.6) {
+      return reviewQueue.shift();
+    }
+    return trickyWords[Math.floor(Math.random() * trickyWords.length)];
+  }
+  // default CVC
+  return cvcWords[Math.floor(Math.random() * cvcWords.length)];
+}
+
+function buildOptions(target) {
+  const opts = new Set([target]);
+  if (mode === "tricky") {
+    const confusers = trickyDistractors[target] || [];
+    // Add up to 2 confusers
+    confusers.forEach(c => { if (opts.size < 3) opts.add(c); });
+    // Fill remaining with other tricky words
+    while (opts.size < 3) {
+      const w = trickyWords[Math.floor(Math.random() * trickyWords.length)];
+      if (!opts.has(w)) opts.add(w);
+    }
+  } else {
+    // CVC: random other words
+    while (opts.size < 3) {
+      const w = cvcWords[Math.floor(Math.random() * cvcWords.length)];
+      if (!opts.has(w)) opts.add(w);
+    }
+  }
+  return Array.from(opts).sort(() => Math.random() - 0.5);
+}
+
 function newQuestion() {
   choicesDiv.innerHTML = "";
 
   // choose target word
-  correctWord = words[Math.floor(Math.random() * words.length)];
+  correctWord = pickTarget();
 
   // build options
-  let options = [correctWord];
-  while (options.length < 3) {
-    const w = words[Math.floor(Math.random() * words.length)];
-    if (!options.includes(w)) options.push(w);
-  }
-
-  options.sort(() => Math.random() - 0.5);
+  const options = buildOptions(correctWord);
 
   options.forEach(word => {
     const optionDiv = document.createElement("div");
@@ -169,6 +229,8 @@ function newQuestion() {
         speakWord("Well done");
       } else {
         speakWord("Try again");
+        // Requeue missed target for spaced repetition
+        reviewQueue.push(correctWord);
       }
     };
 
@@ -184,6 +246,13 @@ function newQuestion() {
 /* ---------- EVENTS ---------- */
 playBtn.onclick = () => speakWord(correctWord);
 nextBtn.onclick = newQuestion;
+if (modeSelect) {
+  modeSelect.onchange = () => {
+    mode = modeSelect.value;
+    reviewQueue = [];
+    newQuestion();
+  };
+}
 
 /* ---------- START ---------- */
 newQuestion();

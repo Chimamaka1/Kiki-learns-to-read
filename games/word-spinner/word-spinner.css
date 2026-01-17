@@ -1,0 +1,321 @@
+/* Word Spinner – Animated Letter Rolling Game */
+
+.spinner-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+  text-align: center;
+}
+
+.game-header {
+  margin-bottom: 2rem;
+}
+
+.game-header h1 {
+  font-size: 2.5rem;
+  color: #667eea;
+  text-shadow: 3px 3px 6px rgba(0,0,0,0.1);
+  margin-bottom: 0.5rem;
+  animation: titleBounce 2s ease-in-out infinite;
+}
+
+@keyframes titleBounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(-2deg); }
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #555;
+  margin: 0;
+}
+
+.back-button {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-bottom: 1rem;
+}
+
+.back-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.game-board {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  padding: 3rem 2rem;
+  border-radius: 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  margin-bottom: 2rem;
+}
+
+.spinner-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.spin-btn {
+  width: 80px;
+  height: 60px;
+  font-size: 2rem;
+  background: linear-gradient(135deg, #a8e6cf 0%, #56CCF2 100%);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  font-weight: bold;
+}
+
+.spin-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 15px rgba(86, 204, 242, 0.4);
+  animation: btnWiggle 0.5s ease-in-out;
+}
+
+@keyframes btnWiggle {
+  0%, 100% { transform: scale(1.1) rotate(0deg); }
+  25% { transform: scale(1.1) rotate(-5deg); }
+  75% { transform: scale(1.1) rotate(5deg); }
+}
+
+.spin-btn:active {
+  transform: scale(0.95);
+}
+
+.letter-display {
+  width: 140px;
+  height: 140px;
+  background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+  border: 6px solid #ff6b9d;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  font-weight: bold;
+  color: #2d3436;
+  box-shadow: 0 8px 20px rgba(255, 107, 157, 0.3);
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.letter-display.spinning {
+  animation: letterSpin 0.5s ease-out;
+}
+
+@keyframes letterSpin {
+  0% { transform: rotateY(0deg) scale(1); }
+  50% { transform: rotateY(180deg) scale(0.8); opacity: 0.5; }
+  100% { transform: rotateY(360deg) scale(1); opacity: 1; }
+}
+
+.ending-display {
+  font-size: 5rem;
+  font-weight: bold;
+  color: #764ba2;
+  text-shadow: 3px 3px 6px rgba(0,0,0,0.15);
+  background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+  padding: 1rem 2rem;
+  border-radius: 20px;
+  border: 4px solid #667eea;
+  box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+  animation: endingFloat 3s ease-in-out infinite;
+}
+
+@keyframes endingFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.word-result {
+  margin-bottom: 2rem;
+}
+
+.current-word {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #ff6b9d;
+  margin-bottom: 1rem;
+  text-shadow: 3px 3px 6px rgba(0,0,0,0.1);
+  animation: wordPop 0.5s ease-out;
+}
+
+@keyframes wordPop {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.sound-btn {
+  padding: 1rem 2.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+}
+
+.sound-btn:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(108, 92, 231, 0.5);
+  animation: soundPulse 0.8s ease-in-out infinite;
+}
+
+@keyframes soundPulse {
+  0%, 100% { box-shadow: 0 8px 20px rgba(108, 92, 231, 0.5); }
+  50% { box-shadow: 0 8px 30px rgba(108, 92, 231, 0.8); }
+}
+
+.sound-btn:active {
+  transform: translateY(-2px) scale(1);
+}
+
+.family-selector {
+  margin-top: 2rem;
+}
+
+.family-selector p {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 1rem;
+}
+
+.family-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.family-btn {
+  padding: 0.8rem 1.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(9, 132, 227, 0.3);
+}
+
+.family-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 15px rgba(9, 132, 227, 0.5);
+}
+
+.family-btn.active {
+  background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+  box-shadow: 0 6px 15px rgba(232, 67, 147, 0.5);
+  animation: activeGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes activeGlow {
+  0%, 100% { box-shadow: 0 6px 15px rgba(232, 67, 147, 0.5); }
+  50% { box-shadow: 0 8px 25px rgba(232, 67, 147, 0.8); }
+}
+
+.reward {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #ffd93d;
+  font-weight: bold;
+  text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+  animation: rewardPop 0.6s ease-out;
+  margin-top: 1rem;
+}
+
+@keyframes rewardPop {
+  0% { 
+    transform: scale(0) rotate(-180deg); 
+    opacity: 0; 
+  }
+  50% { 
+    transform: scale(1.2) rotate(10deg); 
+    opacity: 1; 
+  }
+  100% { 
+    transform: scale(1) rotate(0deg); 
+    opacity: 1; 
+  }
+}
+
+.reward.hidden {
+  display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .game-header h1 {
+    font-size: 2rem;
+  }
+  
+  .game-board {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem 1rem;
+  }
+  
+  .letter-display, .ending-display {
+    font-size: 4rem;
+  }
+  
+  .current-word {
+    font-size: 3rem;
+  }
+  
+  .spin-btn {
+    width: 60px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+  
+  .letter-display {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+/* Additional animations for letter changes */
+.letter-display.roll-up {
+  animation: rollUp 0.4s ease-out;
+}
+
+@keyframes rollUp {
+  0% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(-30px); opacity: 0; }
+  51% { transform: translateY(30px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.letter-display.roll-down {
+  animation: rollDown 0.4s ease-out;
+}
+
+@keyframes rollDown {
+  0% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(30px); opacity: 0; }
+  51% { transform: translateY(-30px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
