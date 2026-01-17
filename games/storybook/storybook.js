@@ -123,63 +123,42 @@ function initReadingGuide() {
   const observer = new MutationObserver(positionGuide);
   observer.observe(storyText, { childList: true, subtree: true });
   
-  // Drag finger horizontally
-  finger.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    e.preventDefault();
-  });
-  
-  document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
+  // Drag finger horizontally with pointer events (stable on iPad)
+  const onPointerMove = (clientX) => {
     const rect = guide.getBoundingClientRect();
-    let x = e.clientX - rect.left;
-    x = Math.max(0, Math.min(x, rect.width));
+    // Clamp so the finger stays fully within the guide
+    const half = finger.offsetWidth / 2;
+    let x = clientX - rect.left;
+    x = Math.max(half, Math.min(x, rect.width - half));
     finger.style.left = x + 'px';
-    
-    // Animate word under finger
-    const word = getWordUnderFinger(e.clientX);
+
+    // Use the visual finger center for hit detection
+    const fingerCenterClientX = rect.left + x;
+    const word = getWordUnderFinger(fingerCenterClientX);
     if (word && word !== lastWord) {
       if (lastWord) lastWord.classList.remove('word-jump');
       word.classList.add('word-jump');
       lastWord = word;
       setTimeout(() => word.classList.remove('word-jump'), 400);
     }
-    
-    e.preventDefault();
-  });
-  
-  document.addEventListener('mouseup', () => {
-    isDragging = false;
-  });
-  
-  // Touch support
-  finger.addEventListener('touchstart', (e) => {
+  };
+
+  finger.addEventListener('pointerdown', (e) => {
     isDragging = true;
+    try { finger.setPointerCapture(e.pointerId); } catch {}
+    onPointerMove(e.clientX);
     e.preventDefault();
-  }, { passive: false });
-  
-  document.addEventListener('touchmove', (e) => {
-    if (!isDragging) return;
-    const rect = guide.getBoundingClientRect();
-    let x = e.touches[0].clientX - rect.left;
-    x = Math.max(0, Math.min(x, rect.width));
-    finger.style.left = x + 'px';
-    
-    // Animate word under finger
-    const word = getWordUnderFinger(e.touches[0].clientX);
-    if (word && word !== lastWord) {
-      if (lastWord) lastWord.classList.remove('word-jump');
-      word.classList.add('word-jump');
-      lastWord = word;
-      setTimeout(() => word.classList.remove('word-jump'), 400);
-    }
-    
-    e.preventDefault();
-  }, { passive: false });
-  
-  document.addEventListener('touchend', () => {
-    isDragging = false;
   });
+
+  window.addEventListener('pointermove', (e) => {
+    if (!isDragging) return;
+    onPointerMove(e.clientX);
+    e.preventDefault();
+  }, { passive: false });
+
+  const stopDrag = () => { isDragging = false; };
+  window.addEventListener('pointerup', stopDrag);
+  window.addEventListener('pointercancel', stopDrag);
 }
 
 function displayStoryList() {
@@ -273,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Use event delegation for CVC word clicks (works on dynamically added content)
   const storyText = document.getElementById('story-text');
-  // Click: highlight only (silent)
+  // Click: highlight and speak the word
   storyText.addEventListener('click', (e) => {
     if (e.target.classList.contains('cvc-word') || e.target.classList.contains('sb-word')) {
       e.target.classList.add('highlighted');
@@ -284,6 +263,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (currentSceneCanvas) {
         playSceneAnimation(currentSceneCanvas);
+      }
+      // Speak the clicked word (letters and apostrophes only)
+      const spoken = (e.target.textContent || '').trim().match(/[A-Za-z']+/);
+      if (spoken) {
+        speakText(spoken[0]);
       }
       setTimeout(() => {
         e.target.classList.remove('highlighted');

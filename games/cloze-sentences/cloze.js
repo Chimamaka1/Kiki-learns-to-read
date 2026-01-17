@@ -160,6 +160,20 @@ hearBtn.addEventListener('click', () => {
   speakText(currentSentence);
 });
 
+// Click-to-speak for words in the sentence (including filled blank)
+sentenceEl.addEventListener('click', (e) => {
+  const t = e.target;
+  if (!t) return;
+  const isWord = t.classList && t.classList.contains('word-item');
+  const isFilledBlank = t.classList && t.classList.contains('blank') && t.classList.contains('filled');
+  if (isWord || isFilledBlank) {
+    const match = (t.textContent || '').trim().match(/[A-Za-z']+/);
+    if (match) {
+      speakText(match[0]);
+    }
+  }
+});
+
 // Reading Guide functionality - horizontal finger tracker
 function initReadingGuide() {
   const guide = document.getElementById('reading-guide');
