@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spot the Difference - Kiki Learns to Read</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="spot-difference.css">
+</head>
+<body>
+  <div id="audio-gate" style="display: none;">
+    <button id="start-audio">🔊 Start Learning</button>
+  </div>
+
+  <div class="container">
+    <div class="spot-difference-container">
+      <div class="game-header">
+        <button class="back-button" onclick="goBack()">← Back</button>
+        <h1>🔍 Spot the Difference</h1>
+        <div class="score-display">
+          <span class="score-label">Found:</span>
+          <span class="score-value" id="found">0</span>/<span id="total">0</span>
+        </div>
+      </div>
+
+      <div class="game-instructions">
+        <h2>Click on the differences you can spot! Find them all! 👀</h2>
+      </div>
+
+      <div class="difficulty-selector">
+        <h3>Choose Difficulty:</h3>
+        <div class="difficulty-buttons">
+          <button class="difficulty-btn active" data-difficulty="easy">🌟 Easy</button>
+          <button class="difficulty-btn" data-difficulty="medium">⭐⭐ Medium</button>
+          <button class="difficulty-btn" data-difficulty="hard">⭐⭐⭐ Hard</button>
+        </div>
+      </div>
+
+      <div class="game-area">
+        <div class="image-container">
+          <h3>Picture 1</h3>
+          <div class="scene-canvas" id="scene-left">
+            <canvas id="canvas-left"></canvas>
+          </div>
+        </div>
+
+        <div class="image-container">
+          <h3>Picture 2</h3>
+          <div class="scene-canvas" id="scene-right">
+            <canvas id="canvas-right"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div id="feedback-section" class="feedback-section" style="display: none;">
+        <div id="feedback-message" class="feedback-message"></div>
+        <button class="next-btn" onclick="nextRound()">Next Level →</button>
+      </div>
+
+      <div id="celebration" class="celebration" style="display: none;">
+        <div class="confetti"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../config.js"></script>
+  <script src="spot-difference.js"></script>
+</body>
+</html>

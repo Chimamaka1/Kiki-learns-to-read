@@ -1,0 +1,348 @@
+/* ==========================================
+   PATTERN MASTER - CSS STYLES
+=========================================== */
+
+.pattern-master-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  color: white;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.game-header h1 {
+  font-size: 2.5em;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.score-display {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 10px 20px;
+  border-radius: 15px;
+  font-size: 1.3em;
+  font-weight: bold;
+  backdrop-filter: blur(10px);
+}
+
+.score-label {
+  margin-right: 8px;
+}
+
+.game-instructions {
+  text-align: center;
+  margin-bottom: 25px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.game-instructions h2 {
+  margin: 0;
+  font-size: 1.3em;
+  line-height: 1.5;
+}
+
+/* Difficulty Selector */
+.difficulty-selector {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.difficulty-selector h3 {
+  margin: 0 0 15px 0;
+  font-size: 1.1em;
+}
+
+.difficulty-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.difficulty-btn {
+  padding: 12px 24px;
+  font-size: 1.1em;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.difficulty-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.difficulty-btn.active {
+  background: rgba(255, 255, 255, 0.4);
+  border-color: white;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+/* Pattern Display Area */
+.pattern-display-area {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 25px;
+  color: #333;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.pattern-display-area h3 {
+  margin: 0 0 20px 0;
+  font-size: 1.2em;
+  color: #667eea;
+  text-transform: uppercase;
+}
+
+.pattern-sequence {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  min-height: 100px;
+}
+
+.pattern-item {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5em;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  animation: itemAppear 0.3s ease-out;
+}
+
+.pattern-item.question {
+  background: repeating-linear-gradient(
+    45deg,
+    #ddd,
+    #ddd 10px,
+    #e8e8e8 10px,
+    #e8e8e8 20px
+  );
+  color: #999;
+  border: 3px dashed #999;
+  font-size: 1.5em;
+}
+
+@keyframes itemAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Answer Options */
+.answer-options {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 25px;
+  color: #333;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.answer-options h3 {
+  margin: 0 0 20px 0;
+  font-size: 1.2em;
+  color: #667eea;
+  text-transform: uppercase;
+}
+
+.answer-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.answer-btn {
+  width: 90px;
+  height: 90px;
+  border-radius: 12px;
+  font-size: 2.2em;
+  border: 4px solid #ddd;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.answer-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.answer-btn:active {
+  transform: scale(0.95);
+}
+
+.answer-btn.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Feedback Section */
+.feedback-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 25px;
+  text-align: center;
+  color: #333;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.feedback-message {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  font-weight: bold;
+  min-height: 40px;
+}
+
+.feedback-message.correct {
+  color: #4caf50;
+  animation: bounce 0.6s ease;
+}
+
+.feedback-message.incorrect {
+  color: #f44336;
+  animation: shake 0.6s ease;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+.next-btn {
+  padding: 15px 40px;
+  font-size: 1.2em;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.next-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+/* Celebration */
+.celebration {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #667eea;
+  animation: confetti-fall 3s linear forwards;
+}
+
+@keyframes confetti-fall {
+  to {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Back Button */
+.back-button {
+  padding: 10px 20px;
+  font-size: 1.1em;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .pattern-master-container {
+    padding: 15px;
+  }
+
+  .game-header h1 {
+    font-size: 1.8em;
+  }
+
+  .pattern-item {
+    width: 60px;
+    height: 60px;
+    font-size: 2em;
+  }
+
+  .answer-btn {
+    width: 70px;
+    height: 70px;
+    font-size: 1.8em;
+  }
+
+  .difficulty-buttons {
+    gap: 8px;
+  }
+
+  .difficulty-btn {
+    padding: 10px 16px;
+    font-size: 0.9em;
+  }
+}
