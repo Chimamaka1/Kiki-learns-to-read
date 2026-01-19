@@ -635,6 +635,9 @@ function prepareInteractiveWords() {
 
 function enablePointerDragHighlight(container) {
   let dragging = false;
+  let startX = 0;
+  let startY = 0;
+  const DRAG_THRESHOLD = 6; // px before switching from tap to drag
 
   const highlightEl = (el) => {
     if (!el) return;
@@ -655,17 +658,29 @@ function enablePointerDragHighlight(container) {
   };
 
   container.addEventListener('pointerdown', (e) => {
-    dragging = true;
+    dragging = false; // decide based on movement
+    startX = e.clientX;
+    startY = e.clientY;
     if (container.setPointerCapture) {
       try { container.setPointerCapture(e.pointerId); } catch {}
     }
+    // Immediate feedback on press without suppressing click
     highlightEl(e.target);
   });
 
   container.addEventListener('pointermove', (e) => {
-    if (!dragging) return;
+    if (!dragging) {
+      const dx = Math.abs(e.clientX - startX);
+      const dy = Math.abs(e.clientY - startY);
+      if (dx > DRAG_THRESHOLD || dy > DRAG_THRESHOLD) {
+        dragging = true;
+      } else {
+        return; // treat as tap; don't prevent default so click can fire
+      }
+    }
     const el = document.elementFromPoint(e.clientX, e.clientY);
     highlightEl(el);
+    e.preventDefault();
   });
 
   const stopDrag = () => { dragging = false; };
