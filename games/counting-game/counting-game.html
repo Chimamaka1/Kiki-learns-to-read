@@ -19,6 +19,7 @@
       <div class="game-header">
         <button class="back-button" onclick="goBack()">← Back</button>
         <h1>🎯 Counting Practice</h1>
+        <button class="guide-button" id="open-guide">📖 How to Play</button>
       </div>
       
       <!-- Progress Display -->
@@ -48,10 +49,63 @@
       
       <p class="counting-instruction">Look at the objects above and click the correct number!</p>
     </div>
+
+    <!-- Number Chart Section -->
+    <div class="number-chart-container">
+      <div class="chart-header">
+        <h2>🧮 Number Chart: Click to Hear</h2>
+        <p class="chart-subtitle">Choose a range and tap numbers to hear them.</p>
+      </div>
+
+      <div class="range-selector" id="range-selector">
+        <button class="range-btn" data-start="1" data-end="10">1–10</button>
+        <button class="range-btn" data-start="10" data-end="20">10–20</button>
+        <button class="range-btn" data-start="20" data-end="30">20–30</button>
+        <button class="range-btn" data-start="30" data-end="40">30–40</button>
+        <button class="range-btn" data-start="40" data-end="50">40–50</button>
+      </div>
+
+      <div class="number-grid" id="number-grid" aria-live="polite"></div>
+    </div>
   </div>
 
   <script src="../../config.js"></script>
   <script src="../../script.js"></script>
   <script src="counting-game.js"></script>
+
+      <!-- Learning Guide Modal -->
+      <div class="guide-overlay" id="guide-overlay" aria-modal="true" role="dialog">
+        <div class="guide-modal">
+          <h2>👋 Welcome, grown-ups & kiddos!</h2>
+          <p class="guide-intro">Read this quick guide together before you start. It keeps learning fun, easy, and interactive.</p>
+          <div class="guide-section">
+            <h3>🎯 Objective</h3>
+            <ul>
+              <li>Spot the objects, count carefully, and choose the right number.</li>
+              <li>Hear the number aloud to connect the symbol with its sound.</li>
+              <li>Build confidence by celebrating every win, big or small.</li>
+            </ul>
+          </div>
+          <div class="guide-section">
+            <h3>🤝 Tips for Parents</h3>
+            <ul>
+              <li>Count together out loud once before your child answers.</li>
+              <li>Use a finger to point and track objects left-to-right.</li>
+              <li>If unsure, say: "Let's count slowly together." Model, then let them try.</li>
+              <li>Cheer the effort, not just the result: "Great counting!"</li>
+              <li>Keep sessions short (3–5 questions), then take a playful break.</li>
+            </ul>
+          </div>
+          <div class="guide-section">
+            <h3>🌟 Make It Extra Fun</h3>
+            <ul>
+              <li>Guess first, then check by counting.</li>
+              <li>Take turns: you answer one, your child answers one.</li>
+              <li>Ask, "Can you clap the number you chose?" for movement.</li>
+            </ul>
+          </div>
+          <button class="guide-start" id="guide-start">👍 Got it! Let's play</button>
+        </div>
+      </div>
 </body>
 </html>

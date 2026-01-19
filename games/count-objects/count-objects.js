@@ -1,19 +1,9 @@
-// Counting Game Logic
+// Count Objects Game Logic
 let currentCountingAnswer = 0;
 let countingScore = 0;
 let countingLevel = 1;
 const countingObjects = ['🍎', '⭐', '🎈', '🦋', '🌸', '🎁', '🐸', '⚽', '🍕', '🚗'];
 let gameUnlocked = false;
-
-// Number Chart state
-const numberRanges = [
-  { label: '1–10', start: 1, end: 10 },
-  { label: '10–20', start: 10, end: 20 },
-  { label: '20–30', start: 20, end: 30 },
-  { label: '30–40', start: 30, end: 40 },
-  { label: '40–50', start: 40, end: 50 },
-];
-let currentRange = numberRanges[0];
 
 // Navigation function
 function goBack() {
@@ -103,13 +93,13 @@ function checkCountingAnswer(selectedNumber, buttonElement) {
     countingScore += 10;
     
     // Update score display
-    const scoreElement = document.getElementById('counting-score');
+    const scoreElement = document.getElementById('count-score');
     if (scoreElement) scoreElement.textContent = countingScore;
     
     // Level up every 50 points
     if (countingScore % 50 === 0) {
       countingLevel++;
-      const levelElement = document.getElementById('counting-level');
+      const levelElement = document.getElementById('count-level');
       if (levelElement) levelElement.textContent = countingLevel;
     }
     
@@ -148,60 +138,6 @@ function hearCount() {
   speakText(`Count the objects. There are ${currentCountingAnswer} ${objectText}.`);
 }
 
-/* ==============================
-   NUMBER CHART LOGIC
-================================ */
-
-function renderRangeSelector() {
-  const selector = document.getElementById('range-selector');
-  if (!selector) return;
-  // Buttons exist in HTML, attach handlers and active state
-  const buttons = selector.querySelectorAll('.range-btn');
-  buttons.forEach(btn => {
-    const start = Number(btn.getAttribute('data-start'));
-    const end = Number(btn.getAttribute('data-end'));
-    btn.onclick = () => {
-      currentRange = { label: `${start}–${end}`, start, end };
-      buttons.forEach(b => b.classList.toggle('active', b === btn));
-      if (typeof speakText === 'function' && window.audioReady) {
-        speakText(`Let's count ${start} to ${end}.`);
-      } else {
-        speechSynthesis.cancel();
-        speechSynthesis.speak(new SpeechSynthesisUtterance(`Let's count ${start} to ${end}.`));
-      }
-      renderNumberGrid(start, end);
-    };
-    // Set initial active on first load
-    if (start === currentRange.start && end === currentRange.end) {
-      btn.classList.add('active');
-    }
-  });
-}
-
-function renderNumberGrid(start, end) {
-  const grid = document.getElementById('number-grid');
-  if (!grid) return;
-  grid.innerHTML = '';
-  for (let n = start; n <= end; n++) {
-    const tile = document.createElement('button');
-    tile.className = 'number-tile';
-    tile.textContent = n;
-    tile.setAttribute('aria-label', `Number ${n}`);
-    tile.addEventListener('click', () => {
-      if (typeof speakText === 'function' && window.audioReady) {
-        speakText(n);
-      } else {
-        speechSynthesis.cancel();
-        speechSynthesis.speak(new SpeechSynthesisUtterance(String(n)));
-      }
-      // brief visual feedback
-      tile.style.transform = 'scale(0.98)';
-      setTimeout(() => tile.style.transform = '', 120);
-    });
-    grid.appendChild(tile);
-  }
-}
-
 // Save progress to localStorage
 function saveCountingProgress() {
   const progressData = {
@@ -209,12 +145,12 @@ function saveCountingProgress() {
     level: countingLevel,
     lastPlayed: new Date().toISOString()
   };
-  localStorage.setItem('countingGameProgress', JSON.stringify(progressData));
+  localStorage.setItem('countObjectsProgress', JSON.stringify(progressData));
 }
 
 // Load progress from localStorage
 function loadCountingProgress() {
-  const saved = localStorage.getItem('countingGameProgress');
+  const saved = localStorage.getItem('countObjectsProgress');
   if (saved) {
     try {
       const progressData = JSON.parse(saved);
@@ -222,12 +158,12 @@ function loadCountingProgress() {
       countingLevel = progressData.level || 1;
       
       // Update display
-      const scoreElement = document.getElementById('counting-score');
-      const levelElement = document.getElementById('counting-level');
+      const scoreElement = document.getElementById('count-score');
+      const levelElement = document.getElementById('count-level');
       if (scoreElement) scoreElement.textContent = countingScore;
       if (levelElement) levelElement.textContent = countingLevel;
     } catch (e) {
-      console.log('Could not load counting game progress');
+      console.log('Could not load count objects game progress');
     }
   }
 }
@@ -238,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
   loadCountingProgress();
   
   // Set up event listeners
-  const newQuestionBtn = document.getElementById('new-counting-question');
+  const newQuestionBtn = document.getElementById('new-count-question');
   const hearCountBtn = document.getElementById('hear-count');
   const guideStartBtn = document.getElementById('guide-start');
   const openGuideBtn = document.getElementById('open-guide');
@@ -264,10 +200,6 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Save progress periodically
   setInterval(saveCountingProgress, 5000);
-
-  // Initialize Number Chart
-  renderRangeSelector();
-  renderNumberGrid(currentRange.start, currentRange.end);
 });
 
 // Save progress when leaving the page

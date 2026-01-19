@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Chart - Kiki Learns to Read</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="number-chart.css">
+</head>
+<body>
+  <!-- Audio Gate for iOS devices -->
+  <div id="audio-gate" style="display: none;">
+    <button id="start-audio">🔊 Start Learning</button>
+  </div>
+
+  <div class="container">
+    <!-- Confetti Container -->
+    <div id="confetti-container" class="confetti-container"></div>
+    
+    <!-- Number Chart Section -->
+    <div class="number-chart-container">
+      <div class="chart-header">
+        <button class="back-button" onclick="goBack()">← Back</button>
+        <h1>🧮 Fun Number Adventure! 🎉</h1>
+        <button class="guide-button" id="open-guide">📖 How to Play</button>
+      </div>
+      
+      <div class="kiki-character" id="kiki-character">🐰</div>
+      
+      <p class="chart-subtitle">Tap a range and click numbers to hear them! 🎵</p>
+
+      <div class="range-selector" id="range-selector">
+        <button class="range-btn" data-start="1" data-end="10">1–10 🎈</button>
+        <button class="range-btn" data-start="10" data-end="20">10–20 🌟</button>
+        <button class="range-btn" data-start="20" data-end="30">20–30 🚀</button>
+        <button class="range-btn" data-start="30" data-end="40">30–40 🌈</button>
+        <button class="range-btn" data-start="40" data-end="50">40–50 🎪</button>
+      </div>
+
+      <div class="number-grid" id="number-grid" aria-live="polite"></div>
+      
+      <div class="celebration-message" id="celebration-message"></div>
+    </div>
+  </div>
+
+  <script src="../../config.js"></script>
+  <script src="../../script.js"></script>
+  <script src="number-chart.js"></script>
+
+  <!-- Learning Guide Modal -->
+  <div class="guide-overlay" id="guide-overlay" aria-modal="true" role="dialog">
+    <div class="guide-modal">
+      <h2>👋 Welcome, grown-ups & kiddos!</h2>
+      <p class="guide-intro">Read this quick guide together before you start. It keeps learning fun, easy, and interactive.</p>
+      <div class="guide-section">
+        <h3>🎯 Objective</h3>
+        <ul>
+          <li>Explore numbers by clicking and hearing them spoken aloud.</li>
+          <li>Choose different ranges to discover numbers from 1 to 50.</li>
+          <li>Build number recognition and connect symbols to their sounds.</li>
+        </ul>
+      </div>
+      <div class="guide-section">
+        <h3>🤝 Tips for Parents</h3>
+        <ul>
+          <li>Start with 1-10, then progress to higher ranges as confidence grows.</li>
+          <li>Count together: "Let's find number 5!" and tap it together.</li>
+          <li>Play counting games: "Can you tap all numbers in order?"</li>
+          <li>Make it a treasure hunt: "Find the hidden number 7!"</li>
+          <li>Celebrate every click with enthusiasm and encouragement.</li>
+        </ul>
+      </div>
+      <div class="guide-section">
+        <h3>🌟 Make It Extra Fun</h3>
+        <ul>
+          <li>Ask: "What comes after this number?" before clicking the next one.</li>
+          <li>Take turns clicking - you pick one, your child picks the next.</li>
+          <li>Count backwards from 10 to 1 together.</li>
+          <li>Try finding patterns: "Let's click all the numbers ending in 5!"</li>
+        </ul>
+      </div>
+      <button class="guide-start" id="guide-start">👍 Got it! Let's play</button>
+    </div>
+  </div>
+</body>
+</html>
