@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Chart - Kiki Learns to Read</title>
+  <link rel="stylesheet" href="../../../css/style.css">
+  <link rel="stylesheet" href="number-chart.css">
+</head>
+<body>
+  <!-- Audio Gate for iOS devices -->
+  <div id="audio-gate" style="display: none;">
+    <button id="start-audio">🔊 Start Learning</button>
+  </div>
+
+  <div class="container">
+    <!-- Confetti Container -->
+    <div id="confetti-container" class="confetti-container"></div>
+    
+    <!-- Number Chart Section -->
+    <div class="number-chart-container">
+      <div class="chart-header">
+        <button class="back-button" onclick="goBack()">← Back</button>
+        <h1>🧮 Fun Number Adventure! 🎉</h1>
+        <button class="guide-button" id="open-guide">📖 How to Play</button>
+      </div>
+      
+      <div class="kiki-character" id="kiki-character">🐰</div>
+      
+      <!-- Level Selector -->
+      <div class="level-selector" id="level-selector">
+        <button class="level-btn active" data-level="1">📊 Level 1: Number Chart</button>
+        <button class="level-btn" data-level="2">🔢 Level 2: Fill the Gaps</button>
+        <button class="level-btn" data-level="3">🏁 Level 3: Number Race</button>
+      </div>
+      
+      <!-- Level 1: Number Chart -->
+      <div class="level-content" id="level-1-content">
+        <p class="chart-subtitle">Tap a range and click numbers to hear them! 🎵</p>
+
+        <div class="range-selector" id="range-selector">
+          <button class="range-btn" data-start="1" data-end="10">1–10 🎈</button>
+          <button class="range-btn" data-start="10" data-end="20">10–20 🌟</button>
+          <button class="range-btn" data-start="20" data-end="30">20–30 🚀</button>
+          <button class="range-btn" data-start="30" data-end="40">30–40 🌈</button>
+          <button class="range-btn" data-start="40" data-end="50">40–50 🎪</button>
+        </div>
+
+        <div class="number-grid" id="number-grid" aria-live="polite"></div>
+      </div>
+      
+      <!-- Level 2: Fill the Gaps -->
+      <div class="level-content" id="level-2-content" style="display: none;">
+        <p class="chart-subtitle">Choose a range and find the missing number! 🎯</p>
+        
+        <div class="range-selector" id="gap-range-selector">
+          <button class="range-btn" data-start="1" data-end="10">1–10 🎈</button>
+          <button class="range-btn" data-start="11" data-end="20">11–20 🌟</button>
+          <button class="range-btn" data-start="21" data-end="30">21–30 🚀</button>
+          <button class="range-btn" data-start="31" data-end="40">31–40 🌈</button>
+          <button class="range-btn" data-start="41" data-end="50">41–50 🎪</button>
+        </div>
+        
+        <div class="gap-game-area" id="gap-game-area">
+          <div class="sequence-display" id="sequence-display"></div>
+          <div class="answer-options" id="answer-options"></div>
+          <button class="next-question-btn" id="next-question-btn" style="display: none;">Next Question ➡️</button>
+        </div>
+        
+        <div class="score-display" id="score-display">Score: <span id="score">0</span></div>
+      </div>
+      
+      <!-- Level 3: Number Race -->
+      <div class="level-content" id="level-3-content" style="display: none;">
+        <p class="chart-subtitle">Click numbers in order as fast as you can! ⚡</p>
+        
+        <div class="difficulty-selector" id="difficulty-selector">
+          <button class="difficulty-btn active" data-difficulty="easy">⭐ Easy (5 Numbers)</button>
+          <button class="difficulty-btn" data-difficulty="medium">⭐⭐ Medium (10 Numbers)</button>
+          <button class="difficulty-btn" data-difficulty="hard">⭐⭐⭐ Hard (10 Numbers)</button>
+        </div>
+        
+        <div class="range-selector" id="race-range-selector">
+          <button class="range-btn" data-start="1" data-end="10">1–10 🎈</button>
+          <button class="range-btn" data-start="11" data-end="20">11–20 🌟</button>
+          <button class="range-btn" data-start="21" data-end="30">21–30 🚀</button>
+          <button class="range-btn" data-start="31" data-end="40">31–40 🌈</button>
+          <button class="range-btn" data-start="41" data-end="50">41–50 🎪</button>
+        </div>
+        
+        <div class="race-game-area" id="race-game-area">
+          <div class="race-stats">
+            <div class="stat-item">
+              <div class="stat-label">Time</div>
+              <div class="stat-value" id="timer">0.0s</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Next Number</div>
+              <div class="stat-value" id="next-number">-</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Progress</div>
+              <div class="stat-value" id="progress">0/0</div>
+            </div>
+          </div>
+          
+          <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+          </div>
+          
+          <button class="start-race-btn" id="start-race-btn">🏁 Start Race!</button>
+          
+          <div class="race-grid" id="race-grid"></div>
+          
+          <div class="race-result" id="race-result" style="display: none;">
+            <div class="result-stars" id="result-stars"></div>
+            <div class="result-time" id="result-time"></div>
+            <div class="result-message" id="result-message"></div>
+            <button class="play-again-btn" id="play-again-btn">Play Again 🔄</button>
+          </div>
+        </div>
+        
+        <div class="best-times" id="best-times">
+          <h3>🏆 Best Times</h3>
+          <div id="best-times-list"></div>
+        </div>
+      </div>
+      
+      <div class="celebration-message" id="celebration-message"></div>
+    </div>
+  </div>
+
+  <script src="../../../config.js"></script>
+  <script src="../../../script.js"></script>
+  <script src="number-chart.js"></script>
+
+  <!-- Learning Guide Modal -->
+  <div class="guide-overlay" id="guide-overlay" aria-modal="true" role="dialog">
+    <div class="guide-modal">
+      <h2>👋 Welcome, grown-ups & kiddos!</h2>
+      <p class="guide-intro">Read this quick guide together before you start. It keeps learning fun, easy, and interactive.</p>
+      <div class="guide-section">
+        <h3>🎯 Objective</h3>
+        <ul>
+          <li><strong>Level 1 - Number Chart:</strong> Explore numbers by clicking and hearing them spoken aloud.</li>
+          <li><strong>Level 2 - Fill the Gaps:</strong> Find the missing number in a sequence and select the correct answer.</li>
+          <li><strong>Level 3 - Number Race:</strong> Click numbers in ascending order as fast as possible to beat your best time!</li>
+          <li>Choose different ranges to discover numbers from 1 to 50.</li>
+          <li>Build number recognition and connect symbols to their sounds.</li>
+        </ul>
+      </div>
+      <div class="guide-section">
+        <h3>🤝 Tips for Parents</h3>
+        <ul>
+          <li>Start with 1-10, then progress to higher ranges as confidence grows.</li>
+          <li>Count together: "Let's find number 5!" and tap it together.</li>
+          <li>Play counting games: "Can you tap all numbers in order?"</li>
+          <li>Make it a treasure hunt: "Find the hidden number 7!"</li>
+          <li>Celebrate every click with enthusiasm and encouragement.</li>
+        </ul>
+      </div>
+      <div class="guide-section">
+        <h3>🌟 Make It Extra Fun</h3>
+        <ul>
+          <li>Ask: "What comes after this number?" before clicking the next one.</li>
+          <li>Take turns clicking - you pick one, your child picks the next.</li>
+          <li>Count backwards from 10 to 1 together.</li>
+          <li>Try finding patterns: "Let's click all the numbers ending in 5!"</li>
+        </ul>
+      </div>
+      <button class="guide-start" id="guide-start">👍 Got it! Let's play</button>
+    </div>
+  </div>
+</body>
+</html>

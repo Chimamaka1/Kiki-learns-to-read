@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Missing Letter Game - Fill in the missing letters to complete words!" />
+  <title>Missing Letter Game - Kiki Learns to Read</title>
+  <link rel="stylesheet" href="../../../css/style.css?v=final1">
+  <link rel="stylesheet" href="missing-letter.css">
+</head>
+<body>
+
+<!-- 🔊 AUDIO GATE (REQUIRED FOR iPAD) -->
+<div id="audio-gate">
+  <button id="start-audio">🔊 Tap to Start</button>
+</div>
+
+<div id="app-container">
+  <!-- Missing Letter Game Section -->
+  <div class="missing-letter-section">
+    <div class="section-header">
+      <button class="back-button" onclick="goBackToReading()">← Back to Reading Skills</button>
+      <h2>🔤 Fill the Missing Letter</h2>
+    </div>
+    
+    <!-- Progress Tracking Display -->
+    <div class="progress-section">
+      <h4>📊 Progress Tracker</h4>
+      <div class="progress-stats">
+        <div class="stat-item correct-stat">
+          <span class="stat-icon">✅</span>
+          <span class="stat-label">Correct:</span>
+          <span class="stat-value" id="correct-count">0</span>
+        </div>
+        <div class="stat-item incorrect-stat">
+          <span class="stat-icon">❌</span>
+          <span class="stat-label">Incorrect:</span>
+          <span class="stat-value" id="incorrect-count">0</span>
+        </div>
+        <div class="stat-item accuracy-stat">
+          <span class="stat-icon">🎯</span>
+          <span class="stat-label">Accuracy:</span>
+          <span class="stat-value" id="accuracy-percent">0%</span>
+        </div>
+      </div>
+      <div class="progress-controls">
+        <button id="view-detailed-progress" onclick="showDetailedProgress()">📈 View Details</button>
+        <button id="reset-progress" onclick="resetProgress()">🔄 Reset Progress</button>
+      </div>
+    </div>
+    
+    <div id="missing-word-display"></div>
+    <div class="missing-controls">
+      <button id="hear-word-button">🔊 Hear Word</button>
+      <button id="new-missing-word-button">New Word</button>
+    </div>
+    <div id="letter-choices" class="letter-choices"></div>
+    <p class="missing-instruction">Listen to the word and choose the missing letter! Click on any letter to hear its sound.</p>
+  </div>
+</div>
+
+<!-- Progress Details Modal -->
+<div id="progress-modal" class="progress-modal" style="display: none;">
+  <div class="progress-modal-content">
+    <div class="progress-modal-header">
+      <h3>📈 Detailed Progress Report</h3>
+      <button class="close-modal" onclick="hideDetailedProgress()">✖</button>
+    </div>
+    <div class="progress-modal-body">
+      <div class="progress-summary">
+        <div class="summary-card">
+          <h4>Overall Performance</h4>
+          <p><strong>Total Attempts:</strong> <span id="total-attempts">0</span></p>
+          <p><strong>Correct Answers:</strong> <span id="modal-correct">0</span></p>
+          <p><strong>Incorrect Answers:</strong> <span id="modal-incorrect">0</span></p>
+          <p><strong>Success Rate:</strong> <span id="modal-accuracy">0%</span></p>
+        </div>
+        <div class="summary-card">
+          <h4>Recent Activity</h4>
+          <div id="recent-words"></div>
+        </div>
+      </div>
+      <div class="progress-actions">
+        <button onclick="exportProgress()">📤 Share Progress</button>
+        <button onclick="resetProgress(); hideDetailedProgress();">🗑 Clear All Data</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../../../config.js"></script>
+<script src="missing-letter.js"></script>
+<script>
+function goBackToReading() {
+  window.location.href = window.location.href.split('games')[0] + 'index.html#reading-section';
+}
+
+// Initialize game when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  // Setup audio gate
+  const startBtn = document.getElementById("start-audio");
+  const audioGate = document.getElementById("audio-gate");
+  
+  startBtn.onclick = () => {
+    // unlock speech
+    speechSynthesis.cancel();
+    speechSynthesis.speak(new SpeechSynthesisUtterance("Let's play!"));
+    
+    audioReady = true;
+    audioGate.style.display = "none";
+  };
+});
+</script>
+</body>
+</html>

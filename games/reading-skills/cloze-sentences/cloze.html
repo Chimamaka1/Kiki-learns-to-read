@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fill the Blank – Fun Sentences!</title>
+  <link rel="stylesheet" href="../../../css/style.css">
+  <link rel="stylesheet" href="cloze.css">
+</head>
+<body>
+  <div class="cloze-container">
+    <!-- Reading Guide -->
+    <div id="reading-guide" class="reading-guide">
+      <div class="guide-line"></div>
+      <div class="guide-finger">☝️</div>
+    </div>
+    
+    <div class="game-header">
+      <button class="back-button" onclick="goBack()">← Back</button>
+      <h1>✨ Fill the Blank!</h1>
+    </div>
+
+    <div id="status" class="status"></div>
+
+    <div class="board">
+      <div id="sentence" class="sentence"></div>
+      <div id="word-bank" class="word-bank"></div>
+    </div>
+
+    <div class="controls">
+      <button id="hear-sentence" class="primary-btn">🔊 Hear Sentence</button>
+      <button id="next" class="secondary-btn">Next</button>
+    </div>
+
+    <div id="reward" class="reward hidden">⭐ Great job!</div>
+  </div>
+
+  <script>
+    function goBack(){ window.location.href = window.location.href.split('games')[0] + 'index.html#reading-section'; }
+  </script>
+  <script src="../../../config.js"></script>
+  <script src="cloze.js"></script>
+</body>
+</html>

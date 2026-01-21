@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shape Puzzle - Kiki Learns to Read</title>
+  <link rel="stylesheet" href="../../../css/style.css">
+  <link rel="stylesheet" href="shape-puzzle.css">
+</head>
+<body>
+  <!-- Audio Gate for iOS devices -->
+  <div id="audio-gate" style="display: none;">
+    <button id="start-audio">🔊 Start Learning</button>
+  </div>
+
+  <div class="container">
+    <!-- Shape Puzzle Game -->
+    <div class="shape-puzzle-container">
+      <div class="game-header">
+        <button class="back-button" onclick="goBack()">← Back</button>
+        <h1>🧩 Shape Puzzle</h1>
+      </div>
+      
+      <!-- Progress Display -->
+      <div class="puzzle-progress">
+        <div class="progress-item">
+          <span class="progress-label">Score:</span>
+          <span class="progress-value" id="puzzle-score">0</span>
+        </div>
+        <div class="progress-item">
+          <span class="progress-label">Level:</span>
+          <span class="progress-value" id="puzzle-level">1</span>
+        </div>
+        <div class="progress-item">
+          <span class="progress-label">Pieces:</span>
+          <span class="progress-value" id="pieces-placed">0</span>/<span id="total-pieces">0</span>
+        </div>
+      </div>
+
+      <!-- Game Instructions -->
+      <div class="game-instructions">
+        <h2 id="instruction-text">Listen to the object name and put the pieces back together!</h2>
+        <button id="hear-object-name" class="hear-name-btn">🔊 Hear Name</button>
+      </div>
+
+      <!-- Object Categories -->
+      <div class="category-selector">
+        <h3>Choose a Category:</h3>
+        <div class="category-buttons">
+          <button class="category-btn active" data-category="animals">🐾 Animals</button>
+          <button class="category-btn" data-category="food">🍎 Food</button>
+          <button class="category-btn" data-category="furniture">🪑 Furniture</button>
+          <button class="category-btn" data-category="toys">🧸 Toys</button>
+          <button class="category-btn" data-category="vehicles">🚗 Vehicles</button>
+        </div>
+      </div>
+
+      <!-- Puzzle Area -->
+      <div class="puzzle-area">
+        <!-- Object Preview (shown initially) -->
+        <div id="object-preview" class="object-preview">
+          <div class="preview-container">
+            <div id="preview-object" class="preview-object"></div>
+            <p id="object-name" class="object-name">Ready to start!</p>
+          </div>
+        </div>
+
+        <!-- Main Game Area (hidden initially) -->
+        <div id="game-area" class="game-area" style="display: none;">
+          <!-- Assembly Area -->
+          <div class="assembly-area">
+            <h3>Put it back together:</h3>
+            <div id="assembly-grid" class="assembly-grid"></div>
+          </div>
+
+          <!-- Pieces Area -->
+          <div class="pieces-area">
+            <h3>Drag the pieces:</h3>
+            <div id="puzzle-pieces" class="puzzle-pieces"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game Controls -->
+      <div class="game-controls">
+        <button id="start-puzzle" class="control-btn start-btn">🚀 Start Puzzle</button>
+        <button id="new-puzzle" class="control-btn" style="display: none;">🔄 New Puzzle</button>
+        <button id="hint-btn" class="control-btn">💡 Hint</button>
+        <button id="reset-puzzle" class="control-btn">🔄 Reset</button>
+      </div>
+
+      <!-- Success Message -->
+      <div id="success-message" class="success-message" style="display: none;">
+        <h2>🎉 Amazing! You completed the puzzle! 🎉</h2>
+        <p id="success-text">Great job rebuilding the object!</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../../config.js"></script>
+  <script src="../../../script.js"></script>
+  <script src="shape-puzzle.js"></script>
+</body>
+</html>

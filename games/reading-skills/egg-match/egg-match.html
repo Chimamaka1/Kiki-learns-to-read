@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crack the Egg</title>
+  <link rel="stylesheet" href="../../../css/style.css">
+</head>
+<body>
+
+<div id="app-container">
+  <div style="margin-bottom: 15px;">
+    <button class="back-button" onclick="goBack()">← Back to Reading Skills</button>
+  </div>
+  <h1>🥚 Crack the Egg</h1>
+
+  <div id="egg-area">
+    <div id="egg" class="egg"></div>
+    <img id="egg-image" class="hidden" src="" alt="hidden image">
+  </div>
+
+  <button id="play-word">🔊 Hear the word</button>
+
+  <div id="choices"></div>
+
+  <button id="next">Next</button>
+</div>
+
+<div id="reward" class="hidden">⭐ Well done!</div>
+
+<script>
+function goBack() {
+  window.location.href = window.location.href.split('games')[0] + 'index.html#reading-section';
+}
+</script>
+
+<script src="../../../config.js"></script>
+<script src="egg-match.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CVC Storybook - Kiki Learns to Read</title>
+  <link rel="stylesheet" href="../../../css/style.css?v=20260125">
+  <link rel="stylesheet" href="storybook.css?v=20260125">
+</head>
+<body>
+  <div class="storybook-container">
+    <div class="game-header">
+      <button class="back-button" onclick="goBack()">← Back</button>
+      <h1>📚 CVC Storybook</h1>
+    </div>
+
+    <div class="story-selector">
+      <h2>Choose a Story</h2>
+      <div id="story-list" class="story-list"></div>
+    </div>
+
+    <div id="story-reader" class="story-reader hidden">
+      <!-- Reading Guide -->
+      <div id="reading-guide" class="reading-guide">
+        <div class="guide-line"></div>
+        <div class="guide-finger">☝️</div>
+      </div>
+      
+      <div class="book">
+        <div class="page">
+          <div class="page-content">
+            <h2 id="story-title"></h2>
+            <div id="story-text" class="story-text"></div>
+            <div id="story-image" class="story-image"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="story-controls">
+        <button id="prev-page" class="nav-btn">← Previous</button>
+        <span id="page-number" class="page-number">Page 1</span>
+        <button id="next-page" class="nav-btn">Next →</button>
+      </div>
+      
+      <div class="reading-controls">
+        <button id="read-page" class="primary-btn">🔊 Read Page</button>
+        <button id="read-word" class="secondary-btn">🔊 Read Word</button>
+        <button id="close-story" class="secondary-btn">📖 Choose Another</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="storybook.js?v=20260125"></script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Balloon Pop - Kiki Learns to Read</title>
+  <link rel="stylesheet" href="../../../css/style.css">
+  <link rel="stylesheet" href="number-balloon.css">
+</head>
+<body>
+  <!-- Audio Gate for iOS devices -->
+  <div id="audio-gate" style="display: none;">
+    <button id="start-audio">🔊 Start Learning</button>
+  </div>
+
+  <div class="container">
+    <!-- Number Balloon Pop Game Section -->
+    <div class="balloon-game-container">
+      <div class="game-header">
+        <button class="back-button" onclick="goBack()">← Back</button>
+        <h1>🎈 Number Balloon Pop</h1>
+      </div>
+      
+      <!-- Progress Display -->
+      <div class="balloon-progress">
+        <div class="progress-item">
+          <span class="progress-label">Score:</span>
+          <span class="progress-value" id="balloon-score">0</span>
+        </div>
+        <div class="progress-item">
+          <span class="progress-label">Level:</span>
+          <span class="progress-value" id="balloon-level">1</span>
+        </div>
+      </div>
+
+      <!-- Level Selectors -->
+      <div class="level-buttons">
+        <button class="level-button active" data-level="1" onclick="setLevel(1)">Level 1: 1-10</button>
+        <button class="level-button" data-level="2" onclick="setLevel(2)">Level 2: 1-20</button>
+        <button class="level-button" data-level="3" onclick="setLevel(3)">Level 3: Before/After</button>
+        <button class="level-button" data-level="4" onclick="setLevel(4)">Level 4: Add/Subtract</button>
+      </div>
+
+      <!-- Game Instructions -->
+      <div class="game-instructions">
+        <h2 id="number-to-pop">Listen to the number and pop the balloon with the number</h2>
+        <button id="speak-number-btn" class="speak-button">🔊 Hear Number Again</button>
+      </div>
+      
+      <!-- Balloons Grid Wrapper -->
+      <div style="max-width: 380px; margin: 6px auto 0;">
+        <!-- Balloons Grid -->
+        <div id="balloons-grid" class="balloons-grid"></div>
+      </div>
+      
+      <p class="balloon-instruction">Listen to the number and pop the correct balloon!</p>
+    </div>
+  </div>
+
+  <!-- Audio element for text-to-speech -->
+  <audio id="audio-context"></audio>
+
+  <script src="number-balloon.js"></script>
+</body>
+</html>

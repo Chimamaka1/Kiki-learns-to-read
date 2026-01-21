@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Game - Card Matching</title>
+  <link rel="stylesheet" href="memory.css">
+</head>
+<body>
+
+<div id="app-container">
+  <div style="margin-bottom: 15px;">
+    <button class="back-button" onclick="goBack()">← Back to Logic</button>
+  </div>
+  <h1>🧠 Memory Game - Find the Pairs!</h1>
+
+  <p id="message">Click Start to begin!</p>
+
+  <button id="start-memory" class="start-btn">🎮 Start Game</button>
+
+  <div id="sequence" class="memory-board"></div>
+</div>
+
+<script>
+function goBack() {
+  window.location.href = window.location.href.split('games')[0] + 'index.html#logic-section';
+}
+</script>
+
+<script src="memory.js"></script>
+</body>
+</html>
