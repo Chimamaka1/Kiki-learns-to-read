@@ -1,0 +1,309 @@
+/* ===============================
+   SHAPE BUILDER STYLES
+================================ */
+
+* {
+  font-style: normal !important;
+}
+
+em, i, cite, dfn, var {
+  font-style: normal !important;
+}
+
+.shape-builder-container {
+  min-height: 100vh;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #2d3748;
+}
+
+.game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.game-header h1 {
+  color: white;
+  font-size: 28px;
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.back-button {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background: #5a6268;
+  transform: scale(1.05);
+}
+
+.game-instructions {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.game-instructions h2 {
+  margin: 0 0 10px 0;
+  color: #667eea;
+  font-size: 22px;
+}
+
+.game-instructions p {
+  margin: 0;
+  color: #555;
+  font-size: 16px;
+}
+
+/* Progress Bar */
+.progress-bar {
+  background: white;
+  padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.progress-fill {
+  width: 0%;
+  height: 20px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+/* Main Workspace */
+.builder-workspace {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+/* Canvas Area */
+.canvas-area {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 12;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-canvas {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, #f8f9fa 0%, #ffffff 100%);
+  border: 3px dashed #bdc3c7;
+  border-radius: 10px;
+}
+
+.completion-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+}
+
+.completion-message span {
+  display: block;
+  font-size: 28px;
+  font-weight: bold;
+  color: #667eea;
+  margin-bottom: 20px;
+}
+
+.completion-message button {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.completion-message button:hover {
+  background: #764ba2;
+  transform: scale(1.05);
+}
+
+/* Shapes Panel */
+.shapes-panel {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+}
+
+.shapes-panel h3 {
+  margin: 0 0 15px 0;
+  color: #667eea;
+  font-size: 16px;
+  text-align: center;
+}
+
+.shapes-available {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.shape-item {
+  padding: 12px;
+  background: #ecf0f1;
+  border: 2px solid #bdc3c7;
+  border-radius: 8px;
+  cursor: grab;
+  transition: all 0.3s ease;
+  text-align: center;
+  font-size: 24px;
+  user-select: none;
+}
+
+.shape-item:hover {
+  background: #d5dbdb;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.shape-item.dragging {
+  opacity: 0.6;
+  cursor: grabbing;
+}
+
+.shape-item.placed {
+  opacity: 0.5;
+  cursor: default;
+  background: #c8e6c9;
+  border-color: #4caf50;
+}
+
+/* Image Selector */
+.image-selector {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.image-selector h3 {
+  margin: 0 0 15px 0;
+  color: #667eea;
+  font-size: 18px;
+}
+
+.image-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.image-btn {
+  padding: 15px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.image-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.image-btn.active {
+  background: #4caf50;
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .builder-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .shapes-panel {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .shape-item {
+    margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .image-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .main-canvas {
+    min-height: 400px;
+  }
+
+  .game-header h1 {
+    font-size: 20px;
+  }
+}

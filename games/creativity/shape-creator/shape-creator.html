@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shape Creator - Kiki Learns to Read</title>
+  <link rel="stylesheet" href="../../../css/style.css">
+  <link rel="stylesheet" href="shape-creator.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Shape Creator Game -->
+    <div class="shape-creator-container">
+      <div class="game-header">
+        <button class="back-button" onclick="goBack()">← Back</button>
+        <h1>🎨 Shape Creator</h1>
+      </div>
+      
+      <!-- Instructions -->
+      <div class="game-instructions">
+        <h2>Create fun pictures with shapes!</h2>
+        <p>Pick a shape, choose a color, and click on the canvas to add it. Draw your imagination!</p>
+      </div>
+
+      <!-- Main Game Area -->
+      <div class="creator-workspace">
+        <!-- Tools Panel -->
+        <div class="tools-panel">
+          <div class="tool-section">
+            <h3>🔷 Shapes</h3>
+            <div class="shape-buttons">
+              <button class="shape-btn" data-shape="circle" title="Circle">●</button>
+              <button class="shape-btn" data-shape="square" title="Square">■</button>
+              <button class="shape-btn" data-shape="triangle" title="Triangle">▲</button>
+              <button class="shape-btn" data-shape="rectangle" title="Rectangle">▬</button>
+              <button class="shape-btn" data-shape="star" title="Star">★</button>
+              <button class="shape-btn" data-shape="heart" title="Heart">♥</button>
+            </div>
+          </div>
+
+          <div class="tool-section">
+            <h3>🎨 Colors</h3>
+            <div class="color-buttons">
+              <button class="color-btn" data-color="#FF6B6B" title="Red" style="background-color: #FF6B6B;"></button>
+              <button class="color-btn" data-color="#4ECDC4" title="Cyan" style="background-color: #4ECDC4;"></button>
+              <button class="color-btn" data-color="#FFE66D" title="Yellow" style="background-color: #FFE66D;"></button>
+              <button class="color-btn" data-color="#95E1D3" title="Green" style="background-color: #95E1D3;"></button>
+              <button class="color-btn" data-color="#C7CEEA" title="Purple" style="background-color: #C7CEEA;"></button>
+              <button class="color-btn" data-color="#FFDAB9" title="Orange" style="background-color: #FFDAB9;"></button>
+              <button class="color-btn" data-color="#FFC0CB" title="Pink" style="background-color: #FFC0CB;"></button>
+              <button class="color-btn" data-color="#87CEEB" title="Blue" style="background-color: #87CEEB;"></button>
+            </div>
+          </div>
+
+          <div class="tool-section">
+            <h3>📏 Size</h3>
+            <div class="size-control">
+              <input type="range" id="size-slider" min="20" max="150" value="60" class="slider">
+              <span id="size-display">60px</span>
+            </div>
+          </div>
+
+          <div class="tool-section">
+            <h3>✏️ Actions</h3>
+            <button class="action-btn" onclick="undoShape()">↶ Undo</button>
+            <button class="action-btn" onclick="clearCanvas()">🗑️ Clear All</button>
+            <button class="action-btn" onclick="downloadDrawing()">💾 Save</button>
+          </div>
+
+          <div class="tool-section">
+            <h3>🌟 Templates</h3>
+            <div class="template-buttons">
+              <button class="template-btn" onclick="loadTemplate('house')">🏠 House</button>
+              <button class="template-btn" onclick="loadTemplate('tree')">🌳 Tree</button>
+              <button class="template-btn" onclick="loadTemplate('flower')">🌸 Flower</button>
+              <button class="template-btn" onclick="loadTemplate('sun')">☀️ Sun</button>
+              <button class="template-btn" onclick="loadTemplate('face')">😊 Face</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Canvas Area -->
+        <div class="canvas-area">
+          <svg id="drawing-canvas" class="drawing-canvas"></svg>
+          <div class="canvas-info">
+            Current: <span id="current-shape">Circle</span> | 
+            Color: <span id="current-color" style="display: inline-block; width: 20px; height: 20px; background-color: #FF6B6B; border-radius: 3px;"></span> | 
+            Size: <span id="size-info">60px</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shape Gallery -->
+      <div class="gallery-section">
+        <h3>📷 Your Creations</h3>
+        <div class="gallery-info">
+          <p>Your drawings are saved automatically! Refresh the page and your artwork will be waiting.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="shape-creator.js"></script>
+</body>
+</html>

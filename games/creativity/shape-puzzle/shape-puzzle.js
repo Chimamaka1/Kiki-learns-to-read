@@ -10,46 +10,55 @@ let gameStarted = false;
 // Object categories with their emojis and names
 const puzzleObjects = {
   animals: [
-    { emoji: '🐱', name: 'cat', pieces: ['🐱', '🐾', '👀', '🥛'] },
-    { emoji: '🐶', name: 'dog', pieces: ['🐶', '🦴', '👃', '🐾'] },
-    { emoji: '🐸', name: 'frog', pieces: ['🐸', '👀', '💚', '🪷'] },
-    { emoji: '🦋', name: 'butterfly', pieces: ['🦋', '🌸', '💙', '✨'] },
-    { emoji: '🐘', name: 'elephant', pieces: ['🐘', '👂', '💧', '🌿'] },
-    { emoji: '🦁', name: 'lion', pieces: ['🦁', '👑', '💛', '🌅'] }
+    { emoji: '🐱', name: 'cat', pieces: ['🐱', '🐾', '👀', '🥛'], image: '../../../assets/images/cat.png' },
+    { emoji: '🐶', name: 'dog', pieces: ['🐶', '🦴', '👃', '🐾'], image: '../../../assets/images/dog.png' },
+    { emoji: '🐸', name: 'frog', pieces: ['🐸', '👀', '💚', '🪷'], image: '../../../assets/images/fish.png' },
+    { emoji: '🦋', name: 'butterfly', pieces: ['🦋', '🌸', '💙', '✨'], image: '../../../assets/images/bird.png' },
+    { emoji: '🐘', name: 'elephant', pieces: ['🐘', '👂', '💧', '🌿'], image: '../../../assets/images/cat.png' },
+    { emoji: '🦁', name: 'lion', pieces: ['🦁', '👑', '💛', '🌅'], image: '../../../assets/images/dog.png' }
   ],
   food: [
-    { emoji: '🍎', name: 'apple', pieces: ['🍎', '🌿', '❤️', '🍯'] },
-    { emoji: '🍌', name: 'banana', pieces: ['🍌', '💛', '🌴', '☀️'] },
-    { emoji: '🍕', name: 'pizza', pieces: ['🍕', '🧀', '🍅', '🌿'] },
-    { emoji: '🎂', name: 'cake', pieces: ['🎂', '🕯️', '🎉', '💖'] },
-    { emoji: '🍪', name: 'cookie', pieces: ['🍪', '🍫', '🥛', '😋'] },
-    { emoji: '🍓', name: 'strawberry', pieces: ['🍓', '💚', '❤️', '🌸'] }
+    { emoji: '🍎', name: 'apple', pieces: ['🍎', '🌿', '❤️', '🍯'], image: '../../../assets/images/apple.png' },
+    { emoji: '🍌', name: 'banana', pieces: ['🍌', '💛', '🌴', '☀️'], image: '../../../assets/images/apple.png' },
+    { emoji: '🍕', name: 'pizza', pieces: ['🍕', '🧀', '🍅', '🌿'], image: '../../../assets/images/apple.png' },
+    { emoji: '🎂', name: 'cake', pieces: ['🎂', '🕯️', '🎉', '💖'], image: '../../../assets/images/apple.png' },
+    { emoji: '🍪', name: 'cookie', pieces: ['🍪', '🍫', '🥛', '😋'], image: '../../../assets/images/apple.png' },
+    { emoji: '🍓', name: 'strawberry', pieces: ['🍓', '💚', '❤️', '🌸'], image: '../../../assets/images/apple.png' }
   ],
   furniture: [
-    { emoji: '🪑', name: 'chair', pieces: ['🪑', '🪵', '⚫', '💺'] },
-    { emoji: '🛏️', name: 'bed', pieces: ['🛏️', '😴', '🌙', '💤'] },
-    { emoji: '🚪', name: 'door', pieces: ['🚪', '🔑', '🚪', '🏠'] },
-    { emoji: '🪟', name: 'window', pieces: ['🪟', '☀️', '🌤️', '🏠'] },
-    { emoji: '🛋️', name: 'sofa', pieces: ['🛋️', '🛏️', '📺', '🏠'] },
-    { emoji: '📺', name: 'television', pieces: ['📺', '🔌', '📺', '🎬'] }
+    { emoji: '🪑', name: 'chair', pieces: ['🪑', '🪵', '⚫', '💺'], image: '../../../assets/images/house.png' },
+    { emoji: '🛏️', name: 'bed', pieces: ['🛏️', '😴', '🌙', '💤'], image: '../../../assets/images/bed.png' },
+    { emoji: '🚪', name: 'door', pieces: ['🚪', '🔑', '🚪', '🏠'], image: '../../../assets/images/house.png' },
+    { emoji: '🪟', name: 'window', pieces: ['🪟', '☀️', '🌤️', '🏠'], image: '../../../assets/images/house.png' },
+    { emoji: '🛋️', name: 'sofa', pieces: ['🛋️', '🛏️', '📺', '🏠'], image: '../../../assets/images/bed.png' },
+    { emoji: '📺', name: 'television', pieces: ['📺', '🔌', '📺', '🎬'], image: '../../../assets/images/house.png' }
   ],
   toys: [
-    { emoji: '🧸', name: 'teddy bear', pieces: ['🧸', '❤️', '🤗', '💤'] },
-    { emoji: '⚽', name: 'ball', pieces: ['⚽', '🏃', '⚽', '🎯'] },
-    { emoji: '🚗', name: 'toy car', pieces: ['🚗', '🛣️', '⛽', '🏁'] },
-    { emoji: '🪀', name: 'yo-yo', pieces: ['🪀', '🌈', '🎯', '🤹'] },
-    { emoji: '🎯', name: 'target', pieces: ['🎯', '🏹', '🎯', '🏆'] },
-    { emoji: '🎲', name: 'dice', pieces: ['🎲', '⚫', '⚪', '🎮'] }
+    { emoji: '🧸', name: 'teddy bear', pieces: ['🧸', '❤️', '🤗', '💤'], image: '../../../assets/images/ball.png' },
+    { emoji: '⚽', name: 'ball', pieces: ['⚽', '🏃', '⚽', '🎯'], image: '../../../assets/images/ball.png' },
+    { emoji: '🚗', name: 'toy car', pieces: ['🚗', '🛣️', '⛽', '🏁'], image: '../../../assets/images/car.png' },
+    { emoji: '🪀', name: 'yo-yo', pieces: ['🪀', '🌈', '🎯', '🤹'], image: '../../../assets/images/ball.png' },
+    { emoji: '🎯', name: 'target', pieces: ['🎯', '🏹', '🎯', '🏆'], image: '../../../assets/images/star.png' },
+    { emoji: '🎲', name: 'dice', pieces: ['🎲', '⚫', '⚪', '🎮'], image: '../../../assets/images/ball.png' }
   ],
   vehicles: [
-    { emoji: '🚗', name: 'car', pieces: ['🚗', '🛣️', '⛽', '🚗'] },
-    { emoji: '✈️', name: 'airplane', pieces: ['✈️', '☁️', '🌍', '✈️'] },
-    { emoji: '🚲', name: 'bicycle', pieces: ['🚲', '🚴', '🛣️', '🚲'] },
-    { emoji: '🚂', name: 'train', pieces: ['🚂', '🛤️', '💨', '🚃'] },
-    { emoji: '🚢', name: 'ship', pieces: ['🚢', '🌊', '⚓', '🚢'] },
-    { emoji: '🚁', name: 'helicopter', pieces: ['🚁', '☁️', '🌪️', '🚁'] }
+    { emoji: '🚗', name: 'car', pieces: ['🚗', '🛣️', '⛽', '🚗'], image: '../../../assets/images/car.png' },
+    { emoji: '✈️', name: 'airplane', pieces: ['✈️', '☁️', '🌍', '✈️'], image: '../../../assets/images/car.png' },
+    { emoji: '🚲', name: 'bicycle', pieces: ['🚲', '🚴', '🛣️', '🚲'], image: '../../../assets/images/car.png' },
+    { emoji: '🚂', name: 'train', pieces: ['🚂', '🛤️', '💨', '🚃'], image: '../../../assets/images/car.png' },
+    { emoji: '🚢', name: 'ship', pieces: ['🚢', '🌊', '⚓', '🚢'], image: '../../../assets/images/car.png' },
+    { emoji: '🚁', name: 'helicopter', pieces: ['🚁', '☁️', '🌪️', '🚁'], image: '../../../assets/images/car.png' }
   ]
 };
+
+// Jigsaw puzzle configurations
+const jigsawConfig = {
+  easy: { rows: 2, cols: 2, pieces: 4 },
+  medium: { rows: 3, cols: 3, pieces: 9 },
+  hard: { rows: 4, cols: 4, pieces: 16 }
+};
+
+let jigsawDifficulty = 'easy';
 
 // Navigation function
 function goBack() {
@@ -69,15 +78,14 @@ function showObjectPreview() {
   const objectName = document.getElementById('object-name');
   
   if (previewObject && objectName) {
-    previewObject.textContent = currentPuzzle.emoji;
+    // Show image preview
+    previewObject.innerHTML = `<img src="${currentPuzzle.image}" alt="${currentPuzzle.name}" style="width: 100%; height: 100%; object-fit: contain;">`;
     objectName.textContent = currentPuzzle.name;
-    
-    // Speak the object name
     speakText(`This is a ${currentPuzzle.name}. Look carefully and remember it!`);
   }
   
   // Update total pieces
-  totalPieces = currentPuzzle.pieces.length;
+  totalPieces = jigsawConfig[jigsawDifficulty].pieces;
   updatePiecesDisplay();
 }
 
@@ -96,11 +104,24 @@ function startPuzzle() {
   const gameArea = document.getElementById('game-area');
   const startBtn = document.getElementById('start-puzzle');
   const newBtn = document.getElementById('new-puzzle');
+  const referenceImage = document.getElementById('reference-image');
   
   if (preview) preview.style.display = 'none';
   if (gameArea) gameArea.style.display = 'block';
   if (startBtn) startBtn.style.display = 'none';
   if (newBtn) newBtn.style.display = 'inline-block';
+  
+  // Show reference image
+  if (referenceImage) {
+    referenceImage.style.display = 'block';
+    referenceImage.innerHTML = `
+      <h3>Reference Image:</h3>
+      <div class="reference-container">
+        <img src="${currentPuzzle.image}" alt="${currentPuzzle.name}" class="reference-img">
+        <p class="reference-name">${currentPuzzle.name}</p>
+      </div>
+    `;
+  }
   
   // Set up assembly grid based on number of pieces
   setupAssemblyGrid();
@@ -125,17 +146,17 @@ function setupAssemblyGrid() {
   
   grid.innerHTML = '';
   
-  // Determine grid size based on number of pieces
-  const numPieces = currentPuzzle.pieces.length;
-  const gridClass = numPieces <= 4 ? 'grid-2x2' : 'grid-3x3';
-  grid.className = `assembly-grid ${gridClass}`;
+  const config = jigsawConfig[jigsawDifficulty];
+  grid.className = `assembly-grid jigsaw-grid`;
+  grid.style.gridTemplateColumns = `repeat(${config.cols}, 100px)`;
+  grid.style.gridTemplateRows = `repeat(${config.rows}, 100px)`;
   
-  // Create slots
-  const slotsNeeded = numPieces;
-  for (let i = 0; i < slotsNeeded; i++) {
+  for (let i = 0; i < config.pieces; i++) {
     const slot = document.createElement('div');
-    slot.className = 'assembly-slot';
+    slot.className = 'assembly-slot jigsaw-slot';
     slot.dataset.slotIndex = i;
+    slot.style.width = '100px';
+    slot.style.height = '100px';
     slot.addEventListener('dragover', handleDragOver);
     slot.addEventListener('drop', handleDrop);
     grid.appendChild(slot);
@@ -148,17 +169,47 @@ function createPuzzlePieces() {
   if (!piecesContainer) return;
   
   piecesContainer.innerHTML = '';
+  createJigsawPieces();
+}
+
+// Create jigsaw puzzle pieces from image
+function createJigsawPieces() {
+  const piecesContainer = document.getElementById('puzzle-pieces');
+  const config = jigsawConfig[jigsawDifficulty];
+  const pieceWidth = 100;
+  const pieceHeight = 100;
   
-  // Shuffle pieces
-  const shuffledPieces = [...currentPuzzle.pieces].sort(() => Math.random() - 0.5);
+  // Create array of piece indices and shuffle
+  const pieceIndices = Array.from({length: config.pieces}, (_, i) => i);
+  const shuffledIndices = pieceIndices.sort(() => Math.random() - 0.5);
   
-  shuffledPieces.forEach((piece, index) => {
+  shuffledIndices.forEach((pieceIndex) => {
+    const row = Math.floor(pieceIndex / config.cols);
+    const col = pieceIndex % config.cols;
+    
     const pieceElement = document.createElement('div');
-    pieceElement.className = 'puzzle-piece';
-    pieceElement.textContent = piece;
+    pieceElement.className = 'puzzle-piece jigsaw-piece';
     pieceElement.draggable = true;
-    pieceElement.dataset.pieceIndex = currentPuzzle.pieces.indexOf(piece);
-    pieceElement.dataset.originalIndex = index;
+    pieceElement.dataset.pieceIndex = pieceIndex;
+    pieceElement.style.width = `${pieceWidth}px`;
+    pieceElement.style.height = `${pieceHeight}px`;
+    pieceElement.style.position = 'relative';
+    pieceElement.style.overflow = 'hidden';
+    pieceElement.style.border = '2px solid #007bff';
+    pieceElement.style.borderRadius = '8px';
+    
+    // Create image inside piece
+    const img = document.createElement('img');
+    img.src = currentPuzzle.image;
+    img.style.position = 'absolute';
+    img.style.width = `${pieceWidth * config.cols}px`;
+    img.style.height = `${pieceHeight * config.rows}px`;
+    img.style.left = `-${col * pieceWidth}px`;
+    img.style.top = `-${row * pieceHeight}px`;
+    img.style.objectFit = 'cover';
+    img.style.pointerEvents = 'none';
+    
+    pieceElement.appendChild(img);
     
     pieceElement.addEventListener('dragstart', handleDragStart);
     pieceElement.addEventListener('dragend', handleDragEnd);
@@ -192,14 +243,16 @@ function handleDrop(e) {
   // Check if correct piece for this slot
   if (pieceIndex === slotIndex && !e.target.classList.contains('filled')) {
     // Correct placement
-    const piece = currentPuzzle.pieces[pieceIndex];
-    e.target.textContent = piece;
-    e.target.classList.add('filled');
-    e.target.classList.add('piece-snap');
-    
-    // Mark original piece as placed
     const originalPiece = document.querySelector(`[data-piece-index="${pieceIndex}"]`);
     if (originalPiece) {
+      // Clone the piece into the slot
+      const clonedPiece = originalPiece.cloneNode(true);
+      clonedPiece.draggable = false;
+      clonedPiece.style.border = 'none';
+      e.target.innerHTML = '';
+      e.target.appendChild(clonedPiece);
+      e.target.classList.add('filled');
+      e.target.classList.add('piece-snap');
       originalPiece.classList.add('placed');
     }
     
@@ -260,11 +313,13 @@ function newPuzzle() {
   const startBtn = document.getElementById('start-puzzle');
   const newBtn = document.getElementById('new-puzzle');
   const instructionText = document.getElementById('instruction-text');
+  const referenceImage = document.getElementById('reference-image');
   
   if (preview) preview.style.display = 'block';
   if (gameArea) gameArea.style.display = 'none';
   if (startBtn) startBtn.style.display = 'inline-block';
   if (newBtn) newBtn.style.display = 'none';
+  if (referenceImage) referenceImage.style.display = 'none';
   if (instructionText) {
     instructionText.textContent = 'Listen to the object name and put the pieces back together!';
   }
@@ -355,6 +410,26 @@ function changeCategory(category) {
   speakText(`${category} category selected!`);
 }
 
+// Change difficulty
+function changeDifficulty(difficulty) {
+  jigsawDifficulty = difficulty;
+  
+  // Update active difficulty button
+  document.querySelectorAll('.difficulty-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  document.querySelector(`[data-difficulty="${difficulty}"]`).classList.add('active');
+  
+  // Reset game if needed
+  if (!gameStarted) {
+    showObjectPreview();
+  } else {
+    newPuzzle();
+  }
+  
+  speakText(`${difficulty} difficulty selected!`);
+}
+
 // Save progress to localStorage
 function saveProgress() {
   const progressData = {
@@ -404,6 +479,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   
+  // Difficulty buttons
+  document.querySelectorAll('.difficulty-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      changeDifficulty(e.target.dataset.difficulty);
+    });
+  });
+  
   // Initialize first object
   showObjectPreview();
   
@@ -412,7 +494,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Welcome message
   setTimeout(() => {
-    speakText('Welcome to Shape Puzzle! Choose a category and click start to begin building puzzles!');
+    speakText('Welcome to Jigsaw Puzzle! Choose a difficulty and category, then click start to begin!');
   }, 1000);
 });
 

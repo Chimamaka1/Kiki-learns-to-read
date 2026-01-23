@@ -18,7 +18,7 @@
     <div class="shape-puzzle-container">
       <div class="game-header">
         <button class="back-button" onclick="goBack()">← Back</button>
-        <h1>🧩 Shape Puzzle</h1>
+        <h1>🧩 Jigsaw Puzzle</h1>
       </div>
       
       <!-- Progress Display -->
@@ -39,8 +39,18 @@
 
       <!-- Game Instructions -->
       <div class="game-instructions">
-        <h2 id="instruction-text">Listen to the object name and put the pieces back together!</h2>
+        <h2 id="instruction-text">Look at the image and drag the pieces to complete the jigsaw puzzle!</h2>
         <button id="hear-object-name" class="hear-name-btn">🔊 Hear Name</button>
+      </div>
+
+      <!-- Difficulty Selector -->
+      <div id="difficulty-selector" class="difficulty-selector">
+        <h3>Choose Difficulty:</h3>
+        <div class="difficulty-buttons">
+          <button class="difficulty-btn active" data-difficulty="easy">😊 Easy (2×2)</button>
+          <button class="difficulty-btn" data-difficulty="medium">😎 Medium (3×3)</button>
+          <button class="difficulty-btn" data-difficulty="hard">🤓 Hard (4×4)</button>
+        </div>
       </div>
 
       <!-- Object Categories -->
@@ -64,6 +74,9 @@
             <p id="object-name" class="object-name">Ready to start!</p>
           </div>
         </div>
+
+        <!-- Reference Image (shown during jigsaw gameplay) -->
+        <div id="reference-image" class="reference-image" style="display: none;"></div>
 
         <!-- Main Game Area (hidden initially) -->
         <div id="game-area" class="game-area" style="display: none;">

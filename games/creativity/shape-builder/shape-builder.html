@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shape Builder - Kiki Learns to Read</title>
+  <link rel="stylesheet" href="../../../css/style.css">
+  <link rel="stylesheet" href="shape-builder.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Shape Builder Game -->
+    <div class="shape-builder-container">
+      <div class="game-header">
+        <button class="back-button" onclick="goBack()">← Back</button>
+        <h1>🔨 Shape Builder</h1>
+      </div>
+      
+      <!-- Instructions -->
+      <div class="game-instructions">
+        <h2>Build the picture with shapes!</h2>
+        <p>Drag the shapes to the right places to complete the image. When you get it right, it will glow!</p>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-bar">
+        <div class="progress-info">
+          <span>Shapes placed:</span>
+          <span id="progress-counter">0</span>/<span id="total-counter">0</span>
+        </div>
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+
+      <!-- Main Game Area -->
+      <div class="builder-workspace">
+        <!-- Image Canvas -->
+        <div class="canvas-area">
+          <div class="image-container">
+            <svg id="main-canvas" class="main-canvas" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet" width="100%" height="100%"></svg>
+            <div class="completion-message" id="completion-message" style="display: none;">
+              <span>✨ Amazing! You completed it! ✨</span>
+              <button onclick="nextImage()">Next Picture →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shapes Panel -->
+        <div class="shapes-panel">
+          <h3>🔷 Available Shapes</h3>
+          <div class="shapes-available" id="shapes-available">
+            <!-- Shapes will be generated here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Image Selector -->
+      <div class="image-selector">
+        <h3>Choose a Picture:</h3>
+        <div class="image-buttons">
+          <button class="image-btn" onclick="startImage('tree')">🌳 Tree</button>
+          <button class="image-btn" onclick="startImage('house')">🏠 House</button>
+          <button class="image-btn" onclick="startImage('flower')">🌸 Flower</button>
+          <button class="image-btn" onclick="startImage('sun')">☀️ Sun</button>
+          <button class="image-btn" onclick="startImage('robot')">🤖 Robot</button>
+          <button class="image-btn" onclick="startImage('car')">🚗 Car</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="shape-builder.js"></script>
+</body>
+</html>
