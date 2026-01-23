@@ -6,6 +6,8 @@ let currentCategory = 'animals';
 let placedPieces = 0;
 let totalPieces = 0;
 let gameStarted = false;
+let selectedPieceIndex = null;
+const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
 // Object categories with their emojis and names
 const puzzleObjects = {
@@ -159,6 +161,8 @@ function setupAssemblyGrid() {
     slot.style.height = '100px';
     slot.addEventListener('dragover', handleDragOver);
     slot.addEventListener('drop', handleDrop);
+    slot.addEventListener('click', handleSlotSelect);
+    slot.addEventListener('touchstart', handleSlotSelect);
     grid.appendChild(slot);
   }
 }
@@ -213,6 +217,8 @@ function createJigsawPieces() {
     
     pieceElement.addEventListener('dragstart', handleDragStart);
     pieceElement.addEventListener('dragend', handleDragEnd);
+    pieceElement.addEventListener('click', handlePieceSelect);
+    pieceElement.addEventListener('touchstart', handlePieceSelect);
     
     piecesContainer.appendChild(pieceElement);
   });
@@ -240,36 +246,67 @@ function handleDrop(e) {
   const pieceIndex = parseInt(e.dataTransfer.getData('text/plain'));
   const slotIndex = parseInt(e.target.dataset.slotIndex);
   
-  // Check if correct piece for this slot
-  if (pieceIndex === slotIndex && !e.target.classList.contains('filled')) {
-    // Correct placement
-    const originalPiece = document.querySelector(`[data-piece-index="${pieceIndex}"]`);
-    if (originalPiece) {
-      // Clone the piece into the slot
-      const clonedPiece = originalPiece.cloneNode(true);
-      clonedPiece.draggable = false;
-      clonedPiece.style.border = 'none';
-      e.target.innerHTML = '';
-      e.target.appendChild(clonedPiece);
-      e.target.classList.add('filled');
-      e.target.classList.add('piece-snap');
-      originalPiece.classList.add('placed');
-    }
-    
-    placedPieces++;
-    updatePiecesDisplay();
-    
-    // Play success sound
-    speakText('Great!');
-    
-    // Check if puzzle is complete
-    if (placedPieces === totalPieces) {
-      completePuzzle();
-    }
-  } else {
-    // Wrong placement
+  const placed = placePieceIntoSlot(pieceIndex, slotIndex, e.target);
+  if (!placed) {
     speakText('Try a different spot!');
   }
+}
+
+// Tap-to-select on touch devices
+function handlePieceSelect(e) {
+  // Prevent scrolling when tapping
+  e.preventDefault();
+  const piece = e.currentTarget;
+  if (piece.classList.contains('placed')) return;
+  clearSelectedPiece();
+  selectedPieceIndex = parseInt(piece.dataset.pieceIndex);
+  piece.classList.add('selected');
+}
+
+function handleSlotSelect(e) {
+  e.preventDefault();
+  const slot = e.currentTarget;
+  if (slot.classList.contains('filled')) return;
+  if (selectedPieceIndex === null) {
+    speakText('Tap a piece first, then tap the correct slot.');
+    return;
+  }
+  const placed = placePieceIntoSlot(selectedPieceIndex, parseInt(slot.dataset.slotIndex), slot);
+  if (!placed) {
+    speakText('Try a different spot!');
+  }
+  clearSelectedPiece();
+}
+
+// Shared placement helper
+function placePieceIntoSlot(pieceIndex, slotIndex, slotElement) {
+  if (pieceIndex !== slotIndex || slotElement.classList.contains('filled')) {
+    return false;
+  }
+  const originalPiece = document.querySelector(`[data-piece-index="${pieceIndex}"]`);
+  if (!originalPiece || originalPiece.classList.contains('placed')) {
+    return false;
+  }
+  const clonedPiece = originalPiece.cloneNode(true);
+  clonedPiece.draggable = false;
+  clonedPiece.style.border = 'none';
+  slotElement.innerHTML = '';
+  slotElement.appendChild(clonedPiece);
+  slotElement.classList.add('filled');
+  slotElement.classList.add('piece-snap');
+  originalPiece.classList.add('placed');
+  placedPieces++;
+  updatePiecesDisplay();
+  speakText('Great!');
+  if (placedPieces === totalPieces) {
+    completePuzzle();
+  }
+  return true;
+}
+
+function clearSelectedPiece() {
+  selectedPieceIndex = null;
+  document.querySelectorAll('.puzzle-piece.selected').forEach(piece => piece.classList.remove('selected'));
 }
 
 // Complete puzzle
@@ -306,6 +343,7 @@ function completePuzzle() {
 function newPuzzle() {
   gameStarted = false;
   placedPieces = 0;
+  clearSelectedPiece();
   
   // Reset UI
   const preview = document.getElementById('object-preview');
@@ -332,6 +370,7 @@ function resetPuzzle() {
   if (!gameStarted) return;
   
   placedPieces = 0;
+  clearSelectedPiece();
   updatePiecesDisplay();
   
   // Clear assembly grid

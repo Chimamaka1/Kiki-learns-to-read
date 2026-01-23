@@ -415,6 +415,11 @@ em, i, cite, dfn, var {
   pointer-events: none;
 }
 
+.puzzle-piece.selected {
+  outline: 3px solid #ff9800;
+  box-shadow: 0 0 12px rgba(255, 152, 0, 0.5);
+}
+
 /* Jigsaw Pieces */
 .jigsaw-piece {
   width: 100px !important;
