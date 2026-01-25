@@ -93,20 +93,111 @@ let currentStory = null;
 let currentPage = 0;
 let currentSceneCanvas = null;
 
-// Speech helper - always available in global scope
-function speakText(text) {
+// ElevenLabs voice configuration and caching
+const elevenLabsApiKey = window.config?.elevenLabs?.apiKey || '';
+const elevenLabsVoiceId = window.config?.elevenLabs?.voiceId || '';
+const ttsCache = new Map();
+let activeTtsAudio = null;
+let audioUnlocked = false;
+
+function stopActiveTtsAudio() {
+  if (activeTtsAudio) {
+    try {
+      activeTtsAudio.pause();
+      activeTtsAudio.currentTime = 0;
+    } catch (_) {}
+    activeTtsAudio = null;
+  }
+}
+
+function fallbackSpeak(cleanText) {
   try {
-    // Remove HTML tags for speech
-    const cleanText = text.replace(/<[^>]*>/g, '');
+    if (!('speechSynthesis' in window)) return;
     speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.rate = 0.8;
     utterance.pitch = 1.1;
     speechSynthesis.speak(utterance);
   } catch (e) {
-    console.warn('Speech unavailable:', e);
+    console.warn('Fallback speech unavailable:', e);
   }
 }
+
+// Speech helper - prefers ElevenLabs voice, falls back to browser TTS
+async function speakText(text) {
+  const cleanText = String(text || '').replace(/<[^>]*>/g, '').trim();
+  if (!cleanText) return;
+
+  stopActiveTtsAudio();
+  if ('speechSynthesis' in window) {
+    try { speechSynthesis.cancel(); } catch (_) {}
+  }
+
+  // Use ElevenLabs if credentials are present
+  if (elevenLabsApiKey && elevenLabsVoiceId) {
+    try {
+      const cachedUrl = ttsCache.get(cleanText);
+      if (cachedUrl) {
+        activeTtsAudio = new Audio(cachedUrl);
+        activeTtsAudio.play().catch(() => fallbackSpeak(cleanText));
+        activeTtsAudio.onended = () => { activeTtsAudio = null; };
+        return;
+      }
+
+      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${elevenLabsVoiceId}`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'audio/mpeg',
+          'Content-Type': 'application/json',
+          'xi-api-key': elevenLabsApiKey
+        },
+        body: JSON.stringify({
+          text: cleanText,
+          model_id: 'eleven_monolingual_v1',
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.5
+          }
+        })
+      });
+
+      if (response.ok) {
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        ttsCache.set(cleanText, audioUrl);
+        activeTtsAudio = new Audio(audioUrl);
+        activeTtsAudio.play().catch(() => fallbackSpeak(cleanText));
+        activeTtsAudio.onended = () => { activeTtsAudio = null; };
+        return;
+      }
+    } catch (e) {
+      console.warn('ElevenLabs speech unavailable, using browser speech.', e);
+    }
+  }
+
+  fallbackSpeak(cleanText);
+}
+
+// Unlock audio/speech on first user gesture (required by iOS Safari)
+function unlockAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+  try {
+    if (sfxContext && sfxContext.state === 'suspended') {
+      sfxContext.resume().catch(() => {});
+    }
+  } catch (_) {}
+  try {
+    if ('speechSynthesis' in window) {
+      const silent = new SpeechSynthesisUtterance(' ');
+      speechSynthesis.speak(silent);
+      setTimeout(() => {
+        try { speechSynthesis.cancel(); } catch (_) {}
+      }, 200);
+    }
+  } catch (_) {}
+}
+document.addEventListener('pointerdown', unlockAudio, { capture: true, once: true });
 
 // Simple SFX using Web Audio (lightweight, no assets)
 let sfxContext = null;
