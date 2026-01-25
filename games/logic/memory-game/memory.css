@@ -38,6 +38,44 @@ h1 {
   font-weight: bold;
 }
 
+/* Difficulty Section */
+.difficulty-section {
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+}
+
+.difficulty-section h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+}
+
+.difficulty-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid white;
+  padding: 8px 12px;
+  margin: 5px;
+  font-size: 13px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  font-style: normal;
+}
+
+.difficulty-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.difficulty-btn.active {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  border-color: #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
 .start-btn {
   background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   color: white;

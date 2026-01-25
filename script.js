@@ -43,7 +43,6 @@ let musicEnabled = false;
 ================================ */
 
 const wordDisplay = document.getElementById("word-display");
-const slider = document.getElementById("blend-slider");
 const newWordBtn = document.getElementById("new-word-button");
 const blendBtn = document.getElementById("blend-word-button");
 
@@ -75,30 +74,32 @@ const cvWords = [
 ];
 
 const cvcWords = [
-  "bat","cat","fat","hat","mat","pat","rat","sat","vat",
-  "bad","dad","had","mad","pad","sad",
-  "bag","lag","rag","tag","wag",
-  "cap","gap","lap","map","nap","sap","tap","zap",
-  "jam","ham","ram","yam",
-  "man","fan","can","pan","ran","tan",
-  "bed","fed","led","red","wed",
-  "beg","leg","peg",
-  "hen","men","pen","ten","den",
-  "jet","net","pet","vet","get",
-  "bin","din","fin","pin","tin","win",
-  "big","dig","fig","pig","wig",
-  "hit","kit","lit","pit","sit","fit",
-  "lip","sip","dip","hip","tip",
-  "mix","six","fix",
-  "cot","dot","hot","lot","not","pot","rot",
-  "dog","fog","hog","log",
-  "box","fox",
-  "top","mop","hop","pop",
-  "job","sob","rob",
-  "bug","hug","jug","mug","rug",
-  "bun","fun","run","sun",
-  "cup","pup","tub","rub",
-  "mud","bud"
+  "ant","bat","bee","bug","cat","cod","cow","cub","dog","elf","emu","fox","hen","hog","owl","pig","pug","pup","ram","rat","yak",
+  "arm","ear","eye","jaw","leg","lip","rib","toe",
+  "bun","egg","gum","ham","jam","nut","oat","pea","pie","tea","yam",
+  "bag","bed","bow","box","bus","cab","can","cap","car","cot","cup","dot","fan","hat","jar","jet","jug","key","kit","lid","log","map","mat","mop","mug","net","pan","pen","pin","pot","rag","rod","rug","saw","sun","tag","tie","tin","top","toy","tub","van","web","wig","wok",
+  "cry","cut","dig","eat","fix","fly","get","got","hid","hit","hop","hug","hum","jog","lay","let","lit","met","mix","nap","nod","pat","pop","put","ran","rub","run","sat","say","see","set","sew","sip","sit","ski","tap","try","tug","use","wag","win","won","zip",
+  "bud","fog","hay","hot","ice","mud","sea","sky","wet",
+  "boy","dad","guy","kid","lad","man","mom","pal","pet","son","tot",
+  "bad","big","dim","dry","fat","fit","fun","gay","icy","joy","low","mad","new","odd","old","red","sad","shy","wow","yum",
+  "few","one","six","ten","two",
+  "den","gym","hut","inn","lab","spa","zoo",
+  "did","end","gap","gas","had","has","her","hey","him","his","how","lot","not","now","oil","out","pay","row","she","sum","the","too","was","way","who","why","yes","yet","you",
+  "fat","hat","mat","pat","rat","sat","vat",
+  "dad","had","mad","pad","sad",
+  "lag","tag",
+  "sap",
+  "fed","led","wed",
+  "beg","peg",
+  "men",
+  "vet",
+  "bin","din","fin","tin",
+  "fig",
+  "dip","hip",
+  "cot","dog","hog","log",
+  "fox",
+  "sob",
+  "job","rob"
 ];
 
 let words = vcWords;
@@ -193,25 +194,137 @@ function renderWord(word) {
     wordDisplay.appendChild(tile);
     letters.push(tile);
   });
-
-  slider.max = letters.length - 1;
-  slider.value = 0;
 }
 
 function newWord() {
   currentWord = words[Math.floor(Math.random() * words.length)];
   renderWord(currentWord);
+  initReadingGuide();
+}
+
+/* ==============================
+   READING GUIDE - FINGER TRACKER
+================================ */
+
+function initReadingGuide() {
+  const guide = document.getElementById('reading-guide');
+  const wordDisplay = document.getElementById('word-display');
+  if (!guide || !wordDisplay) return;
+  
+  const finger = guide.querySelector('.guide-finger');
+  let isDragging = false;
+  let lastLetter = null;
+  
+  // Position guide to match word display bounds
+  function positionGuide() {
+    const letters = wordDisplay.querySelectorAll('.letter');
+    if (letters.length === 0) return;
+    
+    const firstLetter = letters[0].getBoundingClientRect();
+    const lastLetter = letters[letters.length - 1].getBoundingClientRect();
+    const guideParent = guide.parentElement.getBoundingClientRect();
+    
+    // Calculate actual width from first to last letter
+    const guideWidth = lastLetter.right - firstLetter.left;
+    const guideLeft = firstLetter.left - guideParent.left;
+    const guideTop = lastLetter.bottom - guideParent.top + 5;
+    
+    guide.style.left = guideLeft + 'px';
+    guide.style.width = guideWidth + 'px';
+    guide.style.top = guideTop + 'px';
+    
+    // Position finger at start of first letter
+    finger.style.left = '0px';
+    
+    // Trigger first letter on init
+    playLetter(letters[0].textContent);
+    
+    guide.classList.add('active');
+  }
+  
+  // Find letter under finger position
+  function getLetterUnderFinger(fingerX) {
+    const letters = wordDisplay.querySelectorAll('.letter');
+    for (let letter of letters) {
+      const rect = letter.getBoundingClientRect();
+      if (fingerX >= rect.left && fingerX <= rect.right) {
+        return letter;
+      }
+    }
+    return null;
+  }
+  
+  positionGuide();
+  window.addEventListener('resize', positionGuide);
+  
+  // Drag finger horizontally
+  finger.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    e.preventDefault();
+  });
+  
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const displayRect = wordDisplay.getBoundingClientRect();
+    const guideRect = guide.getBoundingClientRect();
+    
+    let x = e.clientX - guideRect.left;
+    x = Math.max(0, Math.min(x, guideRect.width));
+    finger.style.left = x + 'px';
+    
+    // Animate letter under finger
+    const letter = getLetterUnderFinger(e.clientX);
+    if (letter && letter !== lastLetter) {
+      if (lastLetter) lastLetter.classList.remove('word-jump');
+      letter.classList.add('word-jump');
+      lastLetter = letter;
+      playLetter(letter.textContent);
+      setTimeout(() => letter.classList.remove('word-jump'), 400);
+    }
+    
+    e.preventDefault();
+  });
+  
+  document.addEventListener('mouseup', () => {
+    isDragging = false;
+  });
+  
+  // Touch support
+  finger.addEventListener('touchstart', (e) => {
+    isDragging = true;
+    e.preventDefault();
+  });
+  
+  document.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    const displayRect = wordDisplay.getBoundingClientRect();
+    const guideRect = guide.getBoundingClientRect();
+    
+    let x = e.touches[0].clientX - guideRect.left;
+    x = Math.max(0, Math.min(x, guideRect.width));
+    finger.style.left = x + 'px';
+    
+    // Animate letter under finger
+    const letter = getLetterUnderFinger(e.touches[0].clientX);
+    if (letter && letter !== lastLetter) {
+      if (lastLetter) lastLetter.classList.remove('word-jump');
+      letter.classList.add('word-jump');
+      lastLetter = letter;
+      playLetter(letter.textContent);
+      setTimeout(() => letter.classList.remove('word-jump'), 400);
+    }
+    
+    e.preventDefault();
+  });
+  
+  document.addEventListener('touchend', () => {
+    isDragging = false;
+  });
 }
 
 /* ==============================
    EVENTS
 ================================ */
-
-slider.oninput = () => {
-  const i = Number(slider.value);
-  letters.forEach(l => l.classList.remove("active"));
-  letters[i]?.classList.add("active");
-};
 
 blendBtn.onclick = () => speakWord(currentWord);
 newWordBtn.onclick = newWord;

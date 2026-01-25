@@ -17,12 +17,16 @@ const items = [
 const gameBoard = document.getElementById("sequence");
 const startBtn = document.getElementById("start-memory");
 const message = document.getElementById("message");
+const easyBtn = document.getElementById("easy-btn");
+const mediumBtn = document.getElementById("medium-btn");
+const hardBtn = document.getElementById("hard-btn");
 
 let cards = [];
 let flipped = [];
 let matched = 0;
 let totalPairs = 0;
 let gameActive = false;
+let difficulty = 4; // Default to easy (4 pairs)
 
 /* ---------- HELPERS ---------- */
 
@@ -111,6 +115,28 @@ function playMatchSound() {
 
 /* ---------- GAME FLOW ---------- */
 
+// Difficulty selection
+easyBtn.onclick = () => {
+  difficulty = 4;
+  easyBtn.classList.add("active");
+  mediumBtn.classList.remove("active");
+  hardBtn.classList.remove("active");
+};
+
+mediumBtn.onclick = () => {
+  difficulty = 6;
+  easyBtn.classList.remove("active");
+  mediumBtn.classList.add("active");
+  hardBtn.classList.remove("active");
+};
+
+hardBtn.onclick = () => {
+  difficulty = 8;
+  easyBtn.classList.remove("active");
+  mediumBtn.classList.remove("active");
+  hardBtn.classList.add("active");
+};
+
 startBtn.onclick = startGame;
 
 function startGame() {
@@ -121,8 +147,8 @@ function startGame() {
   matched = 0;
   gameActive = true;
 
-  // Create pairs
-  const selectedItems = shuffle([...items]).slice(0, 4); // 4 pairs = 8 cards
+  // Create pairs based on difficulty
+  const selectedItems = shuffle([...items]).slice(0, difficulty);
   totalPairs = selectedItems.length;
   const cardPairs = [...selectedItems, ...selectedItems];
   const shuffledCards = shuffle(cardPairs);

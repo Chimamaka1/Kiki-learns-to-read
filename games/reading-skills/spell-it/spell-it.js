@@ -4,56 +4,240 @@
 
 // CVC words with emojis for visual support
 const cvcWords = [
-  { word: 'cat', emoji: '🐱' },
-  { word: 'dog', emoji: '🐕' },
+  // Animals
+  { word: 'ant', emoji: '🐜' },
   { word: 'bat', emoji: '🦇' },
-  { word: 'hat', emoji: '🎩' },
-  { word: 'mat', emoji: '🧘' },
-  { word: 'rat', emoji: '🐀' },
-  { word: 'pig', emoji: '🐷' },
-  { word: 'sun', emoji: '☀️' },
-  { word: 'run', emoji: '🏃' },
+  { word: 'bee', emoji: '🐝' },
   { word: 'bug', emoji: '🐛' },
-  { word: 'mug', emoji: '☕' },
-  { word: 'rug', emoji: '🧶' },
-  { word: 'pen', emoji: '🖊️' },
-  { word: 'hen', emoji: '🐔' },
-  { word: 'ten', emoji: '🔟' },
-  { word: 'bed', emoji: '🛏️' },
-  { word: 'red', emoji: '🔴' },
-  { word: 'leg', emoji: '🦵' },
-  { word: 'pot', emoji: '🍲' },
-  { word: 'hot', emoji: '🔥' },
-  { word: 'top', emoji: '⬆️' },
-  { word: 'mop', emoji: '🧹' },
-  { word: 'box', emoji: '📦' },
+  { word: 'cat', emoji: '🐱' },
+  { word: 'cod', emoji: '🐟' },
+  { word: 'cow', emoji: '🐄' },
+  { word: 'cub', emoji: '🐻' },
+  { word: 'dog', emoji: '🐕' },
+  { word: 'elf', emoji: '🧝' },
+  { word: 'emu', emoji: '🐦' },
   { word: 'fox', emoji: '🦊' },
-  { word: 'bus', emoji: '🚌' },
-  { word: 'cup', emoji: '🥤' },
+  { word: 'hen', emoji: '🐔' },
+  { word: 'hog', emoji: '🐷' },
+  { word: 'owl', emoji: '🦉' },
+  { word: 'pig', emoji: '🐷' },
+  { word: 'pug', emoji: '🐕' },
   { word: 'pup', emoji: '🐶' },
-  { word: 'cut', emoji: '✂️' },
+  { word: 'ram', emoji: '🐏' },
+  { word: 'rat', emoji: '🐀' },
+  { word: 'yak', emoji: '🦌' },
+  
+  // Body parts
+  { word: 'arm', emoji: '💪' },
+  { word: 'ear', emoji: '👂' },
+  { word: 'eye', emoji: '👁️' },
+  { word: 'jaw', emoji: '😮' },
+  { word: 'leg', emoji: '🦵' },
+  { word: 'lip', emoji: '💋' },
+  { word: 'rib', emoji: '🦴' },
+  { word: 'toe', emoji: '🦶' },
+  
+  // Food & drinks
+  { word: 'bun', emoji: '🍞' },
+  { word: 'egg', emoji: '🥚' },
+  { word: 'gum', emoji: '🍬' },
+  { word: 'ham', emoji: '🍖' },
+  { word: 'jam', emoji: '🍓' },
   { word: 'nut', emoji: '🥜' },
-  { word: 'wet', emoji: '💦' },
-  { word: 'net', emoji: '🎾' },
-  { word: 'jet', emoji: '✈️' },
-  { word: 'bit', emoji: '🍪' },
-  { word: 'sit', emoji: '🪑' },
-  { word: 'kit', emoji: '🧰' },
-  { word: 'big', emoji: '🐘' },
-  { word: 'dig', emoji: '⛏️' },
-  { word: 'fig', emoji: '🍇' },
+  { word: 'oat', emoji: '🌾' },
+  { word: 'pea', emoji: '🫘' },
+  { word: 'pie', emoji: '🥧' },
+  { word: 'tea', emoji: '🫖' },
+  { word: 'yam', emoji: '🍠' },
+  
+  // Objects & things
   { word: 'bag', emoji: '🎒' },
-  { word: 'tag', emoji: '🏷️' },
-  { word: 'log', emoji: '🪵' },
-  { word: 'jog', emoji: '🏃‍♀️' },
-  { word: 'hop', emoji: '🐇' },
-  { word: 'map', emoji: '🗺️' },
-  { word: 'nap', emoji: '😴' },
-  { word: 'van', emoji: '🚐' },
-  { word: 'fan', emoji: '🌀' },
+  { word: 'bat', emoji: '🏏' },
+  { word: 'bed', emoji: '🛏️' },
+  { word: 'bow', emoji: '🏹' },
+  { word: 'box', emoji: '📦' },
+  { word: 'bus', emoji: '🚌' },
+  { word: 'cab', emoji: '🚕' },
   { word: 'can', emoji: '🥫' },
+  { word: 'cap', emoji: '🧢' },
+  { word: 'car', emoji: '🚗' },
+  { word: 'cot', emoji: '🛏️' },
+  { word: 'cup', emoji: '🥤' },
+  { word: 'dot', emoji: '⚫' },
+  { word: 'fan', emoji: '🌀' },
+  { word: 'hat', emoji: '🎩' },
+  { word: 'jar', emoji: '🫙' },
+  { word: 'jet', emoji: '✈️' },
+  { word: 'jug', emoji: '🥤' },
+  { word: 'key', emoji: '🔑' },
+  { word: 'kit', emoji: '🧰' },
+  { word: 'lid', emoji: '🎩' },
+  { word: 'log', emoji: '🪵' },
+  { word: 'map', emoji: '🗺️' },
+  { word: 'mat', emoji: '🧘' },
+  { word: 'mop', emoji: '🧹' },
+  { word: 'mug', emoji: '☕' },
+  { word: 'net', emoji: '🎾' },
   { word: 'pan', emoji: '🍳' },
-  { word: 'ram', emoji: '🐏' }
+  { word: 'pen', emoji: '🖊️' },
+  { word: 'pin', emoji: '📌' },
+  { word: 'pot', emoji: '🍲' },
+  { word: 'rag', emoji: '🧹' },
+  { word: 'rod', emoji: '🎣' },
+  { word: 'rug', emoji: '🧶' },
+  { word: 'saw', emoji: '🪚' },
+  { word: 'sun', emoji: '☀️' },
+  { word: 'tag', emoji: '🏷️' },
+  { word: 'tie', emoji: '👔' },
+  { word: 'tin', emoji: '🥫' },
+  { word: 'top', emoji: '⬆️' },
+  { word: 'toy', emoji: '🧸' },
+  { word: 'tub', emoji: '🛁' },
+  { word: 'van', emoji: '🚐' },
+  { word: 'web', emoji: '🕸️' },
+  { word: 'wig', emoji: '👨' },
+  { word: 'wok', emoji: '🍳' },
+  
+  // Actions
+  { word: 'cry', emoji: '😭' },
+  { word: 'cut', emoji: '✂️' },
+  { word: 'dig', emoji: '⛏️' },
+  { word: 'eat', emoji: '🍽️' },
+  { word: 'fix', emoji: '🔧' },
+  { word: 'fly', emoji: '🪰' },
+  { word: 'get', emoji: '✊' },
+  { word: 'got', emoji: '✅' },
+  { word: 'hid', emoji: '🙈' },
+  { word: 'hit', emoji: '👊' },
+  { word: 'hop', emoji: '🐇' },
+  { word: 'hug', emoji: '🤗' },
+  { word: 'hum', emoji: '🎵' },
+  { word: 'jog', emoji: '🏃‍♀️' },
+  { word: 'lay', emoji: '🛏️' },
+  { word: 'let', emoji: '🤲' },
+  { word: 'lit', emoji: '💡' },
+  { word: 'met', emoji: '🤝' },
+  { word: 'mix', emoji: '🔀' },
+  { word: 'nap', emoji: '😴' },
+  { word: 'nod', emoji: '👤' },
+  { word: 'pat', emoji: '👋' },
+  { word: 'pop', emoji: '💥' },
+  { word: 'put', emoji: '📥' },
+  { word: 'ran', emoji: '🏃' },
+  { word: 'rub', emoji: '🧻' },
+  { word: 'run', emoji: '🏃' },
+  { word: 'sat', emoji: '🪑' },
+  { word: 'saw', emoji: '👀' },
+  { word: 'say', emoji: '💬' },
+  { word: 'see', emoji: '👀' },
+  { word: 'set', emoji: '✅' },
+  { word: 'sew', emoji: '🪡' },
+  { word: 'sip', emoji: '🥤' },
+  { word: 'sit', emoji: '🪑' },
+  { word: 'ski', emoji: '⛷️' },
+  { word: 'tap', emoji: '🚰' },
+  { word: 'try', emoji: '💪' },
+  { word: 'tug', emoji: '💪' },
+  { word: 'use', emoji: '🔨' },
+  { word: 'wag', emoji: '👋' },
+  { word: 'win', emoji: '🏆' },
+  { word: 'won', emoji: '🏆' },
+  { word: 'zip', emoji: '🤐' },
+  
+  // Nature & weather
+  { word: 'bud', emoji: '🌱' },
+  { word: 'fog', emoji: '🌫️' },
+  { word: 'hay', emoji: '🌾' },
+  { word: 'hot', emoji: '🔥' },
+  { word: 'ice', emoji: '🧊' },
+  { word: 'mud', emoji: '🏞️' },
+  { word: 'sea', emoji: '🌊' },
+  { word: 'sky', emoji: '☁️' },
+  { word: 'wet', emoji: '💦' },
+  
+  // People & family
+  { word: 'boy', emoji: '👦' },
+  { word: 'dad', emoji: '👨' },
+  { word: 'guy', emoji: '👨' },
+  { word: 'kid', emoji: '👧' },
+  { word: 'lad', emoji: '👦' },
+  { word: 'man', emoji: '👨' },
+  { word: 'mom', emoji: '👩' },
+  { word: 'pal', emoji: '👫' },
+  { word: 'pet', emoji: '🐱' },
+  { word: 'son', emoji: '👦' },
+  { word: 'tot', emoji: '👶' },
+  
+  // Emotions & descriptive
+  { word: 'bad', emoji: '👎' },
+  { word: 'big', emoji: '🐘' },
+  { word: 'dim', emoji: '💡' },
+  { word: 'dry', emoji: '🏜️' },
+  { word: 'fat', emoji: '🐷' },
+  { word: 'fit', emoji: '💪' },
+  { word: 'fun', emoji: '🎉' },
+  { word: 'gay', emoji: '😊' },
+  { word: 'icy', emoji: '❄️' },
+  { word: 'joy', emoji: '😊' },
+  { word: 'low', emoji: '👇' },
+  { word: 'mad', emoji: '😠' },
+  { word: 'new', emoji: '✨' },
+  { word: 'odd', emoji: '🤨' },
+  { word: 'old', emoji: '👴' },
+  { word: 'red', emoji: '🔴' },
+  { word: 'sad', emoji: '😢' },
+  { word: 'shy', emoji: '🙈' },
+  { word: 'wet', emoji: '💦' },
+  { word: 'wow', emoji: '😲' },
+  { word: 'yum', emoji: '😋' },
+  
+  // Numbers
+  { word: 'few', emoji: '🔢' },
+  { word: 'one', emoji: '1️⃣' },
+  { word: 'six', emoji: '6️⃣' },
+  { word: 'ten', emoji: '🔟' },
+  { word: 'two', emoji: '2️⃣' },
+  
+  // Places
+  { word: 'den', emoji: '🏠' },
+  { word: 'gym', emoji: '🏋️' },
+  { word: 'hut', emoji: '🏠' },
+  { word: 'inn', emoji: '🏨' },
+  { word: 'lab', emoji: '🔬' },
+  { word: 'spa', emoji: '🧖' },
+  { word: 'zoo', emoji: '🦁' },
+  
+  // Common words & concepts
+  { word: 'did', emoji: '✅' },
+  { word: 'end', emoji: '🛑' },
+  { word: 'gap', emoji: '🕳️' },
+  { word: 'gas', emoji: '⛽' },
+  { word: 'had', emoji: '✅' },
+  { word: 'has', emoji: '✅' },
+  { word: 'her', emoji: '👩' },
+  { word: 'hey', emoji: '👋' },
+  { word: 'him', emoji: '👨' },
+  { word: 'his', emoji: '👨' },
+  { word: 'how', emoji: '❓' },
+  { word: 'job', emoji: '💼' },
+  { word: 'lot', emoji: '📦' },
+  { word: 'not', emoji: '❌' },
+  { word: 'now', emoji: '⏰' },
+  { word: 'oil', emoji: '🛢️' },
+  { word: 'out', emoji: '🚪' },
+  { word: 'pay', emoji: '💳' },
+  { word: 'row', emoji: '🚣' },
+  { word: 'she', emoji: '👩' },
+  { word: 'sum', emoji: '➕' },
+  { word: 'the', emoji: '📚' },
+  { word: 'too', emoji: '➕' },
+  { word: 'was', emoji: '⏳' },
+  { word: 'way', emoji: '🛣️' },
+  { word: 'who', emoji: '❓' },
+  { word: 'why', emoji: '❓' },
+  { word: 'yes', emoji: '✅' },
+  { word: 'yet', emoji: '⏰' },
+  { word: 'you', emoji: '👉' }
 ];
 
 // Game state
@@ -75,7 +259,7 @@ let audioCtx = null;
 
 // DOM elements
 let letterSlotsDiv, letterBankDiv, feedbackDiv, feedbackMessage;
-let listenBtn, clearBtn, checkBtn, nextBtn;
+let listenBtn, clearBtn, checkBtn, nextBtn, skipBtn;
 let scoreDisplay, progressFill, emojiDisplay;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -88,6 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
   clearBtn = document.getElementById('clear-btn');
   checkBtn = document.getElementById('check-btn');
   nextBtn = document.getElementById('next-btn');
+    skipBtn = document.getElementById('skip-btn');
   scoreDisplay = document.getElementById('score');
   progressFill = document.getElementById('progress-fill');
   emojiDisplay = document.getElementById('emoji-display');
@@ -97,6 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
   clearBtn.addEventListener('click', clearAttempt);
   checkBtn.addEventListener('click', checkSpelling);
   nextBtn.addEventListener('click', loadNextWord);
+  skipBtn.addEventListener('click', loadNextWord);
 
   // Audio unlock for iOS/mobile
   const unlock = () => {
@@ -177,6 +363,7 @@ function createLetterBank() {
   // Combine and shuffle
   const bankLetters = [...correctLetters, ...distractors];
   shuffleArray(bankLetters);
+  console.log('Shuffled letters:', bankLetters); // Debug log
 
   // Create buttons
   letterBankDiv.innerHTML = '';
@@ -354,11 +541,42 @@ function stopActiveTtsAudio() {
   }
 }
 
+// Pronunciation corrections for words that TTS might mispronounce
+const pronunciationMap = {
+  'bow': 'bo',           // bow (weapon) not bow (bend)
+  'row': 'ro',           // row (line) not row (boat action)
+  'saw': 'saw',          // past tense of see, but also the tool
+  'gay': 'gay',          // happy/joyful
+  'hey': 'hay',          // greeting
+  'icy': 'eye see',      // to pronounce correctly
+  'lit': 'lit',          // past tense of light
+  'won': 'one',          // past tense of win, sounds like "one"
+  'yak': 'yack',         // the animal
+  'zoo': 'zoo',          // animal park
+  'few': 'few',          // small number
+  'new': 'new',          // not old
+  'she': 'shee',         // pronoun
+  'the': 'thuh',         // article
+  'ski': 'skee',         // snow sport
+  'gym': 'jim',          // exercise place
+  'guy': 'gye',          // person
+  'wet': 'wet',          // not dry
+  'yet': 'yet',          // still
+  'how': 'how',          // question word
+  'now': 'now',          // present time
+  'wow': 'wow',          // exclamation
+  'eat': 'eet',          // to consume food
+};
+
 function fallbackSpeak(text) {
   try {
     if (!('speechSynthesis' in window)) return;
     speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Use pronunciation correction if available
+    const textToSpeak = pronunciationMap[text.toLowerCase()] || text;
+    
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
     utterance.rate = 0.7;
     utterance.pitch = 1.1;
     speechSynthesis.speak(utterance);
