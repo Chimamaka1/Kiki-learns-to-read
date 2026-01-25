@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rocket Word Builder</title>
+  <link rel="stylesheet" href="find-it.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="top">
+      <div class="title">
+        <span class="emoji">🚀</span>
+        <div>
+          <h1>Rocket Word Builder</h1>
+          <p>Snap letter blocks to build and launch the word.</p>
+        </div>
+      </div>
+      <a class="back" href="../../../index.html#logic-section">← Back</a>
+    </header>
+
+    <section class="controls">
+      <div class="shape-switch">
+        <span>Shape:</span>
+        <button data-shape="rocket" class="shape-btn active">Rocket</button>
+        <button data-shape="house" class="shape-btn">House</button>
+        <button data-shape="boat" class="shape-btn">Boat</button>
+        <button data-shape="car" class="shape-btn">Car</button>
+      </div>
+      <div class="actions">
+        <button id="new-word" class="primary">🔄 New Word</button>
+        <button id="clear" class="ghost">🧹 Clear</button>
+      </div>
+    </section>
+
+    <section class="status" id="status">Drag letters into the rocket slots.</section>
+
+    <section class="play-area">
+      <div class="shape" id="shape" data-shape="rocket">
+        <div class="burst-layer" id="burst-layer"></div>
+        <div class="nose"></div>
+        <div class="body">
+          <div class="slot-strip" id="slots"></div>
+        </div>
+        <div class="fins">
+          <div class="fin fin-left"></div>
+          <div class="fin fin-right"></div>
+        </div>
+        <div class="flame"></div>
+        <div class="wheels"></div>
+      </div>
+
+      <div class="bank" id="bank"></div>
+    </section>
+
+    <section class="hint">
+      <button id="hear-word" class="ghost">🔊 Hear word</button>
+      <button id="hear-letters" class="ghost">🔊 Hear letters</button>
+    </section>
+  </div>
+
+  <script src="find-it.js"></script>
+</body>
+</html>

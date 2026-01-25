@@ -233,12 +233,9 @@ function initReadingGuide() {
     guide.style.width = guideWidth + 'px';
     guide.style.top = guideTop + 'px';
     
-    // Position finger at start of first letter
+    // Position finger at start of first letter (silent)
     finger.style.left = '0px';
-    
-    // Trigger first letter on init
-    playLetter(letters[0].textContent);
-    
+
     guide.classList.add('active');
   }
   
@@ -278,7 +275,6 @@ function initReadingGuide() {
       if (lastLetter) lastLetter.classList.remove('word-jump');
       letter.classList.add('word-jump');
       lastLetter = letter;
-      playLetter(letter.textContent);
       setTimeout(() => letter.classList.remove('word-jump'), 400);
     }
     
@@ -310,7 +306,6 @@ function initReadingGuide() {
       if (lastLetter) lastLetter.classList.remove('word-jump');
       letter.classList.add('word-jump');
       lastLetter = letter;
-      playLetter(letter.textContent);
       setTimeout(() => letter.classList.remove('word-jump'), 400);
     }
     
