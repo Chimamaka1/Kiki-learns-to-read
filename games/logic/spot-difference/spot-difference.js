@@ -51,6 +51,87 @@ const scenes = {
       }
     },
     {
+      name: 'Playground',
+      differences: [
+        { x: 90, y: 190, type: 'extra', description: 'extra swing seat' },
+        { x: 250, y: 140, type: 'missing', description: 'missing kite tail' }
+      ],
+      drawScene: (ctx, hasDifferences) => {
+        ctx.fillStyle = '#B3E5FC';
+        ctx.fillRect(0, 0, 400, 300);
+
+        // Slide
+        ctx.fillStyle = '#FFC107';
+        ctx.fillRect(60, 120, 20, 120);
+        ctx.beginPath();
+        ctx.moveTo(80, 120);
+        ctx.lineTo(160, 200);
+        ctx.lineTo(140, 210);
+        ctx.fill();
+
+        // Swing frame
+        ctx.strokeStyle = '#6D4C41';
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.moveTo(60, 90);
+        ctx.lineTo(40, 230);
+        ctx.moveTo(160, 90);
+        ctx.lineTo(180, 230);
+        ctx.moveTo(60, 90);
+        ctx.lineTo(160, 90);
+        ctx.stroke();
+
+        // Swing seat(s)
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#3E2723';
+        ctx.beginPath();
+        ctx.moveTo(90, 90);
+        ctx.lineTo(90, 170);
+        ctx.moveTo(120, 90);
+        ctx.lineTo(120, 170);
+        ctx.stroke();
+        ctx.fillStyle = '#FF7043';
+        ctx.fillRect(85, 170, 40, 12);
+
+        if (hasDifferences) {
+          ctx.beginPath();
+          ctx.moveTo(130, 90);
+          ctx.lineTo(130, 155);
+          ctx.moveTo(160, 90);
+          ctx.lineTo(160, 155);
+          ctx.stroke();
+          ctx.fillStyle = '#FF7043';
+          ctx.fillRect(125, 155, 40, 12);
+        }
+
+        // Kite
+        ctx.fillStyle = '#E91E63';
+        ctx.beginPath();
+        ctx.moveTo(260, 80);
+        ctx.lineTo(290, 110);
+        ctx.lineTo(260, 140);
+        ctx.lineTo(230, 110);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#F06292';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(260, 140);
+        if (!hasDifferences) {
+          ctx.lineTo(250, 170);
+          ctx.lineTo(240, 190);
+          ctx.lineTo(230, 210);
+        } else {
+          ctx.lineTo(260, 170);
+        }
+        ctx.stroke();
+
+        // Ground
+        ctx.fillStyle = '#A5D6A7';
+        ctx.fillRect(0, 230, 400, 70);
+      }
+    },
+    {
       name: 'Animal Scene',
       differences: [
         { x: 100, y: 120, type: 'missing', description: 'tail missing' },
@@ -188,6 +269,63 @@ const scenes = {
         ctx.fillRect(0, 240, 400, 60);
       }
     }
+    ,
+    {
+      name: 'Garden Picnic',
+      differences: [
+        { x: 110, y: 190, type: 'extra', description: 'extra sandwich' },
+        { x: 240, y: 150, type: 'missing', description: 'missing cloud' },
+        { x: 300, y: 210, type: 'color', description: 'basket cloth color' }
+      ],
+      drawScene: (ctx, hasDifferences) => {
+        ctx.fillStyle = '#B2EBF2';
+        ctx.fillRect(0, 0, 400, 300);
+
+        // Cloud
+        if (!hasDifferences) {
+          ctx.fillStyle = '#FFFFFF';
+          ctx.beginPath();
+          ctx.ellipse(240, 80, 35, 18, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Picnic blanket
+        ctx.fillStyle = hasDifferences ? '#FFAB91' : '#FFCCBC';
+        ctx.fillRect(80, 200, 240, 60);
+
+        // Basket
+        ctx.fillStyle = '#8D6E63';
+        ctx.fillRect(260, 180, 60, 30);
+        ctx.strokeStyle = '#5D4037';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(260, 180, 60, 30);
+
+        // Sandwiches
+        ctx.fillStyle = '#FFF9C4';
+        ctx.fillRect(110, 210, 30, 15);
+        ctx.fillRect(160, 210, 30, 15);
+        ctx.fillRect(210, 210, 30, 15);
+        if (hasDifferences) {
+          ctx.fillRect(140, 190, 30, 15);
+        }
+
+        // Trees
+        ctx.fillStyle = '#6D4C41';
+        ctx.fillRect(40, 170, 18, 90);
+        ctx.fillRect(340, 170, 18, 90);
+        ctx.fillStyle = '#43A047';
+        ctx.beginPath();
+        ctx.arc(49, 150, 40, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(349, 150, 40, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Ground
+        ctx.fillStyle = '#AED581';
+        ctx.fillRect(0, 240, 400, 60);
+      }
+    }
   ],
   hard: [
     {
@@ -269,6 +407,82 @@ const scenes = {
         ctx.fillStyle = '#90EE90';
         ctx.fillRect(0, 240, 400, 60);
       }
+    },
+    {
+      name: 'City Night',
+      differences: [
+        { x: 90, y: 110, type: 'missing', description: 'missing window light' },
+        { x: 210, y: 160, type: 'extra', description: 'extra street lamp' },
+        { x: 320, y: 80, type: 'color', description: 'moon color change' },
+        { x: 150, y: 220, type: 'extra', description: 'extra car' }
+      ],
+      drawScene: (ctx, hasDifferences) => {
+        ctx.fillStyle = '#1A237E';
+        ctx.fillRect(0, 0, 400, 300);
+
+        // Moon
+        ctx.fillStyle = hasDifferences ? '#FFEB3B' : '#F5F5F5';
+        ctx.beginPath();
+        ctx.arc(330, 60, 25, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Buildings
+        ctx.fillStyle = '#3949AB';
+        ctx.fillRect(40, 120, 80, 180);
+        ctx.fillRect(150, 140, 100, 160);
+        ctx.fillRect(270, 100, 90, 200);
+
+        // Windows
+        ctx.fillStyle = '#FFC107';
+        ctx.fillRect(60, 150, 12, 12);
+        ctx.fillRect(100, 150, 12, 12);
+        ctx.fillRect(60, 190, 12, 12);
+        if (!hasDifferences) {
+          ctx.fillRect(100, 190, 12, 12);
+        }
+
+        ctx.fillRect(180, 170, 12, 12);
+        ctx.fillRect(220, 170, 12, 12);
+        ctx.fillRect(180, 200, 12, 12);
+        ctx.fillRect(220, 200, 12, 12);
+
+        ctx.fillRect(300, 140, 12, 12);
+        ctx.fillRect(340, 140, 12, 12);
+        ctx.fillRect(300, 180, 12, 12);
+        ctx.fillRect(340, 180, 12, 12);
+
+        // Street lamps
+        ctx.strokeStyle = '#FFC107';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(40, 230);
+        ctx.lineTo(40, 260);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(260, 230);
+        ctx.lineTo(260, 260);
+        ctx.stroke();
+        if (hasDifferences) {
+          ctx.beginPath();
+          ctx.moveTo(210, 230);
+          ctx.lineTo(210, 260);
+          ctx.stroke();
+        }
+
+        // Cars
+        ctx.fillStyle = '#FF5252';
+        ctx.fillRect(90, 240, 50, 20);
+        ctx.fillStyle = '#29B6F6';
+        ctx.fillRect(230, 245, 50, 20);
+        if (hasDifferences) {
+          ctx.fillStyle = '#4CAF50';
+          ctx.fillRect(150, 230, 50, 20);
+        }
+
+        // Road
+        ctx.fillStyle = '#212121';
+        ctx.fillRect(0, 260, 400, 40);
+      }
     }
   ]
 };
@@ -280,6 +494,8 @@ let currentScene = null;
 let canvasLeftContext = null;
 let canvasRightContext = null;
 let gameActive = false;
+let foundMarkers = [];
+let audioCtx = null;
 
 document.addEventListener('DOMContentLoaded', function() {
   const canvasLeft = document.getElementById('canvas-left');
@@ -299,7 +515,18 @@ document.addEventListener('DOMContentLoaded', function() {
   // Add click handlers
   canvasLeft.addEventListener('click', (e) => handleCanvasClick(e, 'left'));
   canvasRight.addEventListener('click', (e) => handleCanvasClick(e, 'right'));
+  // Ensure audio context is primed after first user gesture (mobile/iPad)
+  const unlock = () => { const ctx = ensureAudioCtx(); if (ctx && ctx.state === 'suspended') { ctx.resume().catch(()=>{}); } document.removeEventListener('pointerdown', unlock, { capture: true }); };
+  document.addEventListener('pointerdown', unlock, { capture: true, once: true });
 });
+
+function ensureAudioCtx() {
+  if (audioCtx) return audioCtx;
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  if (!Ctx) return null;
+  audioCtx = new Ctx();
+  return audioCtx;
+}
 
 function setupDifficultyButtons() {
   const buttons = document.querySelectorAll('.difficulty-btn');
@@ -320,18 +547,13 @@ function loadNewScene() {
   currentScene = sceneList[currentSceneIndex % sceneList.length];
   
   foundDifferences.clear();
+  foundMarkers = [];
   document.getElementById('found').textContent = '0';
   document.getElementById('total').textContent = currentScene.differences.length;
   document.getElementById('feedback-section').style.display = 'none';
   
   gameActive = true;
-  
-  // Draw scenes
-  canvasLeftContext.clearRect(0, 0, 400, 300);
-  canvasRightContext.clearRect(0, 0, 400, 300);
-  
-  currentScene.drawScene(canvasLeftContext, false);
-  currentScene.drawScene(canvasRightContext, true);
+  renderCurrentScene();
 }
 
 function handleCanvasClick(event, side) {
@@ -349,6 +571,7 @@ function handleCanvasClick(event, side) {
     
     if (distance < 30 && !foundDifferences.has(i)) {
       foundDifferences.add(i);
+      markDifference(diff);
       document.getElementById('found').textContent = foundDifferences.size;
       playCorrectSound();
       
@@ -376,23 +599,93 @@ function completeScene() {
   currentSceneIndex++;
 }
 
-async function playCorrectSound() {
-  const synth = window.speechSynthesis;
-  if (synth) {
-    const utterance = new SpeechSynthesisUtterance('Found one!');
-    utterance.rate = 0.8;
-    utterance.pitch = 1.3;
-    synth.speak(utterance);
+function markDifference(diff) {
+  foundMarkers.push(diff);
+  renderCurrentScene();
+  pulseMarker(canvasLeftContext, diff.x, diff.y);
+  pulseMarker(canvasRightContext, diff.x, diff.y);
+}
+
+function drawMarker(ctx, x, y) {
+  ctx.save();
+  ctx.strokeStyle = '#00C853';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.arc(x, y, 24, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.strokeStyle = '#1B5E20';
+  ctx.lineWidth = 5;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(x - 12, y);
+  ctx.lineTo(x - 2, y + 10);
+  ctx.lineTo(x + 14, y - 12);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function renderCurrentScene() {
+  if (!currentScene || !canvasLeftContext || !canvasRightContext) return;
+  canvasLeftContext.clearRect(0, 0, 400, 300);
+  canvasRightContext.clearRect(0, 0, 400, 300);
+  currentScene.drawScene(canvasLeftContext, false);
+  currentScene.drawScene(canvasRightContext, true);
+  foundMarkers.forEach(diff => {
+    drawMarker(canvasLeftContext, diff.x, diff.y);
+    drawMarker(canvasRightContext, diff.x, diff.y);
+  });
+}
+
+function pulseMarker(ctx, x, y) {
+  const start = performance.now();
+  const duration = 220;
+  function step(now) {
+    const t = Math.min(1, (now - start) / duration);
+    const scale = 1 + 0.35 * Math.sin(t * Math.PI);
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(scale, scale);
+    ctx.translate(-x, -y);
+    ctx.globalAlpha = 0.8;
+    drawMarker(ctx, x, y);
+    ctx.restore();
+    if (t < 1) requestAnimationFrame(step);
+    else renderCurrentScene();
   }
+  requestAnimationFrame(step);
+}
+
+async function playCorrectSound() {
+  const ctx = ensureAudioCtx();
+  if (!ctx) return;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  const now = ctx.currentTime;
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(720, now);
+  osc.frequency.exponentialRampToValueAtTime(420, now + 0.18);
+  gain.gain.setValueAtTime(0.18, now);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.3);
 }
 
 async function playIncorrectSound() {
-  const synth = window.speechSynthesis;
-  if (synth) {
-    const utterance = new SpeechSynthesisUtterance('Keep looking');
-    utterance.rate = 0.8;
-    synth.speak(utterance);
-  }
+  const ctx = ensureAudioCtx();
+  if (!ctx) return;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  const now = ctx.currentTime;
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(220, now);
+  osc.frequency.exponentialRampToValueAtTime(140, now + 0.18);
+  gain.gain.setValueAtTime(0.16, now);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.3);
 }
 
 function celebrateSuccess() {
