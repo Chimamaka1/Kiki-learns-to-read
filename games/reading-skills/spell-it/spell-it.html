@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spell It! - Kiki Learns to Read</title>
+  <link rel="stylesheet" href="../../../css/style.css">
+  <link rel="stylesheet" href="spell-it.css">
+</head>
+<body>
+  <div class="spell-container">
+    <div class="game-header">
+      <button class="back-button" onclick="goBack()">← Back</button>
+      <h1>✏️ Spell It!</h1>
+      <div class="score-display">
+        <span class="score-label">Score:</span>
+        <span class="score-value" id="score">0</span>
+      </div>
+    </div>
+
+    <div class="game-instructions">
+      <h2>Listen to the word and click letters to spell it! 👂✨</h2>
+    </div>
+
+    <div class="word-display-area">
+      <div class="word-image" id="word-image">
+        <div class="emoji-display" id="emoji-display">🐱</div>
+      </div>
+      
+      <button class="listen-btn" id="listen-btn">🔊 Hear Word</button>
+      
+      <div class="letter-slots" id="letter-slots">
+        <div class="letter-slot"></div>
+        <div class="letter-slot"></div>
+        <div class="letter-slot"></div>
+      </div>
+    </div>
+
+    <div class="letter-bank" id="letter-bank">
+      <!-- Letter buttons will be generated here -->
+    </div>
+
+    <div class="controls">
+      <button class="action-btn secondary" id="clear-btn">🗑️ Clear</button>
+      <button class="action-btn primary" id="check-btn">✓ Check</button>
+      <button class="action-btn secondary hidden" id="next-btn">Next Word →</button>
+    </div>
+
+    <div id="feedback" class="feedback hidden">
+      <div class="feedback-message" id="feedback-message"></div>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <script src="../../../config.js"></script>
+  <script src="spell-it.js"></script>
+</body>
+</html>
