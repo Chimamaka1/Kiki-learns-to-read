@@ -1,5 +1,5 @@
 # Sensitive configuration files
-config.js
+# config.js
 
 # Node modules (if used)
 node_modules/

@@ -59,6 +59,33 @@ const stories = [
       { text: "The <span class='cvc-word'>pig</span> and <span class='cvc-word'>hen</span> ran.", emoji: "🐷🐔💨" },
       { text: "They had <span class='cvc-word'>fun</span> together!", emoji: "🐷🐔❤️" }
     ]
+  },
+  {
+    title: "Puddle Play",
+    pages: [
+      { text: "The <span class='cvc-word'>sun</span> set and it did <span class='cvc-word'>rain</span>.", emoji: "☀️🌧️", action: { label: "Splash the puddle", sound: "splash", speak: "Splash splash!" } },
+      { text: "A <span class='cvc-word'>kid</span> got a red <span class='cvc-word'>pan</span>.", emoji: "🧒🍳", action: { label: "Tap the pan", sound: "ding", speak: "Tap the pan!" } },
+      { text: "The <span class='cvc-word'>kid</span> and a <span class='cvc-word'>dog</span> run to the <span class='cvc-word'>mud</span>.", emoji: "🧒🐶", action: { label: "Jump with the dog", sound: "pop", speak: "Jump jump!" } },
+      { text: "They <span class='cvc-word'>splash</span> and <span class='cvc-word'>laugh</span>.", emoji: "💦😂", action: { label: "Make a splash", sound: "splash" } }
+    ]
+  },
+  {
+    title: "Picnic Pals",
+    pages: [
+      { text: "A <span class='cvc-word'>cat</span> and a <span class='cvc-word'>hen</span> pack a <span class='cvc-word'>bag</span>.", emoji: "🐱🐔🎒", action: { label: "Pack the bag", sound: "zip", speak: "Pack the snacks!" } },
+      { text: "They sit on a <span class='cvc-word'>mat</span> in the <span class='cvc-word'>sun</span>.", emoji: "🐱🐔☀️", action: { label: "Lay the mat", sound: "whoosh" } },
+      { text: "The <span class='cvc-word'>pig</span> runs in with a <span class='cvc-word'>bun</span>.", emoji: "🐷🥯", action: { label: "Share the bun", sound: "chime" } },
+      { text: "They <span class='cvc-word'>sip</span> and <span class='cvc-word'>chat</span> and have <span class='cvc-word'>fun</span>.", emoji: "🥤😊", action: { label: "Cheers!", sound: "clink" } }
+    ]
+  },
+  {
+    title: "Space Pup",
+    pages: [
+      { text: "A <span class='cvc-word'>pup</span> gets in a <span class='cvc-word'>pod</span>.", emoji: "🐶🚀", action: { label: "Launch!", soundFile: "../../../assets/sounds/music.mp3", speak: "3, 2, 1, launch!" } },
+      { text: "The <span class='cvc-word'>pod</span> goes <span class='cvc-word'>up</span> to the <span class='cvc-word'>sun</span>.", emoji: "🚀☀️", action: { label: "Boost", sound: "whoosh" } },
+      { text: "The <span class='cvc-word'>pup</span> sees a red <span class='cvc-word'>bug</span> in the <span class='cvc-word'>sky</span>.", emoji: "🐶🛸", action: { label: "Catch the bug", soundFile: "../../../assets/sounds/pop.mp3" } },
+      { text: "The <span class='cvc-word'>pup</span> and <span class='cvc-word'>bug</span> say <span class='cvc-word'>hi</span>.", emoji: "🐶👋🐛", action: { label: "Wave hello", sound: "ding", speak: "Hello little bug!" } }
+    ]
   }
 ];
 
@@ -79,6 +106,64 @@ function speakText(text) {
   } catch (e) {
     console.warn('Speech unavailable:', e);
   }
+}
+
+// Simple SFX using Web Audio (lightweight, no assets)
+let sfxContext = null;
+function ensureSfxContext() {
+  if (!sfxContext) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return null;
+    sfxContext = new AudioCtx();
+  }
+  if (sfxContext.state === 'suspended') {
+    sfxContext.resume().catch(() => {});
+  }
+  return sfxContext;
+}
+
+function playSfx(type = 'pop') {
+  const ctx = ensureSfxContext();
+  if (!ctx) return;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = ['ding','chime','clink'].includes(type) ? 'sine' : 'triangle';
+  const now = ctx.currentTime;
+  const freqMap = {
+    pop: 330,
+    splash: 180,
+    whoosh: 240,
+    ding: 660,
+    chime: 520,
+    clink: 720,
+    zip: 440,
+    tap: 520
+  };
+  const base = freqMap[type] || 400;
+  osc.frequency.setValueAtTime(base, now);
+  osc.frequency.exponentialRampToValueAtTime(base / 2, now + 0.18);
+  gain.gain.setValueAtTime(0.15, now);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.3);
+}
+
+// Simple audio-file playback with caching
+const audioCache = new Map();
+function playAudioFile(src) {
+  if (!src) return;
+  let audio = audioCache.get(src);
+  if (!audio) {
+    audio = new Audio(src);
+    audio.preload = 'auto';
+    audioCache.set(src, audio);
+  }
+  // Reset to start for repeat plays
+  audio.currentTime = 0;
+  audio.play().catch(() => {
+    // Fail silently; keep UX smooth
+  });
 }
 
 function goBack() {
@@ -212,6 +297,25 @@ function displayPage() {
   drawStaticScene(canvas, page.text, page.emoji || '');
   enableCanvasDragInteractivity(canvas, page.text, page.emoji || '');
   document.getElementById('page-number').textContent = `Page ${currentPage + 1} of ${currentStory.pages.length}`;
+
+  // Page action button
+  const pageAction = document.getElementById('page-action');
+  pageAction.innerHTML = '';
+  if (page.action) {
+    const btn = document.createElement('button');
+    btn.className = 'action-btn';
+    btn.textContent = page.action.label || 'Do it';
+    btn.onclick = () => {
+      if (page.action.soundFile) playAudioFile(page.action.soundFile);
+      else if (page.action.sound) playSfx(page.action.sound);
+      playSceneAnimation(currentSceneCanvas);
+      if (page.action.speak) speakText(page.action.speak);
+    };
+    pageAction.appendChild(btn);
+    pageAction.style.display = 'flex';
+  } else {
+    pageAction.style.display = 'none';
+  }
 
   // Enable/disable navigation buttons
   document.getElementById('prev-page').disabled = currentPage === 0;

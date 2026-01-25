@@ -172,8 +172,21 @@ function createPuzzlePieces() {
   const piecesContainer = document.getElementById('puzzle-pieces');
   if (!piecesContainer) return;
   
-  piecesContainer.innerHTML = '';
-  createJigsawPieces();
+  piecesContainer.innerHTML = '<p style="width:100%;text-align:center;color:#555;">Loading picture…</p>';
+  preloadImage(currentPuzzle.image, () => {
+    piecesContainer.innerHTML = '';
+    createJigsawPieces();
+  }, () => {
+    piecesContainer.innerHTML = '<p style="width:100%;text-align:center;color:#b00020;">Could not load the picture. Check your connection.</p>';
+  });
+}
+
+// Preload image to avoid blank pieces on mobile Safari
+function preloadImage(src, onLoad, onError) {
+  const img = new Image();
+  img.onload = () => onLoad && onLoad();
+  img.onerror = () => onError && onError();
+  img.src = src;
 }
 
 // Create jigsaw puzzle pieces from image
@@ -201,19 +214,10 @@ function createJigsawPieces() {
     pieceElement.style.overflow = 'hidden';
     pieceElement.style.border = '2px solid #007bff';
     pieceElement.style.borderRadius = '8px';
-    
-    // Create image inside piece
-    const img = document.createElement('img');
-    img.src = currentPuzzle.image;
-    img.style.position = 'absolute';
-    img.style.width = `${pieceWidth * config.cols}px`;
-    img.style.height = `${pieceHeight * config.rows}px`;
-    img.style.left = `-${col * pieceWidth}px`;
-    img.style.top = `-${row * pieceHeight}px`;
-    img.style.objectFit = 'cover';
-    img.style.pointerEvents = 'none';
-    
-    pieceElement.appendChild(img);
+    pieceElement.style.backgroundImage = `url(${currentPuzzle.image})`;
+    pieceElement.style.backgroundSize = `${pieceWidth * config.cols}px ${pieceHeight * config.rows}px`;
+    pieceElement.style.backgroundPosition = `-${col * pieceWidth}px -${row * pieceHeight}px`;
+    pieceElement.style.backgroundRepeat = 'no-repeat';
     
     pieceElement.addEventListener('dragstart', handleDragStart);
     pieceElement.addEventListener('dragend', handleDragEnd);
