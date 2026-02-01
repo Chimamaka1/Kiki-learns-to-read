@@ -25,6 +25,14 @@
         <div class="navbar-logo">
           <img src="assets/images/logo.png" alt="Kiki Learns to Read" class="navbar-logo-img">
         </div>
+        
+        <!-- Hamburger Menu Button (Mobile Only) -->
+        <button class="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        
         <ul class="navbar-menu">
           <li><a href="#" onclick="showHomepage(); return false;" class="nav-link">Home</a></li>
           <li><a href="#" onclick="showReadingSection(); return false;" class="nav-link">Games</a></li>
@@ -45,6 +53,22 @@
         </div>
       </div>
     </nav>
+    
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobile-menu" onclick="toggleMobileMenu()">
+      <div class="mobile-menu-content" onclick="event.stopPropagation()">
+        <button class="close-menu" onclick="toggleMobileMenu()">&times;</button>
+        <ul class="mobile-menu-list">
+          <li><a href="#" onclick="showHomepage(); toggleMobileMenu(); return false;">🏠 Home</a></li>
+          <li><a href="#" onclick="showReadingSection(); toggleMobileMenu(); return false;">🎮 Games</a></li>
+          <li><a href="#" onclick="toggleMobileMenu(); return false;">📚 Stories</a></li>
+          <li><a href="#" onclick="toggleMobileMenu(); return false;">👨‍👩‍👧 Parents</a></li>
+          <li class="menu-divider"></li>
+          <li><a href="#" onclick="openModal('signin-modal'); toggleMobileMenu(); return false;">🔐 Login</a></li>
+          <li><a href="#" onclick="openModal('signup-modal'); toggleMobileMenu(); return false;">✨ Sign Up</a></li>
+        </ul>
+      </div>
+    </div>
 
     <!-- Hero Section -->
     <div class="hero-section">
@@ -356,6 +380,36 @@
 <script src="src/game-integration.js"></script>
 <script src="src/script.js?v=final1"></script>
 <script>
+// Mobile Menu Toggle
+function toggleMobileMenu() {
+  const mobileMenu = document.getElementById('mobile-menu');
+  const hamburger = document.querySelector('.hamburger-menu');
+  
+  if (mobileMenu && hamburger) {
+    mobileMenu.classList.toggle('active');
+    hamburger.classList.toggle('active');
+    
+    // Prevent body scroll when menu is open
+    if (mobileMenu.classList.contains('active')) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }
+}
+
+// Close mobile menu when clicking outside
+document.addEventListener('click', function(event) {
+  const mobileMenu = document.getElementById('mobile-menu');
+  const hamburger = document.querySelector('.hamburger-menu');
+  
+  if (mobileMenu && mobileMenu.classList.contains('active')) {
+    if (!event.target.closest('.mobile-menu-content') && !event.target.closest('.hamburger-menu')) {
+      toggleMobileMenu();
+    }
+  }
+});
+
 // Functions to handle section switching
 function showReadingSection() {
   // Hide homepage sections

@@ -40,10 +40,20 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 999;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Use portrait background on mobile */
+@media (max-width: 768px) {
+  .header-hero-wrapper {
+    background: url('../assets/images/background2.png');
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    position: relative;
+  }
 }
 
 /* ===============================
@@ -89,6 +99,147 @@ body {
   font-size: 18px;
   font-weight: 900;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Hamburger Menu Button */
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #FF6B9D 0%, #C86DD7 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 1001;
+  box-shadow: 0 4px 12px rgba(255, 107, 157, 0.4);
+  transition: all 0.3s ease;
+}
+
+.hamburger-menu:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(255, 107, 157, 0.6);
+}
+
+.hamburger-menu span {
+  width: 100%;
+  height: 3px;
+  background: white;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.hamburger-menu.active span:nth-child(1) {
+  transform: rotate(45deg) translate(8px, 8px);
+}
+
+.hamburger-menu.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(8px, -8px);
+}
+
+/* Mobile Menu Overlay */
+.mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1002;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-menu-overlay.active {
+  display: block;
+  opacity: 1;
+}
+
+.mobile-menu-content {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 80%;
+  max-width: 320px;
+  height: 100%;
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.mobile-menu-overlay.active .mobile-menu-content {
+  right: 0;
+}
+
+.close-menu {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  color: white;
+  font-size: 36px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+.close-menu:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: rotate(90deg);
+}
+
+.mobile-menu-list {
+  list-style: none;
+  padding: 60px 0 20px 0;
+  margin: 0;
+}
+
+.mobile-menu-list li {
+  margin: 0;
+  padding: 0;
+}
+
+.mobile-menu-list li a {
+  display: block;
+  color: white;
+  text-decoration: none;
+  padding: 18px 20px;
+  margin: 8px 0;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.mobile-menu-list li a:hover,
+.mobile-menu-list li a:active {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateX(10px);
+}
+
+.menu-divider {
+  height: 2px;
+  background: rgba(255, 255, 255, 0.3);
+  margin: 15px 0;
 }
 
 .navbar-menu {
@@ -209,17 +360,31 @@ body {
 
 @media (max-width: 768px) {
   .navbar-container {
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     gap: 10px;
+    height: auto;
+    padding: 15px 20px;
   }
   
-  .navbar-menu {
-    gap: 15px;
-    justify-content: center;
+  .navbar-logo {
+    height: 80px;
   }
   
-  .nav-link {
-    font-size: 13px;
+  .navbar-logo-img {
+    width: 160px;
+    height: 80px;
+  }
+  
+  .hamburger-menu {
+    display: flex;
+  }
+  
+  .navbar-menu,
+  .auth-buttons,
+  .user-profile {
+    display: none !important;
   }
 }
 
@@ -833,24 +998,35 @@ button:active {
 }
 
 @media (max-width: 768px) {
+  .hero-section {
+    padding: 30px 15px;
+  }
+  
   .hero-content {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
   }
   
   .hero-text h1 {
-    font-size: 28px;
+    font-size: 32px;
+    padding: 15px 25px;
   }
   
   .hero-description {
-    font-size: 16px;
+    font-size: 18px;
+    padding: 12px 20px;
   }
   
   .hero-ctas {
     flex-direction: column;
+    width: 100%;
   }
   
   .cta-primary, .cta-secondary {
     width: 100%;
+    padding: 16px 35px;
+    font-size: 20px;
   }
 }
 
