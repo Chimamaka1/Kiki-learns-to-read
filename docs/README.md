@@ -2,6 +2,16 @@
 
 A collection of interactive educational games designed to help children learn phonics and reading through Consonant-Vowel-Consonant (CVC) patterns. The games use engaging visuals, audio feedback, and gamification to create an enjoyable learning experience.
 
+## 🔥 NEW: Firebase Backend Integration
+
+The application now includes a complete Firebase backend for user authentication, progress tracking, and subscription management!
+
+📖 **Quick Links:**
+- [Firebase Setup Guide](FIREBASE_SETUP.md) - Get started with Firebase
+- [Backend Documentation](firebase/README.md) - API reference
+- [Refactoring Summary](REFACTORING_SUMMARY.md) - What changed
+- [Migration Guide](MIGRATION_GUIDE.md) - Update existing code
+
 ## 🎮 Games Overview
 
 ### 1. **Main CVC Phonics Game** (`index.html`)
@@ -34,60 +44,92 @@ A collection of interactive educational games designed to help children learn ph
 
 ```
 Kiki-learns-to-read/
-├── index.html              # Main CVC phonics application
+├── index.html              # Main application with Firebase integration
 ├── script.js              # Core game logic and audio handling
-├── icon.png               # Application icon
+├── config.js              # Your Firebase & API credentials (not in git)
+├── config.template.js     # Template for configuration
 ├── README.md              # This documentation
 │
+├── firebase/              # 🔥 Backend module (NEW)
+│   ├── core/
+│   │   └── config.js      # Firebase initialization
+│   ├── services/          # Business logic services
+│   │   ├── auth.service.js
+│   │   ├── user.service.js
+│   │   ├── kid.service.js
+│   │   ├── progress.service.js
+│   │   └── subscription.service.js
+│   ├── utils/             # Utility functions
+│   │   ├── storage.js
+│   │   └── helpers.js
+│   ├── ui/                # UI components
+│   │   ├── handlers.js
+│   │   └── game-integration.js
+│   ├── index.js           # Main entry point
+│   └── README.md          # Backend API documentation
+│
 ├── css/
-│   └── style.css          # Main stylesheet for all games
+│   ├── style.css          # Main stylesheet
+│   └── auth.css           # Authentication UI styles
 │
-├── games/
-│   ├── balloon-pop/
-│   │   ├── balloon.html   # Balloon popping game
-│   │   └── balloon.js     # Balloon game logic
-│   │
-│   ├── listen-choose/
-│   │   ├── listen.html    # Listen and choose game
-│   │   └── listen.js      # Listen game logic
-│   │
-│   ├── egg-match/
-│   │   ├── egg-match.html # Egg cracking game
-│   │   └── egg-match.js   # Egg game logic
-│   │
-│   └── memory-game/
-│       ├── memory.html    # Memory sequence game
-│       ├── memory.js      # Memory game logic
-│       └── memory.css     # Memory game specific styles
+├── games/                 # Individual learning games
+│   ├── reading-skills/
+│   │   ├── balloon-pop/
+│   │   ├── listen-choose/
+│   │   ├── egg-match/
+│   │   └── ... (other reading games)
+│   ├── numbers-and-maths/
+│   ├── logic/
+│   └── creativity/
 │
-└── assets/
-    ├── sounds/
-    │   ├── a.mp3 - z.mp3  # Individual letter sounds
-    │   ├── music.mp3      # Background music
-    │   ├── pop.mp3        # Sound effects
-    │   └── .keep          # Placeholder file
-    │
-    └── images/
-        ├── cat.png        # Word images for matching games
-        └── (additional image assets)
+├── assets/
+│   ├── sounds/            # Audio files
+│   └── images/            # Visual assets
+│
+└── docs/                  # Documentation
+    ├── FIREBASE_SETUP.md
+    ├── DATABASE_SCHEMA.md
+    ├── MIGRATION_GUIDE.md
+    ├── REFACTORING_SUMMARY.md
+    └── BACKEND_IMPLEMENTATION.md
 ```
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 - Modern web browser with HTML5 audio support
+- Firebase account (for backend features)
 - Local web server (recommended) or ability to open HTML files directly
 
 ### Installation
-1. Clone or download the project to your local machine
-2. **Configure API credentials** (optional for ElevenLabs speech):
-   - Copy `config.template.js` to `config.js`
-   - Edit `config.js` and add your ElevenLabs API key and voice ID
-   - The app will work without this (using browser speech synthesis)
-3. Open `index.html` in a web browser
-4. For best experience, serve files through a local web server
 
-### Quick Start
+#### 1. Basic Setup
+```bash
+# Clone or download the project
+git clone [your-repo-url]
+cd Kiki-learns-to-read
+```
+
+#### 2. Configure Firebase (Optional but Recommended)
+```bash
+# Copy configuration template
+cp config.template.js config.js
+
+# Edit config.js and add your Firebase credentials
+# Follow FIREBASE_SETUP.md for detailed instructions
+```
+
+#### 3. Run the Application
+```bash
+# Option 1: Use a local web server
+python -m http.server 8000
+# Then open http://localhost:8000
+
+# Option 2: Open directly in browser
+# Open index.html in your browser
+```
+
+### Quick Start (Without Backend)
 ```bash
 # Using Python 3 (if available)
 python -m http.server 8000

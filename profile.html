@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Parent Profile - Kiki Learns to Read</title>
+  <link rel="stylesheet" href="css/style.css?v=final1">
+  <link rel="stylesheet" href="css/profile.css">
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
+</head>
+<body>
+
+<div id="app-container">
+  <!-- Header Navigation -->
+  <div class="profile-header">
+    <div class="header-content">
+      <button class="back-button" onclick="goToHome()">← Back to Home</button>
+      <h1>👨‍👩‍👧 Parent Profile</h1>
+      <button class="logout-button" onclick="logoutAndReturn()">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- Main Profile Container -->
+  <div class="profile-container">
+    
+    <!-- User Information Section -->
+    <section class="profile-section user-info-section">
+      <div class="section-title">
+        <h2>👤 Your Information</h2>
+        <button class="edit-button" onclick="openEditProfileModal()">✏️ Edit</button>
+      </div>
+      
+      <div class="user-info-card">
+        <div class="info-row">
+          <span class="label">Email:</span>
+          <span class="value" id="user-email-display">-</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Parent Name:</span>
+          <span class="value" id="user-name-display">-</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Account Created:</span>
+          <span class="value" id="user-created-display">-</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings Section -->
+    <section class="profile-section settings-section">
+      <div class="section-title">
+        <h2>⚙️ Settings</h2>
+      </div>
+      
+      <div class="settings-card">
+        <div class="setting-item">
+          <div class="setting-label">
+            <label for="sound-toggle">🔊 Sound Effects</label>
+          </div>
+          <input type="checkbox" id="sound-toggle" class="toggle-switch" checked>
+        </div>
+        
+        <div class="setting-item">
+          <div class="setting-label">
+            <label for="music-toggle">🎵 Background Music</label>
+          </div>
+          <input type="checkbox" id="music-toggle" class="toggle-switch">
+        </div>
+      </div>
+    </section>
+
+    <!-- Kids Management Section -->
+    <section class="profile-section kids-section">
+      <div class="section-title">
+        <h2>👶 My Children</h2>
+        <button class="add-button" onclick="openAddKidModal()">+ Add Child</button>
+      </div>
+      
+      <div class="kids-list" id="kids-list">
+        <div class="empty-state">
+          <p>👶 No children added yet</p>
+          <p class="empty-description">Click "Add Child" to get started with Kiki's learning adventure!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Progress Overview Section -->
+    <section class="profile-section progress-section">
+      <div class="section-title">
+        <h2>📊 Learning Progress</h2>
+      </div>
+      
+      <div class="progress-overview" id="progress-overview">
+        <div class="empty-state">
+          <p>📈 No progress data yet</p>
+          <p class="empty-description">Once your child plays games, their progress will appear here!</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div id="edit-profile-modal" class="modal" style="display: none;">
+  <div class="modal-content modal-large">
+    <button class="modal-close" onclick="closeModal('edit-profile-modal')">×</button>
+    <h2>✏️ Edit Profile</h2>
+    
+    <form id="edit-profile-form" class="auth-form">
+      <div class="form-group">
+        <label for="edit-name">Parent Name</label>
+        <input type="text" id="edit-name" placeholder="Your name">
+      </div>
+      
+      <button type="submit" class="auth-button">Save Changes</button>
+    </form>
+  </div>
+</div>
+
+<!-- Add Kid Modal -->
+<div id="add-kid-modal" class="modal" style="display: none;">
+  <div class="modal-content modal-large">
+    <button class="modal-close" onclick="closeModal('add-kid-modal')">×</button>
+    <h2>👶 Add a Child</h2>
+    
+    <form id="add-kid-form" class="auth-form">
+      <div class="form-group">
+        <label for="kid-name">Child's Name</label>
+        <input type="text" id="kid-name" required placeholder="e.g., Emma, Liam">
+      </div>
+      
+      <div class="form-group">
+        <label for="kid-age-years">Age - Years</label>
+        <input type="number" id="kid-age-years" min="0" max="10" placeholder="e.g., 3" required>
+      </div>
+
+      <div class="form-group">
+        <label for="kid-age-months">Age - Months</label>
+        <input type="number" id="kid-age-months" min="0" max="11" placeholder="e.g., 6" value="0">
+      </div>
+
+      <div class="form-group">
+        <label for="kid-avatar">Choose Avatar</label>
+        <div class="avatar-selector">
+          <div class="avatar-option" data-avatar="avatar1">
+            <span class="avatar-emoji">👦</span>
+            <span class="avatar-label">Boy</span>
+          </div>
+          <div class="avatar-option" data-avatar="avatar2">
+            <span class="avatar-emoji">👧</span>
+            <span class="avatar-label">Girl</span>
+          </div>
+          <div class="avatar-option" data-avatar="avatar3">
+            <span class="avatar-emoji">👶</span>
+            <span class="avatar-label">Baby</span>
+          </div>
+          <div class="avatar-option" data-avatar="avatar4">
+            <span class="avatar-emoji">🧒</span>
+            <span class="avatar-label">Kid</span>
+          </div>
+        </div>
+        <input type="hidden" id="kid-avatar" value="avatar1">
+      </div>
+      
+      <button type="submit" class="auth-button">Add Child</button>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Kid Modal -->
+<div id="edit-kid-modal" class="modal" style="display: none;">
+  <div class="modal-content modal-large">
+    <button class="modal-close" onclick="closeModal('edit-kid-modal')">×</button>
+    <h2>✏️ Edit Child Profile</h2>
+    
+    <form id="edit-kid-form" class="auth-form">
+      <input type="hidden" id="edit-kid-id">
+      
+      <div class="form-group">
+        <label for="edit-kid-name">Child's Name</label>
+        <input type="text" id="edit-kid-name" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="edit-kid-age-years">Age - Years</label>
+        <input type="number" id="edit-kid-age-years" min="0" max="10" required>
+      </div>
+
+      <div class="form-group">
+        <label for="edit-kid-age-months">Age - Months</label>
+        <input type="number" id="edit-kid-age-months" min="0" max="11" value="0">
+      </div>
+
+      <div class="form-group">
+        <label for="edit-kid-avatar">Avatar</label>
+        <div class="avatar-selector">
+          <div class="avatar-option" data-avatar="avatar1">
+            <span class="avatar-emoji">👦</span>
+            <span class="avatar-label">Boy</span>
+          </div>
+          <div class="avatar-option" data-avatar="avatar2">
+            <span class="avatar-emoji">👧</span>
+            <span class="avatar-label">Girl</span>
+          </div>
+          <div class="avatar-option" data-avatar="avatar3">
+            <span class="avatar-emoji">👶</span>
+            <span class="avatar-label">Baby</span>
+          </div>
+          <div class="avatar-option" data-avatar="avatar4">
+            <span class="avatar-emoji">🧒</span>
+            <span class="avatar-label">Kid</span>
+          </div>
+        </div>
+        <input type="hidden" id="edit-kid-avatar" value="avatar1">
+      </div>
+      
+      <div class="form-actions">
+        <button type="submit" class="auth-button">Save Changes</button>
+        <button type="button" class="delete-button" onclick="deleteCurrentKid()">Delete Child</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="config/config.js"></script>
+<script src="config/firebase-config.js"></script>
+<script src="src/auth.js"></script>
+<script src="src/profile.js"></script>
+
+<script>
+// Initialize Firebase for profile page
+if (typeof initializeFirebase === 'function') {
+  initializeFirebase();
+}
+
+// Modal utilities
+function openModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) modal.style.display = 'none';
+}
+
+function goToHome() {
+  window.location.href = 'index.html';
+}
+
+function logoutAndReturn() {
+  if (confirm('Are you sure you want to sign out?')) {
+    signOut().then(() => {
+      window.location.href = 'index.html';
+    });
+  }
+}
+
+// Close modal when clicking outside
+document.addEventListener('DOMContentLoaded', function() {
+  const modals = document.querySelectorAll('.modal');
+  modals.forEach(modal => {
+    modal.addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.style.display = 'none';
+      }
+    });
+  });
+});
+</script>
+
+</body>
+</html>

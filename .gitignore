@@ -1,5 +1,11 @@
 # Sensitive configuration files
-# config.js
+config/config.js
+
+# Firebase
+.firebase/
+.firebaserc
+firebase-debug.log
+firestore-debug.log
 
 # Node modules (if used)
 node_modules/

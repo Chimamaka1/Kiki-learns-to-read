@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sequence Memory Game</title>
+    <link rel="stylesheet" href="sequence-memory.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Sequence Memory</h1>
+            <p>Watch the sequence, then click the images in the same order!</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-label">Stage:</span>
+                <span class="stat-value" id="stage">Easy</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Level:</span>
+                <span class="stat-value" id="level">1</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Score:</span>
+                <span class="stat-value" id="score">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Sequence:</span>
+                <span class="stat-value" id="sequenceCount">0</span>
+            </div>
+        </div>
+
+        <!-- Stage Selection -->
+        <div class="stage-selection">
+            <button class="stage-btn active" id="easyBtn" onclick="selectStage('easy')">🟢 Easy</button>
+            <button class="stage-btn" id="mediumBtn" onclick="selectStage('medium')">🟡 Medium</button>
+            <button class="stage-btn" id="hardBtn" onclick="selectStage('hard')">🔴 Hard</button>
+        </div>
+
+        <div class="game-area">
+            <div class="message" id="message">Click "Start Game" - Cards will open, memorize them!</div>
+            
+            <!-- Sequence Display Section -->
+            <div class="sequence-display-section">
+                <h3>🎯 Remember These in Order:</h3>
+                <div class="sequence-display" id="sequenceDisplay">
+                    <p>Sequence will appear here...</p>
+                </div>
+            </div>
+
+            <!-- Your Turn Section -->
+            <div class="your-turn-section">
+                <h3>👆 Your Choices:</h3>
+                <div class="your-sequence-display" id="yourSequenceDisplay">
+                    <p>Click the cards in the same order...</p>
+                </div>
+            </div>
+
+            <!-- Game Grid -->
+            <div class="game-grid-section">
+                <h3>🎮 Click the Cards:</h3>
+                <div class="memory-grid" id="memoryGrid">
+                    <!-- Memory cards will be generated here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-start" id="startBtn" onclick="startGame()">Start Game</button>
+            <button class="btn btn-reset" id="resetBtn" onclick="resetGame()">Reset</button>
+        </div>
+
+        <div class="info">
+            <p>💡 <strong>How to Play:</strong></p>
+            <ul>
+                <li>Click "Start Game" and all cards will flip open</li>
+                <li>Look at all the images and memorize the sequence shown</li>
+                <li>Cards will flip closed after a few seconds</li>
+                <li>Click the closed cards in the correct sequence order</li>
+                <li>Complete correctly to advance to the next level!</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="sequence-memory.js"></script>
+</body>
+</html>
+

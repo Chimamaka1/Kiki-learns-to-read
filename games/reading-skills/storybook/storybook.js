@@ -11,6 +11,96 @@ const stories = [
     ]
   },
   {
+    title: "The Magic Bus",
+    pages: [
+      { text: "A yellow <span class='cvc-word'>bus</span> can <span class='cvc-word'>fly</span>!", emoji: "🚌✨", action: { label: "Fly the bus!", sound: "whoosh", speak: "Zoom!" } },
+      { text: "The <span class='cvc-word'>bus</span> picks up a <span class='cvc-word'>cat</span>, a <span class='cvc-word'>dog</span>, and a <span class='cvc-word'>pig</span>.", emoji: "🐱🐶🐷🚌", action: { label: "Honk!", sound: "ding", speak: "Beep beep!" } },
+      { text: "They <span class='cvc-word'>zoom</span> over a <span class='cvc-word'>big</span> hill.", emoji: "🚌⛰️", action: { label: "Go up!", sound: "whoosh" } },
+      { text: "They see a <span class='cvc-word'>red</span> rainbow in the <span class='cvc-word'>sky</span>.", emoji: "🌈✨", action: { label: "Touch the rainbow", sound: "chime", speak: "So pretty!" } },
+      { text: "The magic <span class='cvc-word'>bus</span> lands at the park!", emoji: "🚌🎡😊", action: { label: "Play!", sound: "pop" } }
+    ]
+  },
+  {
+    title: "Dinosaur Dan",
+    pages: [
+      { text: "Dan the <span class='cvc-word'>dino</span> is <span class='cvc-word'>big</span> and green.", emoji: "🦕", action: { label: "Roar!", sound: "pop", speak: "Roar!" } },
+      { text: "Dan finds a <span class='cvc-word'>red</span> egg in his <span class='cvc-word'>den</span>.", emoji: "🦕🥚", action: { label: "Tap the egg", sound: "ding" } },
+      { text: "The egg goes <span class='cvc-word'>crack</span>! Out comes a baby <span class='cvc-word'>dino</span>!", emoji: "🐣🦖", action: { label: "Crack!", sound: "pop", speak: "Crack!" } },
+      { text: "Dan and the baby <span class='cvc-word'>run</span> and <span class='cvc-word'>jump</span>.", emoji: "🦕🦖💨", action: { label: "Jump!", sound: "whoosh" } },
+      { text: "They eat <span class='cvc-word'>ten</span> leaves and take a <span class='cvc-word'>nap</span>.", emoji: "🍃🦕😴", action: { label: "Yawn", sound: "chime", speak: "Goodnight!" } }
+    ]
+  },
+  {
+    title: "The Robot's Job",
+    pages: [
+      { text: "Rob the robot has a <span class='cvc-word'>job</span>.", emoji: "🤖", action: { label: "Beep boop!", sound: "ding", speak: "Beep boop!" } },
+      { text: "Rob can <span class='cvc-word'>mop</span> the <span class='cvc-word'>wet</span> floor.", emoji: "🤖🧹", action: { label: "Mop!", sound: "whoosh" } },
+      { text: "Rob can <span class='cvc-word'>fix</span> a broken <span class='cvc-word'>clock</span>.", emoji: "🤖⏰", action: { label: "Fix it!", sound: "ding", speak: "Tick tock!" } },
+      { text: "Rob puts a <span class='cvc-word'>box</span> on top of another <span class='cvc-word'>box</span>.", emoji: "🤖📦", action: { label: "Stack boxes", sound: "pop" } },
+      { text: "Rob is <span class='cvc-word'>glad</span> to help!", emoji: "🤖😊✨", action: { label: "Thank you Rob!", sound: "chime", speak: "Good job Rob!" } }
+    ]
+  },
+  {
+    title: "Underwater Swim",
+    pages: [
+      { text: "A <span class='cvc-word'>fish</span> named Finn loves to <span class='cvc-word'>swim</span>.", emoji: "🐠", action: { label: "Swim!", sound: "splash", speak: "Splash!" } },
+      { text: "Finn sees a <span class='cvc-word'>big</span> blue <span class='cvc-word'>whale</span>.", emoji: "🐠🐋", action: { label: "Say hi!", sound: "whoosh", speak: "Hello whale!" } },
+      { text: "The whale and Finn <span class='cvc-word'>zip</span> through the <span class='cvc-word'>waves</span>.", emoji: "🌊🐋🐠", action: { label: "Zoom!", sound: "whoosh" } },
+      { text: "They find a <span class='cvc-word'>chest</span> with a <span class='cvc-word'>gem</span> inside!", emoji: "💎✨", action: { label: "Open chest!", sound: "chime", speak: "Wow!" } },
+      { text: "Finn and whale are <span class='cvc-word'>best</span> pals now!", emoji: "🐠❤️🐋", action: { label: "Celebrate!", sound: "pop" } }
+    ]
+  },
+  {
+    title: "Pizza Party",
+    pages: [
+      { text: "A <span class='cvc-word'>fox</span> wants to make a <span class='cvc-word'>pizza</span>.", emoji: "🦊🍕", action: { label: "Toss dough!", sound: "whoosh", speak: "Toss!" } },
+      { text: "Fox adds <span class='cvc-word'>red</span> sauce and cheese.", emoji: "🦊🧀", action: { label: "Spread sauce", sound: "whoosh" } },
+      { text: "Fox puts on <span class='cvc-word'>six</span> pepperoni slices.", emoji: "🍕", action: { label: "Add toppings!", sound: "pop", speak: "One, two, three!" } },
+      { text: "The pizza goes in the <span class='cvc-word'>hot</span> oven.", emoji: "🔥", action: { label: "Bake!", sound: "ding" } },
+      { text: "Fox's pals come to <span class='cvc-word'>eat</span>. <span class='cvc-word'>Yum</span>!", emoji: "🦊🐱🐶🐷🍕", action: { label: "Eat pizza!", sound: "chime", speak: "Yummy!" } }
+    ]
+  },
+  {
+    title: "The Lost Sock",
+    pages: [
+      { text: "Tim lost his <span class='cvc-word'>red</span> sock.", emoji: "🧦❓", action: { label: "Look around", sound: "pop" } },
+      { text: "Tim looks in his <span class='cvc-word'>bed</span>. Not there!", emoji: "🛏️", action: { label: "Check bed", sound: "whoosh" } },
+      { text: "Tim looks in a <span class='cvc-word'>box</span>. Not there!", emoji: "📦", action: { label: "Open box", sound: "pop" } },
+      { text: "A <span class='cvc-word'>pup</span> has the sock! The pup was playing.", emoji: "🐶🧦", action: { label: "Giggle!", sound: "chime", speak: "Silly puppy!" } },
+      { text: "Tim and the <span class='cvc-word'>pup</span> play <span class='cvc-word'>tug</span>!", emoji: "👦🐶🧦😄", action: { label: "Tug!", sound: "whoosh", speak: "Tug tug!" } }
+    ]
+  },
+  {
+    title: "Garden Friends",
+    pages: [
+      { text: "Ben plants a <span class='cvc-word'>seed</span> in his garden.", emoji: "🌱", action: { label: "Plant seed", sound: "pop", speak: "Plant it!" } },
+      { text: "The <span class='cvc-word'>sun</span> shines and rain falls <span class='cvc-word'>drip drip</span>.", emoji: "☀️🌧️", action: { label: "Rain dance!", sound: "splash" } },
+      { text: "A <span class='cvc-word'>worm</span> and a <span class='cvc-word'>bee</span> come to help.", emoji: "🪱🐝", action: { label: "Buzz!", sound: "ding", speak: "Buzz buzz!" } },
+      { text: "The seed grows into a <span class='cvc-word'>big</span> red flower!", emoji: "🌺✨", action: { label: "Wow!", sound: "chime", speak: "Beautiful!" } },
+      { text: "Ben, worm, and bee are <span class='cvc-word'>glad</span>!", emoji: "👦🪱🐝🌺", action: { label: "Celebrate!", sound: "pop" } }
+    ]
+  },
+  {
+    title: "Superhero Sam",
+    pages: [
+      { text: "Sam puts on a <span class='cvc-word'>red</span> cape.", emoji: "🦸", action: { label: "Whoosh!", sound: "whoosh", speak: "Superhero!" } },
+      { text: "Sam can <span class='cvc-word'>jump</span> really <span class='cvc-word'>high</span>!", emoji: "🦸💨", action: { label: "Jump!", sound: "pop", speak: "So high!" } },
+      { text: "Sam sees a <span class='cvc-word'>cat</span> stuck in a tree.", emoji: "🐱🌳", action: { label: "Help!", sound: "ding", speak: "Don't worry!" } },
+      { text: "Sam flies <span class='cvc-word'>up</span> and gets the <span class='cvc-word'>cat</span>.", emoji: "🦸🐱✨", action: { label: "Rescue!", sound: "whoosh" } },
+      { text: "The <span class='cvc-word'>cat</span> says thanks! Sam is a hero!", emoji: "🐱❤️🦸😊", action: { label: "Hooray!", sound: "chime", speak: "Hooray for Sam!" } }
+    ]
+  },
+  {
+    title: "The Silly Parade",
+    pages: [
+      { text: "A <span class='cvc-word'>band</span> marches down the street.", emoji: "🎺🥁", action: { label: "Play music!", sound: "ding", speak: "Boom boom!" } },
+      { text: "A <span class='cvc-word'>pig</span> wears a funny <span class='cvc-word'>wig</span>.", emoji: "🐷", action: { label: "Laugh!", sound: "pop", speak: "So silly!" } },
+      { text: "A <span class='cvc-word'>frog</span> jumps on a <span class='cvc-word'>log</span>.", emoji: "🐸🪵", action: { label: "Jump!", sound: "whoosh" } },
+      { text: "A <span class='cvc-word'>duck</span> rides in a <span class='cvc-word'>truck</span>.", emoji: "🦆🚚", action: { label: "Honk!", sound: "ding", speak: "Beep beep!" } },
+      { text: "Everyone claps! What a <span class='cvc-word'>fun</span> parade!", emoji: "👏🎉😄", action: { label: "Clap!", sound: "chime", speak: "Hooray!" } }
+    ]
+  },
+  {
     title: "The Red Hen",
     pages: [
       { text: "A <span class='cvc-word'>hen</span> sat in a <span class='cvc-word'>pen</span>.", emoji: "🐔" },

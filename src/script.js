@@ -1,18 +1,17 @@
 /* ==============================
-   AUDIO GATE (iPAD / iOS SAFE)
+   AUDIO INITIALIZATION
 ================================ */
 
 let audioReady = false;
 
-const startBtn = document.getElementById("start-audio");
-const audioGate = document.getElementById("audio-gate");
-
-startBtn.onclick = () => {
-  // unlock sound effects
-  //const test = new Audio("assets/sounds/a.mp3");
-  //test.play().catch(() => {});
-
-  // unlock background music (IMPORTANT)
+// Auto-initialize audio on page load
+function initializeAudio() {
+  // Only run on home page (index.html), not on profile.html
+  if (document.title.includes('Parent Profile') || document.location.pathname.includes('profile.html')) {
+    return;
+  }
+  
+  // unlock background music
   bgMusic.play()
     .then(() => {
       bgMusic.pause();
@@ -22,11 +21,16 @@ startBtn.onclick = () => {
 
   // unlock speech
   speechSynthesis.cancel();
-  speechSynthesis.speak(new SpeechSynthesisUtterance("Let's read!"));
 
   audioReady = true;
-  audioGate.style.display = "none";
-};
+}
+
+// Initialize audio when page is ready (only on home page)
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeAudio);
+} else {
+  initializeAudio();
+}
 
 /* ==============================
    BACKGROUND MUSIC
@@ -42,15 +46,25 @@ let musicEnabled = false;
    DOM
 ================================ */
 
-const wordDisplay = document.getElementById("word-display");
-const newWordBtn = document.getElementById("new-word-button");
-const blendBtn = document.getElementById("blend-word-button");
+let wordDisplay;
+let newWordBtn;
+let blendBtn;
+let vcBtn;
+let cvBtn;
+let cvcBtn;
+let musicBtn;
 
-const vcBtn = document.getElementById("vc-button");
-const cvBtn = document.getElementById("cv-button");
-const cvcBtn = document.getElementById("cvc-button");
-
-const musicBtn = document.getElementById("music-toggle");
+function initDOM() {
+  wordDisplay = document.getElementById("word-display");
+  newWordBtn = document.getElementById("new-word-button");
+  blendBtn = document.getElementById("blend-word-button");
+  
+  vcBtn = document.getElementById("vc-button");
+  cvBtn = document.getElementById("cv-button");
+  cvcBtn = document.getElementById("cvc-button");
+  
+  musicBtn = document.getElementById("music-toggle");
+}
 
 /* ==============================
    WORD LISTS
@@ -121,54 +135,10 @@ function playLetter(letter) {
   a.play().catch(() => {});
 }
 
-async function speakWord(word) {
+function speakWord(word) {
   if (!audioReady) return;
-  
-  // Check if ElevenLabs credentials are available
-  if (!elevenLabsApiKey || !voiceId) {
-    console.warn('ElevenLabs credentials not configured, using fallback speech synthesis');
-    speechSynthesis.cancel();
-    speechSynthesis.speak(new SpeechSynthesisUtterance(word));
-    return;
-  }
-  
-  try {
-    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'audio/mpeg',
-        'Content-Type': 'application/json',
-        'xi-api-key': elevenLabsApiKey
-      },
-      body: JSON.stringify({
-        text: word,
-        model_id: "eleven_monolingual_v1",
-        voice_settings: {
-          stability: 0.5,
-          similarity_boost: 0.5
-        }
-      })
-    });
-
-    if (response.ok) {
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      audio.play().catch(() => {});
-      
-      // Clean up the object URL after playback
-      audio.onended = () => URL.revokeObjectURL(audioUrl);
-    } else {
-      // Fallback to speech synthesis if ElevenLabs fails
-      speechSynthesis.cancel();
-      speechSynthesis.speak(new SpeechSynthesisUtterance(word));
-    }
-  } catch (error) {
-    console.error('ElevenLabs API error:', error);
-    // Fallback to speech synthesis
-    speechSynthesis.cancel();
-    speechSynthesis.speak(new SpeechSynthesisUtterance(word));
-  }
+  speechSynthesis.cancel();
+  speechSynthesis.speak(new SpeechSynthesisUtterance(word));
 }
 
 // Text-to-speech function for games
@@ -321,26 +291,135 @@ function initReadingGuide() {
    EVENTS
 ================================ */
 
-blendBtn.onclick = () => speakWord(currentWord);
-newWordBtn.onclick = newWord;
-
-vcBtn.onclick = () => { words = vcWords; newWord(); };
-cvBtn.onclick = () => { words = cvWords; newWord(); };
-cvcBtn.onclick = () => { words = cvcWords; newWord(); };
-
-musicBtn.onclick = () => {
-  if (!audioReady) return;
-
-  if (musicEnabled) {
-    bgMusic.pause();
-    musicEnabled = false;
-    musicBtn.textContent = "🎵 Music";
-  } else {
-    bgMusic.play().catch(() => {});
-    musicEnabled = true;
-    musicBtn.textContent = "⏸ Music";
+function setupPhonicsEvents() {
+  if (!newWordBtn || !blendBtn || !vcBtn || !cvBtn || !cvcBtn || !musicBtn) {
+    return; // Elements not found, not on phonics page
   }
-};
+
+  blendBtn.onclick = () => speakWord(currentWord);
+  newWordBtn.onclick = newWord;
+
+  vcBtn.onclick = () => { words = vcWords; newWord(); };
+  cvBtn.onclick = () => { words = cvWords; newWord(); };
+  cvcBtn.onclick = () => { words = cvcWords; newWord(); };
+
+  musicBtn.onclick = () => {
+    if (!audioReady) return;
+
+    if (musicEnabled) {
+      bgMusic.pause();
+      musicEnabled = false;
+      musicBtn.textContent = "🎵 Music";
+    } else {
+      bgMusic.play().catch(() => {});
+      musicEnabled = true;
+      musicBtn.textContent = "⏸ Music";
+    }
+  };
+
+  // Load first word
+  newWord();
+}
+
+/* ==============================
+   INITIALIZATION
+================================ */
+
+function setupPhonics() {
+  // Initialize DOM elements
+  initDOM();
+  
+  // Only set up if on phonics page
+  if (!newWordBtn || !blendBtn) return;
+
+  blendBtn.onclick = () => speakWord(currentWord);
+  newWordBtn.onclick = newWord;
+
+  vcBtn.onclick = () => { words = vcWords; newWord(); };
+  cvBtn.onclick = () => { words = cvWords; newWord(); };
+  cvcBtn.onclick = () => { words = cvcWords; newWord(); };
+
+  musicBtn.onclick = () => {
+    if (!audioReady) return;
+
+    if (musicEnabled) {
+      bgMusic.pause();
+      musicEnabled = false;
+      musicBtn.textContent = "🎵 Music";
+    } else {
+      bgMusic.play().catch(() => {});
+      musicEnabled = true;
+      musicBtn.textContent = "⏸ Music";
+    }
+  };
+
+  // Load first word
+  newWord();
+}
+
+// Wait for DOM to be ready before setting up phonics
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', setupPhonics);
+} else {
+  setupPhonics();
+}
+
+/* ==============================
+   KID MANAGEMENT
+================================ */
+
+// Store current selected kid globally
+let currentSelectedKidId = null;
+
+// Populate kid selector dropdown
+function populateKidSelector() {
+  const selector = document.getElementById('kid-selector');
+  if (!selector) return;
+  
+  // Get all kids from parent's account
+  const kids = (window.userData && window.userData.kids) || [];
+  
+  // Clear existing options
+  selector.innerHTML = '<option value="">Select a kid...</option>';
+  
+  kids.forEach(kid => {
+    const option = document.createElement('option');
+    option.value = kid.id;
+    option.textContent = kid.name;
+    selector.appendChild(option);
+  });
+  
+  // Load saved kid selection from localStorage
+  const savedKidId = localStorage.getItem('selectedKidId');
+  if (savedKidId && kids.some(k => k.id === savedKidId)) {
+    selector.value = savedKidId;
+    currentSelectedKidId = savedKidId;
+  }
+}
+
+// Handle kid selection change
+function selectKidForGame() {
+  const selector = document.getElementById('kid-selector');
+  const kidId = selector.value;
+  
+  if (kidId) {
+    currentSelectedKidId = kidId;
+    localStorage.setItem('selectedKidId', kidId);
+    
+    // Show confirmation
+    const kids = window.userData.kids || [];
+    const selectedKid = kids.find(k => k.id === kidId);
+    if (selectedKid) {
+      console.log(`Now playing as: ${selectedKid.name}`);
+      // Optional: Show toast notification
+    }
+  }
+}
+
+// Get current selected kid
+function getCurrentSelectedKidId() {
+  return currentSelectedKidId;
+}
 
 /* ==============================
    START
