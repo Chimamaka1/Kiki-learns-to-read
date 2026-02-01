@@ -1,6 +1,26 @@
 /* ==============================
-   LETTERS & PHONICS GAME
+   LETTERS & PHONICS GAME V2
+   WITH LEVELS, THEMES & BUDDIES
 ================================ */
+
+/* ==============================
+   GAME STATE
+================================ */
+
+let gameState = {
+  currentLevel: 1,
+  currentBuddy: 'kiki',
+  currentTheme: 'jungle',
+  musicEnabled: false,
+  sessionStart: null,
+  sessionStats: {
+    wordsAttempted: 0,
+    wordsCompleted: 0,
+    blendUsed: 0,
+    letterTaps: {},
+    wordTimes: []
+  }
+};
 
 /* ==============================
    AUDIO INITIALIZATION
@@ -35,8 +55,6 @@ const bgMusic = new Audio("../../../assets/sounds/music.mp3");
 bgMusic.loop = true;
 bgMusic.volume = 0.3;
 
-let musicEnabled = false;
-
 /* ==============================
    DOM ELEMENTS
 ================================ */
@@ -44,21 +62,21 @@ let musicEnabled = false;
 let wordDisplay;
 let newWordBtn;
 let blendBtn;
-let vcBtn;
-let cvBtn;
-let cvcBtn;
 let musicBtn;
+let letterGrid;
+let gameContainer;
+let gameHeader;
+let welcomeScreen;
 
 function initDOM() {
   wordDisplay = document.getElementById("word-display");
   newWordBtn = document.getElementById("new-word-button");
   blendBtn = document.getElementById("blend-word-button");
-  
-  vcBtn = document.getElementById("vc-button");
-  cvBtn = document.getElementById("cv-button");
-  cvcBtn = document.getElementById("cvc-button");
-  
   musicBtn = document.getElementById("music-toggle");
+  letterGrid = document.getElementById("letter-grid");
+  gameContainer = document.getElementById("game-container");
+  gameHeader = document.getElementById("game-header");
+  welcomeScreen = document.getElementById("welcome-screen");
 }
 
 /* ==============================
@@ -111,9 +129,10 @@ const cvcWords = [
   "job","rob"
 ];
 
-let words = cvcWords;
+let currentWords = [];
 let currentWord = "";
 let letters = [];
+let wordStartTime = 0;
 
 /* ==============================
    AUDIO HELPERS
@@ -121,9 +140,15 @@ let letters = [];
 
 function playLetter(letter) {
   if (!audioReady) return;
-  const a = new Audio(`../../../assets/sounds/${letter}.mp3`);
+  const a = new Audio(`../../../assets/sounds/${letter.toLowerCase()}.mp3`);
   a.currentTime = 0;
   a.play().catch(() => {});
+  
+  // Track letter taps
+  if (!gameState.sessionStats.letterTaps[letter]) {
+    gameState.sessionStats.letterTaps[letter] = 0;
+  }
+  gameState.sessionStats.letterTaps[letter]++;
 }
 
 function speakWord(word) {
@@ -290,9 +315,9 @@ function setWordList(type) {
 }
 
 function toggleMusic() {
-  musicEnabled = !musicEnabled;
+  gameState.musicEnabled = !gameState.musicEnabled;
   
-  if (musicEnabled) {
+  if (gameState.musicEnabled) {
     bgMusic.play().catch(() => {});
     musicBtn.textContent = "🔇 Music";
   } else {
@@ -302,23 +327,299 @@ function toggleMusic() {
 }
 
 /* ==============================
-   EVENT LISTENERS
+   LEVEL SELECTION & SETUP
+================================ */
+
+const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+function selectBuddy(buddy) {
+  gameState.currentBuddy = buddy;
+  document.querySelectorAll('.buddy-option').forEach(el => el.classList.remove('active'));
+  document.querySelector(`[data-buddy="${buddy}"]`).classList.add('active');
+}
+
+function selectTheme(theme) {
+  gameState.currentTheme = theme;
+  document.querySelectorAll('.theme-option').forEach(el => el.classList.remove('active'));
+  document.querySelector(`[data-theme="${theme}"]`).classList.add('active');
+  
+  // Apply theme
+  document.body.className = `theme-${theme}`;
+}
+
+function startGame(level) {
+  gameState.currentLevel = level;
+  gameState.sessionStart = Date.now();
+  gameState.sessionStats = {
+    wordsAttempted: 0,
+    wordsCompleted: 0,
+    blendUsed: 0,
+    letterTaps: {},
+    wordTimes: []
+  };
+  
+  // Hide welcome screen, show game
+  welcomeScreen.classList.remove('active');
+  gameHeader.style.display = 'flex';
+  gameContainer.style.display = 'block';
+  
+  // Update header
+  updateHeader();
+  
+  // Set up level
+  if (level === 1) {
+    setupLevel1();
+  } else if (level === 2) {
+    setupLevel2();
+  } else if (level === 3) {
+    setupLevel3();
+  } else if (level === 4) {
+    setupLevel4();
+  }
+}
+
+function updateHeader() {
+  const buddyEmojis = {
+    'kiki': '🧑‍🦰',
+    'tiger': '🐯',
+    'robot': '🤖',
+    'star': '⭐'
+  };
+  
+  const levelNames = ['', 'A-Z Letters', 'VC Words', 'CV Words', 'CVC Words'];
+  
+  document.getElementById('buddy-display').textContent = `${buddyEmojis[gameState.currentBuddy]} ${gameState.currentBuddy.charAt(0).toUpperCase() + gameState.currentBuddy.slice(1)}`;
+  document.getElementById('level-badge').textContent = `Level ${gameState.currentLevel}`;
+  document.getElementById('game-subtitle').textContent = `📚 ${levelNames[gameState.currentLevel]}`;
+}
+
+/* ==============================
+   LEVEL SETUP FUNCTIONS
+================================ */
+
+function setupLevel1() {
+  document.getElementById('level-1-content').style.display = 'block';
+  document.getElementById('level-2-4-content').style.display = 'none';
+  document.getElementById('phonics-options').style.display = 'none';
+  document.getElementById('game-instruction').textContent = 'Tap any letter to hear its sound!';
+  
+  letterGrid.innerHTML = '';
+  alphabet.forEach(letter => {
+    const letterEl = document.createElement('div');
+    letterEl.className = 'grid-letter';
+    letterEl.textContent = letter;
+    letterEl.onclick = () => {
+      letterEl.classList.add('bounce');
+      playLetter(letter);
+      setTimeout(() => letterEl.classList.remove('bounce'), 600);
+    };
+    letterGrid.appendChild(letterEl);
+  });
+}
+
+function setupLevel2() {
+  currentWords = vcWords;
+  document.getElementById('level-1-content').style.display = 'none';
+  document.getElementById('level-2-4-content').style.display = 'block';
+  document.getElementById('phonics-options').style.display = 'flex';
+  document.getElementById('game-instruction').textContent = 'Tap letters to hear sounds. Use Blend to hear the whole word!';
+  
+  renderRandomWord();
+}
+
+function setupLevel3() {
+  currentWords = cvWords;
+  document.getElementById('level-1-content').style.display = 'none';
+  document.getElementById('level-2-4-content').style.display = 'block';
+  document.getElementById('phonics-options').style.display = 'flex';
+  document.getElementById('game-instruction').textContent = 'Tap letters to hear sounds. Use Blend to hear the whole word!';
+  
+  renderRandomWord();
+}
+
+function setupLevel4() {
+  currentWords = cvcWords;
+  document.getElementById('level-1-content').style.display = 'none';
+  document.getElementById('level-2-4-content').style.display = 'block';
+  document.getElementById('phonics-options').style.display = 'flex';
+  document.getElementById('game-instruction').textContent = 'Tap letters to hear sounds. Use Blend to hear the whole word!';
+  
+  renderRandomWord();
+}
+
+/* ==============================
+   WORD RENDERING
+================================ */
+
+function renderRandomWord() {
+  if (currentWords.length === 0) return;
+  
+  const word = currentWords[Math.floor(Math.random() * currentWords.length)];
+  wordStartTime = Date.now();
+  gameState.sessionStats.wordsAttempted++;
+  
+  renderWord(word);
+}
+
+function renderWord(word) {
+  currentWord = word;
+  wordDisplay.innerHTML = "";
+  letters = [];
+  
+  for (let i = 0; i < word.length; i++) {
+    const letter = word[i];
+    const letterDiv = document.createElement("div");
+    letterDiv.className = "letter";
+    letterDiv.textContent = letter.toUpperCase();
+    
+    // Random animation on render
+    const animations = ['spin', 'pulse', 'jump'];
+    const randomAnim = animations[Math.floor(Math.random() * animations.length)];
+    letterDiv.classList.add(randomAnim);
+    setTimeout(() => letterDiv.classList.remove(randomAnim), 600);
+    
+    letterDiv.onclick = () => {
+      letterDiv.classList.add('pulse');
+      playLetter(letter);
+      setTimeout(() => letterDiv.classList.remove('pulse'), 500);
+    };
+    
+    wordDisplay.appendChild(letterDiv);
+    letters.push(letterDiv);
+  }
+}
+
+function blendWord() {
+  if (!currentWord) return;
+  
+  gameState.sessionStats.blendUsed++;
+  
+  let delay = 0;
+  for (let i = 0; i < currentWord.length; i++) {
+    setTimeout(() => {
+      letters[i].classList.add('jump');
+      playLetter(currentWord[i]);
+      setTimeout(() => {
+        letters[i].classList.remove('jump');
+      }, 600);
+    }, delay);
+    delay += 600;
+  }
+  
+  setTimeout(() => {
+    speakWord(currentWord);
+  }, delay);
+}
+
+/* ==============================
+   NAVIGATION & MENU
+================================ */
+
+function goHome() {
+  window.location.href = window.location.href.split('games')[0] + 'index.html#reading-section';
+}
+
+function goBackToReading() {
+  window.location.href = window.location.href.split('games')[0] + 'index.html#reading-section';
+}
+
+function toggleMenu() {
+  const menu = document.getElementById('pause-menu');
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
+function showMenu() {
+  document.getElementById('pause-menu').style.display = 'block';
+}
+
+function showLevelSelect() {
+  toggleMenu();
+  // Hide game, show welcome screen with level selection
+  gameHeader.style.display = 'none';
+  gameContainer.style.display = 'none';
+  welcomeScreen.classList.add('active');
+}
+
+function showSettings() {
+  toggleMenu();
+  // Would show settings modal
+}
+
+/* ==============================
+   GAME INFO MODAL FUNCTIONS
+================================ */
+
+function closeInfoModal() {
+  const modal = document.getElementById('game-info-modal');
+  if (modal) {
+    modal.classList.remove('active');
+  }
+}
+
+function showInfoTab(tabName) {
+  // Hide all tab contents
+  const tabContents = document.querySelectorAll('.info-tab-content');
+  tabContents.forEach(content => {
+    content.classList.remove('active');
+  });
+  
+  // Remove active class from all buttons
+  const tabButtons = document.querySelectorAll('.info-tab-btn');
+  tabButtons.forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  // Show selected tab content
+  const selectedContent = document.getElementById(`${tabName}-tab`);
+  if (selectedContent) {
+    selectedContent.classList.add('active');
+  }
+  
+  // Mark button as active
+  const selectedBtn = document.querySelector(`[onclick="showInfoTab('${tabName}')"]`);
+  if (selectedBtn) {
+    selectedBtn.classList.add('active');
+  }
+}
+
+function showInfoModal() {
+  const modal = document.getElementById('game-info-modal');
+  if (modal) {
+    modal.classList.add('active');
+    // Show first tab by default
+    showInfoTab('objective');
+  }
+}
+
+/* ==============================
+   INITIALIZATION
 ================================ */
 
 document.addEventListener("DOMContentLoaded", () => {
   initDOM();
-  initReadingGuide();
   
-  if (newWordBtn) newWordBtn.onclick = randomWord;
+  // Set default theme
+  selectTheme('jungle');
+  
+  // Show game info modal on first load
+  showInfoModal();
+  
+  // Event listeners for game controls
+  if (newWordBtn) newWordBtn.onclick = renderRandomWord;
   if (blendBtn) blendBtn.onclick = blendWord;
-  if (vcBtn) vcBtn.onclick = () => setWordList('vc');
-  if (cvBtn) cvBtn.onclick = () => setWordList('cv');
-  if (cvcBtn) cvcBtn.onclick = () => setWordList('cvc');
   if (musicBtn) musicBtn.onclick = toggleMusic;
   
-  // Start with CVC word
-  randomWord();
+  // Close menu when clicking outside
+  document.addEventListener('click', (e) => {
+    const menu = document.getElementById('pause-menu');
+    const menuContent = document.querySelector('.menu-content');
+    if (menu && menu.style.display === 'block' && !menuContent.contains(e.target) && !e.target.closest('.menu-button')) {
+      menu.style.display = 'none';
+    }
+  });
 });
 
 // Handle window resize
-window.addEventListener('resize', positionReadingGuide);
+window.addEventListener('resize', () => {
+  // Reposition elements if needed
+});

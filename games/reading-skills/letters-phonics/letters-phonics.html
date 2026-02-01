@@ -9,36 +9,199 @@
 </head>
 <body>
 
+  <!-- Game Info Modal -->
+  <div id="game-info-modal" class="game-info-modal">
+    <div class="info-modal-content">
+      <button class="close-info-modal" onclick="closeInfoModal()">✕</button>
+      
+      <h2>🔤 Letters & Phonics Game</h2>
+      
+      <div class="info-tabs">
+        <button class="info-tab-btn active" onclick="showInfoTab('objective')">🎯 Objectives</button>
+        <button class="info-tab-btn" onclick="showInfoTab('tips')">👨‍👩‍👧 Parent Tips</button>
+        <button class="info-tab-btn" onclick="showInfoTab('fun')">🎉 Make It Fun</button>
+      </div>
+      
+      <div id="objective-tab" class="info-tab-content active">
+        <h3>Learning Objectives</h3>
+        <ul>
+          <li>🔤 Learn individual letter sounds (A-Z)</li>
+          <li>🔊 Develop phonemic awareness</li>
+          <li>📚 Build foundational phonics skills</li>
+          <li>🎵 Practice blending sounds into words</li>
+          <li>💪 Progress from simple (VC) to complex (CVC) words</li>
+        </ul>
+      </div>
+      
+      <div id="tips-tab" class="info-tab-content">
+        <h3>Tips for Parents</h3>
+        <ul>
+          <li><strong>🎯 Start Simple:</strong> Begin with Level 1 to master letter sounds (A-Z) before moving to word blending</li>
+          <li><strong>👂 Sound Exploration:</strong> Encourage tapping individual letters to explore sounds before attempting to blend them together</li>
+          <li><strong>⏱️ Short & Sweet:</strong> Keep sessions to 5-10 minutes daily - consistency beats marathon sessions</li>
+          <li><strong>🔄 Blend Practice:</strong> Use the blend button together - say the sounds along with your child to model proper pronunciation</li>
+          <li><strong>🗣️ Real-World Connection:</strong> After practicing a word, find it in books you read together or point it out in everyday life</li>
+          <li><strong>🎨 Make it Playful:</strong> Try different themes and buddies to keep things fresh and exciting for your child</li>
+          <li><strong>📈 Gradual Progression:</strong> Move to the next level only when your child confidently recognizes sounds in current level</li>
+          <li><strong>🎵 Add Music:</strong> Toggle the background music on/off based on your child's preference - some find it motivating!</li>
+          <li><strong>⭐ Celebrate Small Wins:</strong> Praise effort and enthusiasm over perfection - positive experiences build confidence</li>
+          <li><strong>💬 Repeat & Reinforce:</strong> Say sounds and words aloud together - hearing you model proper speech is powerful</li>
+        </ul>
+      </div>
+      
+      <div id="fun-tab" class="info-tab-content">
+        <h3>Make It More Fun!</h3>
+        <ul>
+          <li>🎨 Try different themes (Jungle, Space, Ocean, Candy)</li>
+          <li>👫 Choose your favorite learning buddy</li>
+          <li>🏆 Practice all 4 levels to master phonics</li>
+          <li>⏰ Make it a daily game routine</li>
+          <li>🎵 Use music to make it more engaging</li>
+          <li>🎮 Challenge your child: "Can you say the word after blending?"</li>
+        </ul>
+      </div>
+      
+      <button class="start-game-btn" onclick="closeInfoModal()">🎮 Let's Play!</button>
+    </div>
+  </div>
+
 <div id="app-container">
+  <!-- Welcome/Setup Screen -->
+  <div id="welcome-screen" class="welcome-screen active">
+    <div class="welcome-container">
+      <button class="welcome-back-button" onclick="goBackToReading()">← Back to Games</button>
+      <h1>🔤 Letters & Phonics!</h1>
+      <p class="welcome-subtitle">Let's get started! Choose your preferences:</p>
+      
+      <!-- Learning Buddy Selection -->
+      <div class="selection-group">
+        <h3>👋 Pick Your Learning Buddy</h3>
+        <div class="buddy-selector">
+          <button class="buddy-option active" data-buddy="kiki" onclick="selectBuddy('kiki')">
+            <span class="buddy-icon">🧑‍🦰</span>
+            <span>Kiki</span>
+          </button>
+          <button class="buddy-option" data-buddy="tiger" onclick="selectBuddy('tiger')">
+            <span class="buddy-icon">🐯</span>
+            <span>Tiger</span>
+          </button>
+          <button class="buddy-option" data-buddy="robot" onclick="selectBuddy('robot')">
+            <span class="buddy-icon">🤖</span>
+            <span>Robot</span>
+          </button>
+          <button class="buddy-option" data-buddy="star" onclick="selectBuddy('star')">
+            <span class="buddy-icon">⭐</span>
+            <span>Star</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Theme Selection -->
+      <div class="selection-group">
+        <h3>🎨 Pick Your Theme</h3>
+        <div class="theme-selector">
+          <button class="theme-option active" data-theme="jungle" onclick="selectTheme('jungle')">
+            <span class="theme-preview jungle-preview"></span>
+            <span>Jungle</span>
+          </button>
+          <button class="theme-option" data-theme="space" onclick="selectTheme('space')">
+            <span class="theme-preview space-preview"></span>
+            <span>Space</span>
+          </button>
+          <button class="theme-option" data-theme="ocean" onclick="selectTheme('ocean')">
+            <span class="theme-preview ocean-preview"></span>
+            <span>Ocean</span>
+          </button>
+          <button class="theme-option" data-theme="candy" onclick="selectTheme('candy')">
+            <span class="theme-preview candy-preview"></span>
+            <span>Candy</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Level Selection -->
+      <div class="selection-group">
+        <h3>📚 Start at Level</h3>
+        <div class="level-selector">
+          <button class="level-option active" data-level="1" onclick="startGame(1)">
+            <span class="level-number">1</span>
+            <span class="level-name">A-Z Letters</span>
+          </button>
+          <button class="level-option" data-level="2" onclick="startGame(2)">
+            <span class="level-number">2</span>
+            <span class="level-name">VC Words</span>
+          </button>
+          <button class="level-option" data-level="3" onclick="startGame(3)">
+            <span class="level-number">3</span>
+            <span class="level-name">CV Words</span>
+          </button>
+          <button class="level-option" data-level="4" onclick="startGame(4)">
+            <span class="level-number">4</span>
+            <span class="level-name">CVC Words</span>
+          </button>
+        </div>
+      </div>
+      
+      <button class="start-button" onclick="startGame(1)">🎮 Let's Play!</button>
+    </div>
+  </div>
+
   <!-- Game Header -->
-  <div class="game-header">
-    <button class="back-button" onclick="window.location.href='../../../index.html'">← Back to Games</button>
-    <h1>🔤 Letters & Phonics</h1>
+  <div id="game-header" class="game-header" style="display: none;">
+    <div class="header-left">
+      <button class="back-button" onclick="goBackToReading()">← Back to Games</button>
+      <button class="menu-button" onclick="toggleMenu()">☰ Menu</button>
+    </div>
+    <div class="header-center">
+      <span class="buddy-display" id="buddy-display">🧑‍🦰 Kiki</span>
+      <h1 id="level-title">🔤 Letters & Phonics</h1>
+    </div>
+    <div class="header-right">
+      <span class="level-badge" id="level-badge">Level 1</span>
+    </div>
   </div>
 
   <!-- Game Container -->
-  <div class="game-container">
+  <div id="game-container" class="game-container" style="display: none;">
     <!-- Reading Guide -->
     <div id="reading-guide" class="reading-guide">
       <div class="guide-line"></div>
       <div class="guide-finger">☝️</div>
     </div>
     
-    <h2>🎯 Phonics Practice</h2>
-    <p class="instruction">Tap a letter to hear its sound</p>
+    <h2 id="game-subtitle">🎯 Phonics Practice</h2>
+    <p class="instruction" id="game-instruction">Tap a letter to hear its sound</p>
     
-    <div id="word-display"></div>
-    
-    <div class="phonics-controls">
-      <button id="new-word-button" class="game-button">New Word</button>
-      <button id="blend-word-button" class="game-button">Blend Word</button>
+    <!-- Level 1: A-Z Letters -->
+    <div id="level-1-content" class="level-content" style="display: none;">
+      <div class="letter-grid" id="letter-grid"></div>
     </div>
     
-    <div class="phonics-options">
-      <button id="vc-button" class="mode-button">VC</button>
-      <button id="cv-button" class="mode-button">CV</button>
-      <button id="cvc-button" class="mode-button active">CVC</button>
+    <!-- Levels 2-4: Words -->
+    <div id="level-2-4-content" class="level-content" style="display: none;">
+      <div id="word-display"></div>
+      
+      <div class="phonics-controls">
+        <button id="new-word-button" class="game-button">New Word</button>
+        <button id="blend-word-button" class="game-button">Blend Word</button>
+      </div>
+    </div>
+    
+    <div class="phonics-options" id="phonics-options" style="display: none;">
       <button id="music-toggle" class="mode-button">🎵 Music</button>
+      <button class="mode-button" onclick="showMenu()">⚙️ Settings</button>
+    </div>
+  </div>
+
+  <!-- Pause Menu -->
+  <div id="pause-menu" class="pause-menu" style="display: none;">
+    <div class="menu-content">
+      <button class="close-menu" onclick="toggleMenu()">✕</button>
+      <h2>Menu</h2>
+      <button class="menu-item-btn" onclick="goBackToReading()">🏠 Back to Reading Games</button>
+      <button class="menu-item-btn" onclick="showLevelSelect()">📚 Change Level</button>
+      <button class="menu-item-btn" onclick="showSettings()">⚙️ Change Theme/Buddy</button>
+      <button class="menu-item-btn" onclick="toggleMenu()">▶️ Resume Game</button>
     </div>
   </div>
 </div>

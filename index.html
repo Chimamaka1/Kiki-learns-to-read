@@ -409,6 +409,10 @@ function showReadingSection() {
   // Show reading section
   const readingSection = document.getElementById('reading-section');
   if (readingSection) readingSection.style.display = 'block';
+
+  if (window.location.hash !== '#reading-section') {
+    window.location.hash = '#reading-section';
+  }
 }
 
 function showNumbersSection() {
@@ -428,6 +432,10 @@ function showNumbersSection() {
   // Show numbers section
   const numbersSection = document.getElementById('numbers-section');
   if (numbersSection) numbersSection.style.display = 'block';
+
+  if (window.location.hash !== '#numbers-section') {
+    window.location.hash = '#numbers-section';
+  }
 }
 
 function showLogicSection() {
@@ -447,6 +455,10 @@ function showLogicSection() {
   // Show logic section
   const logicSection = document.getElementById('logic-section');
   if (logicSection) logicSection.style.display = 'block';
+
+  if (window.location.hash !== '#logic-section') {
+    window.location.hash = '#logic-section';
+  }
 }
 
 function showCreativitySection() {
@@ -466,6 +478,10 @@ function showCreativitySection() {
   // Show creativity section
   const creativitySection = document.getElementById('creativity-section');
   if (creativitySection) creativitySection.style.display = 'block';
+
+  if (window.location.hash !== '#creativity-section') {
+    window.location.hash = '#creativity-section';
+  }
 }
 
 function showHomepage() {
@@ -485,6 +501,27 @@ function showHomepage() {
   if (numbersSection) numbersSection.style.display = 'none';
   if (creativitySection) creativitySection.style.display = 'none';
   if (logicSection) logicSection.style.display = 'none';
+}
+
+function handleHashNavigation() {
+  const hash = window.location.hash;
+  if (hash === '#reading-section') {
+    showReadingSection();
+    return;
+  }
+  if (hash === '#numbers-section') {
+    showNumbersSection();
+    return;
+  }
+  if (hash === '#logic-section') {
+    showLogicSection();
+    return;
+  }
+  if (hash === '#creativity-section') {
+    showCreativitySection();
+    return;
+  }
+  showHomepage();
 }
 
 // Modal utilities
@@ -517,7 +554,11 @@ if (typeof document !== 'undefined') {
     setTimeout(() => {
       initializeKidSelector();
     }, 1000);
+
+    handleHashNavigation();
   });
+
+  window.addEventListener('hashchange', handleHashNavigation);
 }
 </script>
 
