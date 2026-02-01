@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Letters & Phonics - Kiki Learns to Read</title>
+  <link rel="stylesheet" href="letters-phonics.css">
+  <link rel="stylesheet" href="../../../css/style.css">
+</head>
+<body>
+
+<div id="app-container">
+  <!-- Game Header -->
+  <div class="game-header">
+    <button class="back-button" onclick="window.location.href='../../../index.html'">← Back to Games</button>
+    <h1>🔤 Letters & Phonics</h1>
+  </div>
+
+  <!-- Game Container -->
+  <div class="game-container">
+    <!-- Reading Guide -->
+    <div id="reading-guide" class="reading-guide">
+      <div class="guide-line"></div>
+      <div class="guide-finger">☝️</div>
+    </div>
+    
+    <h2>🎯 Phonics Practice</h2>
+    <p class="instruction">Tap a letter to hear its sound</p>
+    
+    <div id="word-display"></div>
+    
+    <div class="phonics-controls">
+      <button id="new-word-button" class="game-button">New Word</button>
+      <button id="blend-word-button" class="game-button">Blend Word</button>
+    </div>
+    
+    <div class="phonics-options">
+      <button id="vc-button" class="mode-button">VC</button>
+      <button id="cv-button" class="mode-button">CV</button>
+      <button id="cvc-button" class="mode-button active">CVC</button>
+      <button id="music-toggle" class="mode-button">🎵 Music</button>
+    </div>
+  </div>
+</div>
+
+<script src="../../../config/config.js"></script>
+<script src="letters-phonics.js"></script>
+
+</body>
+</html>
