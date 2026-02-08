@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Adventure Race! 🎲</title>
+    <link rel="stylesheet" href="dice-adventure.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🎲 Dice Adventure Race! 🏆</h1>
+            <button id="backBtn" class="back-btn">← Back</button>
+        </div>
+
+        <!-- Setup Screen -->
+        <div id="setupScreen" class="setup-screen">
+            <h2>Choose Your Players!</h2>
+            <div class="player-selection">
+                <div class="player-option">
+                    <input type="checkbox" id="player1" checked>
+                    <label for="player1">
+                        <div class="character-preview" data-color="red">🦁</div>
+                        <span>Lion</span>
+                    </label>
+                </div>
+                <div class="player-option">
+                    <input type="checkbox" id="player2" checked>
+                    <label for="player2">
+                        <div class="character-preview" data-color="blue">🐘</div>
+                        <span>Elephant</span>
+                    </label>
+                </div>
+                <div class="player-option">
+                    <input type="checkbox" id="player3">
+                    <label for="player3">
+                        <div class="character-preview" data-color="green">🐸</div>
+                        <span>Frog</span>
+                    </label>
+                </div>
+                <div class="player-option">
+                    <input type="checkbox" id="player4">
+                    <label for="player4">
+                        <div class="character-preview" data-color="yellow">🐻</div>
+                        <span>Bear</span>
+                    </label>
+                </div>
+            </div>
+            <button id="startGame" class="start-btn">Start Adventure! 🚀</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="game-screen hidden">
+            <div class="game-info">
+                <div class="current-turn">
+                    <h2>Turn: <span id="currentPlayer"></span></h2>
+                </div>
+                <div class="dice-container">
+                    <div id="dice" class="dice">?</div>
+                    <button id="rollDice" class="roll-btn">Roll Dice! 🎲</button>
+                </div>
+            </div>
+
+            <div class="board-container">
+                <svg id="gameBoard" class="game-board" viewBox="0 0 1000 600">
+                    <!-- Board path will be drawn here -->
+                </svg>
+            </div>
+
+            <div class="players-info">
+                <h3>Players:</h3>
+                <div id="playersList"></div>
+            </div>
+        </div>
+
+        <!-- Task Modal -->
+        <div id="taskModal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="taskTitle">Special Task!</h2>
+                <div id="taskContent"></div>
+                <button id="taskDone" class="task-btn">Done! ✓</button>
+            </div>
+        </div>
+
+        <!-- Win Modal -->
+        <div id="winModal" class="modal hidden">
+            <div class="modal-content win-content">
+                <h1>🎉 Winner! 🎉</h1>
+                <div id="winnerInfo"></div>
+                <button id="playAgain" class="play-again-btn">Play Again! 🔄</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="dice-adventure.js"></script>
+</body>
+</html>
