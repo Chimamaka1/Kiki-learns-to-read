@@ -636,7 +636,7 @@ class DiceAdventureGame {
             // Bonus: move forward 1 space
             setTimeout(() => {
                 const taskContent = document.getElementById('taskContent');
-                taskContent.innerHTML = `<div style="font-size: 3em;">🎉 Correct! Move forward 1 space! 🎉</div>`;
+                taskContent.innerHTML = `<div class="task-message">🎉 Correct! Move forward 1 space! 🎉</div>`;
                 player.position = Math.min(player.position + 1, this.boardSpaces);
                 this.updatePlayerPositions();
                 this.updatePlayersDisplay();
@@ -653,7 +653,7 @@ class DiceAdventureGame {
             
             setTimeout(() => {
                 const taskContent = document.getElementById('taskContent');
-                taskContent.innerHTML = `<div style="font-size: 2em;">😅 Oops! The answer was: ${correct}</div>`;
+                taskContent.innerHTML = `<div class="task-message">😅 Oops! The answer was: ${correct}</div>`;
                 
                 // Hide instruction if showing
                 document.getElementById('moveInstruction').classList.add('hidden');
@@ -675,7 +675,7 @@ class DiceAdventureGame {
         
         document.getElementById('taskTitle').textContent = '✨ Lucky Space! ✨';
         document.getElementById('taskContent').innerHTML = `
-            <div style="font-size: 3em;">🎁 Jump forward 2 spaces! 🎁</div>
+            <div class="task-message">🎁 Jump forward 2 spaces! 🎁</div>
         `;
         document.getElementById('taskModal').classList.remove('hidden');
         document.getElementById('taskDone').style.display = 'block';
@@ -695,7 +695,7 @@ class DiceAdventureGame {
         
         document.getElementById('taskTitle').textContent = '🌟 SUPER LUCKY! 🌟';
         document.getElementById('taskContent').innerHTML = `
-            <div style="font-size: 3em;">🚀 ZOOM forward 3 spaces! 🚀</div>
+            <div class="task-message">🚀 ZOOM forward 3 spaces! 🚀</div>
         `;
         document.getElementById('taskModal').classList.remove('hidden');
         document.getElementById('taskDone').style.display = 'block';
@@ -715,7 +715,7 @@ class DiceAdventureGame {
         
         document.getElementById('taskTitle').textContent = '😮 Oops!';
         document.getElementById('taskContent').innerHTML = `
-            <div style="font-size: 3em;">🌀 Go back 1 space! 🌀</div>
+            <div class="task-message">🌀 Go back 1 space! 🌀</div>
         `;
         document.getElementById('taskModal').classList.remove('hidden');
         document.getElementById('taskDone').style.display = 'block';
