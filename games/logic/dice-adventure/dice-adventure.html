@@ -61,7 +61,8 @@
                 <div class="current-turn">
                     <h2>Turn: <span id="currentPlayer"></span></h2>
                     <div id="moveInstruction" class="move-instruction hidden">
-                        ✋ DRAG your character to the glowing space! (<span id="stepsRemaining"></span> left)
+                        <button class="close-instruction" onclick="document.getElementById('moveInstruction').classList.add('hidden')">&times;</button>
+                        <span>✋ DRAG to glowing space! (<span id="stepsRemaining"></span> left)</span>
                     </div>
                 </div>
                 <div class="dice-container">
