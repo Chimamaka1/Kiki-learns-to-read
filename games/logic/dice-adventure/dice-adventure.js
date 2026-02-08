@@ -5,6 +5,12 @@ class DiceAdventureGame {
         this.boardSpaces = 35; // Longer board!
         this.remainingSteps = 0;
         this.isManualMove = false;
+        this.activeDragPlayerId = null;
+        this.dragState = {
+            active: false,
+            offsetX: 0,
+            offsetY: 0
+        };
         this.tasks = [
             {
                 type: 'count',
@@ -163,6 +169,7 @@ class DiceAdventureGame {
     
     init() {
         this.setupEventListeners();
+        this.setupDragSurface();
     }
     
     setupEventListeners() {
@@ -173,6 +180,25 @@ class DiceAdventureGame {
         document.getElementById('backBtn').addEventListener('click', () => {
             window.location.href = '../../../index.html';
         });
+    }
+
+    setupDragSurface() {
+        if (this.dragSurfaceBound) return;
+        const svg = document.getElementById('gameBoard');
+        if (!svg) return;
+
+        this.dragSurfaceBound = true;
+
+        svg.addEventListener('pointerdown', (evt) => this.handleBoardPointerDown(evt), { passive: false });
+        svg.addEventListener('pointermove', (evt) => this.handleBoardPointerMove(evt), { passive: false });
+        window.addEventListener('pointerup', (evt) => this.handleBoardPointerUp(evt), { passive: false });
+        svg.addEventListener('pointerleave', (evt) => this.handleBoardPointerUp(evt), { passive: false });
+
+        // Touch support for iPad Safari
+        svg.addEventListener('touchstart', (evt) => this.handleBoardPointerDown(evt), { passive: false });
+        svg.addEventListener('touchmove', (evt) => this.handleBoardPointerMove(evt), { passive: false });
+        window.addEventListener('touchend', (evt) => this.handleBoardPointerUp(evt), { passive: false });
+        window.addEventListener('touchcancel', (evt) => this.handleBoardPointerUp(evt), { passive: false });
     }
     
     startGame() {
@@ -367,11 +393,95 @@ class DiceAdventureGame {
             // Make current player's token draggable
             if (this.isManualMove && index === this.currentPlayerIndex) {
                 token.classList.add('draggable');
-                this.attachDragHandlers(token, player);
+                this.activeDragPlayerId = player.id;
             }
             
             board.appendChild(token);
         });
+    }
+
+    getEventPoint(evt) {
+        const svg = document.getElementById('gameBoard');
+        const CTM = svg.getScreenCTM();
+        const touch = evt.touches && evt.touches[0];
+        const clientX = evt.clientX ?? touch?.clientX;
+        const clientY = evt.clientY ?? touch?.clientY;
+        return {
+            x: (clientX - CTM.e) / CTM.a,
+            y: (clientY - CTM.f) / CTM.d
+        };
+    }
+
+    getPlayerTokenPosition(player) {
+        const index = this.players.findIndex(p => p.id === player.id);
+        const coord = this.pathCoords[player.position];
+        const offset = (index - this.players.length / 2) * 30;
+        return { x: coord.x + offset, y: coord.y + 18 };
+    }
+
+    handleBoardPointerDown(evt) {
+        if (!this.isManualMove || this.remainingSteps <= 0) return;
+        const player = this.players[this.currentPlayerIndex];
+        if (!player) return;
+
+        const point = this.getEventPoint(evt);
+        const tokenPos = this.getPlayerTokenPosition(player);
+        const distance = Math.sqrt(Math.pow(point.x - tokenPos.x, 2) + Math.pow(point.y - tokenPos.y, 2));
+
+        // Start drag if near the current player's token
+        if (distance <= 50) {
+            evt.preventDefault();
+            this.dragState.active = true;
+            this.dragState.offsetX = point.x - tokenPos.x;
+            this.dragState.offsetY = point.y - tokenPos.y;
+
+            const token = document.querySelector(`.player-token[data-player='${player.id}']`);
+            if (token) {
+                token.classList.add('dragging');
+                token.style.zIndex = '1000';
+            }
+        }
+    }
+
+    handleBoardPointerMove(evt) {
+        if (!this.dragState.active) return;
+        evt.preventDefault();
+
+        const player = this.players[this.currentPlayerIndex];
+        if (!player) return;
+
+        const point = this.getEventPoint(evt);
+        const token = document.querySelector(`.player-token[data-player='${player.id}']`);
+        if (token) {
+            token.setAttribute('x', point.x - this.dragState.offsetX);
+            token.setAttribute('y', point.y - this.dragState.offsetY);
+        }
+    }
+
+    handleBoardPointerUp(evt) {
+        if (!this.dragState.active) return;
+        evt.preventDefault();
+        this.dragState.active = false;
+
+        const player = this.players[this.currentPlayerIndex];
+        if (!player) return;
+
+        const point = this.getEventPoint(evt);
+        const droppedSpace = this.findSpaceAtCoordinates(point.x, point.y);
+        const validSpace = player.position + 1;
+
+        const token = document.querySelector(`.player-token[data-player='${player.id}']`);
+        if (token) {
+            token.classList.remove('dragging');
+            token.style.zIndex = '';
+        }
+
+        if (droppedSpace === validSpace && this.remainingSteps > 0) {
+            this.handleSuccessfulDrop(player, droppedSpace);
+        } else if (token) {
+            token.setAttribute('x', token.getAttribute('data-original-x'));
+            token.setAttribute('y', token.getAttribute('data-original-y'));
+        }
     }
 
     async handleSpaceClick(spaceIndex) {
@@ -477,78 +587,8 @@ class DiceAdventureGame {
         }, 100);
     }
     
-    attachDragHandlers(token, player) {
-        const svg = document.getElementById('gameBoard');
-        let isDragging = false;
-        let offsetX = 0;
-        let offsetY = 0;
-
-        const getEventPoint = (evt) => {
-            const CTM = svg.getScreenCTM();
-            const touch = evt.touches && evt.touches[0];
-            const clientX = evt.clientX ?? touch?.clientX;
-            const clientY = evt.clientY ?? touch?.clientY;
-            return {
-                x: (clientX - CTM.e) / CTM.a,
-                y: (clientY - CTM.f) / CTM.d
-            };
-        };
-
-        const startDrag = (evt) => {
-            evt.preventDefault();
-            if (!this.isManualMove || this.remainingSteps <= 0) return;
-            isDragging = true;
-            token.classList.add('dragging');
-
-            const coord = getEventPoint(evt);
-            const tokenX = parseFloat(token.getAttribute('x'));
-            const tokenY = parseFloat(token.getAttribute('y'));
-
-            offsetX = coord.x - tokenX;
-            offsetY = coord.y - tokenY;
-
-            token.style.zIndex = '1000';
-        };
-
-        const drag = (evt) => {
-            if (!isDragging) return;
-            evt.preventDefault();
-
-            const coord = getEventPoint(evt);
-            token.setAttribute('x', coord.x - offsetX);
-            token.setAttribute('y', coord.y - offsetY);
-        };
-
-        const endDrag = (evt) => {
-            if (!isDragging) return;
-            evt.preventDefault();
-            isDragging = false;
-            token.classList.remove('dragging');
-            token.style.zIndex = '';
-
-            const coord = getEventPoint(evt);
-            const droppedSpace = this.findSpaceAtCoordinates(coord.x, coord.y);
-            const validSpace = player.position + 1;
-
-            if (droppedSpace === validSpace && this.remainingSteps > 0) {
-                this.handleSuccessfulDrop(player, droppedSpace);
-            } else {
-                token.setAttribute('x', token.getAttribute('data-original-x'));
-                token.setAttribute('y', token.getAttribute('data-original-y'));
-            }
-        };
-
-        // Pointer events (modern browsers)
-        token.addEventListener('pointerdown', startDrag, { passive: false });
-        svg.addEventListener('pointermove', drag, { passive: false });
-        window.addEventListener('pointerup', endDrag, { passive: false });
-        svg.addEventListener('pointerleave', endDrag, { passive: false });
-
-        // Touch events (iPad Safari)
-        token.addEventListener('touchstart', startDrag, { passive: false });
-        svg.addEventListener('touchmove', drag, { passive: false });
-        window.addEventListener('touchend', endDrag, { passive: false });
-        window.addEventListener('touchcancel', endDrag, { passive: false });
+    attachDragHandlers() {
+        // Drag handling now done on the board surface for iPad reliability.
     }
     
     findSpaceAtCoordinates(x, y) {
