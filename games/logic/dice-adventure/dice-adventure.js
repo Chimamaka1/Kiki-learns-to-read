@@ -262,6 +262,9 @@ class DiceAdventureGame {
             
             // Store space index
             circle.spaceIndex = index;
+
+            // Click-to-move fallback (also helps on touch)
+            circle.addEventListener('click', () => this.handleSpaceClick(index));
             
             board.appendChild(circle);
             
@@ -370,6 +373,46 @@ class DiceAdventureGame {
             board.appendChild(token);
         });
     }
+
+    async handleSpaceClick(spaceIndex) {
+        if (!this.isManualMove || this.remainingSteps <= 0) return;
+
+        const player = this.players[this.currentPlayerIndex];
+
+        // Only allow next space
+        if (spaceIndex !== player.position + 1) return;
+
+        player.position = spaceIndex;
+        this.updatePlayerPositions();
+        await this.sleep(200);
+
+        this.remainingSteps--;
+        document.getElementById('stepsRemaining').textContent = this.remainingSteps;
+
+        if (this.remainingSteps === 0 || player.position === this.boardSpaces) {
+            this.isManualMove = false;
+            document.getElementById('moveInstruction').classList.add('hidden');
+            this.clearDropZones();
+            this.updatePlayerPositions();
+            this.updatePlayersDisplay();
+
+            if (player.position === this.boardSpaces) {
+                this.showWinner(player);
+            } else if (this.specialSpaces.includes(player.position)) {
+                this.showTask();
+            } else if (this.superBonusSpaces && this.superBonusSpaces.includes(player.position)) {
+                this.showSuperBonus();
+            } else if (this.bonusSpaces.includes(player.position)) {
+                this.showBonus();
+            } else if (this.penaltySpaces.includes(player.position)) {
+                this.showPenalty();
+            } else {
+                this.nextTurn();
+            }
+        } else {
+            this.highlightDropZones();
+        }
+    }
     
     updatePlayersDisplay() {
         const list = document.getElementById('playersList');
@@ -439,66 +482,65 @@ class DiceAdventureGame {
         let isDragging = false;
         let offsetX = 0;
         let offsetY = 0;
-        
-        const getMousePosition = (evt) => {
+
+        const getEventPoint = (evt) => {
             const CTM = svg.getScreenCTM();
+            const clientX = evt.clientX ?? (evt.touches && evt.touches[0]?.clientX);
+            const clientY = evt.clientY ?? (evt.touches && evt.touches[0]?.clientY);
             return {
-                x: (evt.clientX - CTM.e) / CTM.a,
-                y: (evt.clientY - CTM.f) / CTM.d
+                x: (clientX - CTM.e) / CTM.a,
+                y: (clientY - CTM.f) / CTM.d
             };
         };
-        
+
         const startDrag = (evt) => {
             evt.preventDefault();
+            if (!this.isManualMove || this.remainingSteps <= 0) return;
             isDragging = true;
             token.classList.add('dragging');
-            
-            const coord = getMousePosition(evt);
+
+            const coord = getEventPoint(evt);
             const tokenX = parseFloat(token.getAttribute('x'));
             const tokenY = parseFloat(token.getAttribute('y'));
-            
+
             offsetX = coord.x - tokenX;
             offsetY = coord.y - tokenY;
-            
-            // Bring token to front
+
             token.style.zIndex = '1000';
         };
-        
+
         const drag = (evt) => {
             if (!isDragging) return;
             evt.preventDefault();
-            
-            const coord = getMousePosition(evt);
+
+            const coord = getEventPoint(evt);
             token.setAttribute('x', coord.x - offsetX);
             token.setAttribute('y', coord.y - offsetY);
         };
-        
+
         const endDrag = (evt) => {
             if (!isDragging) return;
             evt.preventDefault();
             isDragging = false;
             token.classList.remove('dragging');
             token.style.zIndex = '';
-            
-            const coord = getMousePosition(evt);
+
+            const coord = getEventPoint(evt);
             const droppedSpace = this.findSpaceAtCoordinates(coord.x, coord.y);
-            
             const validSpace = player.position + 1;
-            
+
             if (droppedSpace === validSpace && this.remainingSteps > 0) {
-                // Valid drop!
                 this.handleSuccessfulDrop(player, droppedSpace);
             } else {
-                // Snap back to original position
                 token.setAttribute('x', token.getAttribute('data-original-x'));
                 token.setAttribute('y', token.getAttribute('data-original-y'));
             }
         };
-        
-        token.addEventListener('mousedown', startDrag);
-        svg.addEventListener('mousemove', drag);
-        svg.addEventListener('mouseup', endDrag);
-        svg.addEventListener('mouseleave', endDrag);
+
+        token.addEventListener('pointerdown', startDrag);
+        svg.addEventListener('pointermove', drag);
+        window.addEventListener('pointerup', endDrag);
+        svg.addEventListener('pointerleave', endDrag);
     }
     
     findSpaceAtCoordinates(x, y) {
