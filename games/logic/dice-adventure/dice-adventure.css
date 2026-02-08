@@ -254,9 +254,9 @@ body {
 .move-instruction {
     background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
     color: white;
-    padding: 15px;
+    padding: 12px;
     border-radius: 15px;
-    font-size: 1.3em;
+    font-size: 1.1em;
     font-weight: bold;
     margin-top: 15px;
     animation: pulse 1.5s infinite;
@@ -339,7 +339,6 @@ body {
 }
 
 .board-space {
-    cursor: pointer;
     transition: all 0.3s;
 }
 
@@ -349,6 +348,22 @@ body {
 
 .board-space.special {
     animation: sparkle 2s infinite;
+}
+
+.board-space.clickable-space {
+    cursor: pointer;
+    animation: glow 1s infinite;
+    stroke-width: 6 !important;
+}
+
+.board-space.clickable-space:hover {
+    transform: scale(1.2);
+    filter: brightness(1.3) drop-shadow(0 0 15px currentColor);
+}
+
+@keyframes glow {
+    0%, 100% { stroke: #ffd93d; }
+    50% { stroke: #ff6b6b; }
 }
 
 @keyframes sparkle {
@@ -370,13 +385,8 @@ body {
 }
 
 .player-token:hover {
-    transform: scale(1.3);
+    transform: scale(1.2);
     filter: drop-shadow(4px 4px 8px rgba(0, 0, 0, 0.6));
-}
-
-.player-token.clickable {
-    animation: bounce 0.8s infinite;
-    cursor: pointer;
 }
 
 .player-token.moving {

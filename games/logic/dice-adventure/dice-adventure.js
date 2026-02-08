@@ -259,6 +259,10 @@ class DiceAdventureGame {
             
             circle.setAttribute('stroke', '#333');
             circle.setAttribute('stroke-width', '4');
+            
+            // Add click handler to space
+            circle.addEventListener('click', () => this.handleSpaceClick(index));
+            
             board.appendChild(circle);
             
             // Add number
@@ -355,13 +359,6 @@ class DiceAdventureGame {
             token.textContent = player.emoji;
             token.setAttribute('data-player', player.id);
             
-            // Add click handler for manual movement
-            if (this.isManualMove && index === this.currentPlayerIndex) {
-                token.classList.add('clickable');
-                token.style.cursor = 'pointer';
-                token.addEventListener('click', () => this.handlePlayerClick());
-            }
-            
             board.appendChild(token);
         });
     }
@@ -423,20 +420,24 @@ class DiceAdventureGame {
                 stepsText.textContent = this.remainingSteps;
                 instruction.classList.remove('hidden');
                 
-                // Update player tokens to be clickable
-                this.updatePlayerPositions();
+                // Highlight clickable spaces
+                this.highlightClickableSpaces();
             }
         }, 100);
     }
     
-    async handlePlayerClick() {
+    async handleSpaceClick(spaceIndex) {
         if (!this.isManualMove || this.remainingSteps <= 0) return;
         
         const player = this.players[this.currentPlayerIndex];
-        const newPosition = Math.min(player.position + 1, this.boardSpaces);
+        
+        // Check if this is the next valid space
+        if (spaceIndex !== player.position + 1) {
+            return; // Not the next space
+        }
         
         // Animate single step movement
-        player.position = newPosition;
+        player.position = spaceIndex;
         const tokens = document.querySelectorAll('.player-token');
         tokens.forEach(t => {
             if (parseInt(t.getAttribute('data-player')) === player.id) {
@@ -445,6 +446,7 @@ class DiceAdventureGame {
         });
         
         this.updatePlayerPositions();
+        this.highlightClickableSpaces(); // Update which spaces are clickable
         await this.sleep(300);
         
         this.remainingSteps--;
@@ -454,6 +456,7 @@ class DiceAdventureGame {
         if (this.remainingSteps === 0 || player.position === this.boardSpaces) {
             this.isManualMove = false;
             document.getElementById('moveInstruction').classList.add('hidden');
+            this.clearClickableSpaces();
             this.updatePlayerPositions();
             
             // Check for special space
@@ -471,6 +474,29 @@ class DiceAdventureGame {
                 this.nextTurn();
             }
         }
+    }
+    
+    highlightClickableSpaces() {
+        const player = this.players[this.currentPlayerIndex];
+        const nextSpace = player.position + 1;
+        
+        // Clear previous highlights
+        this.clearClickableSpaces();
+        
+        // Highlight next valid space
+        if (this.isManualMove && nextSpace <= this.boardSpaces) {
+            const spaces = document.querySelectorAll('.board-space');
+            spaces.forEach(space => {
+                if (parseInt(space.getAttribute('data-space')) === nextSpace) {
+                    space.classList.add('clickable-space');
+                }
+            });
+        }
+    }
+    
+    clearClickableSpaces() {
+        const spaces = document.querySelectorAll('.board-space');
+        spaces.forEach(space => space.classList.remove('clickable-space'));
     }
     
     async movePlayer(steps) {
@@ -603,6 +629,8 @@ class DiceAdventureGame {
         document.getElementById('taskModal').classList.add('hidden');
         
         const player = this.players[this.currentPlayerIndex];
+        this.clearClickableSpaces();
+        
         if (player.position === this.boardSpaces) {
             this.showWinner(player);
         } else {
@@ -656,6 +684,7 @@ class DiceAdventureGame {
         this.updatePlayersDisplay();
         this.remainingSteps = 0;
         this.isManualMove = false;
+        this.clearClickableSpaces();
         document.getElementById('moveInstruction').classList.add('hidden');
         document.getElementById('rollDice').disabled = false;
     }
