@@ -683,6 +683,11 @@ class DiceAdventureGame {
             });
         }
     }
+
+    clearDropZones() {
+        const spaces = document.querySelectorAll('.board-space');
+        spaces.forEach(space => space.classList.remove('drop-zone'));
+    }
     
     async movePlayer(steps) {
         // This method is kept for compatibility but now we use manual movement
