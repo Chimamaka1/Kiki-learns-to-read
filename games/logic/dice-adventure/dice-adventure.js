@@ -436,69 +436,95 @@ class DiceAdventureGame {
     }
     
     makeDraggable(token, player) {
+        const svg = document.getElementById('gameBoard');
         let isDragging = false;
-        let startX, startY;
+        let currentX, currentY;
         
-        const onMouseDown = (e) => {
+        // Make it work for both mouse and touch
+        token.style.cursor = 'grab';
+        
+        const startDrag = (evt) => {
+            evt.preventDefault();
             isDragging = true;
             token.classList.add('dragging');
-            const point = this.getSVGPoint(e);
-            startX = point.x;
-            startY = point.y;
+            token.style.cursor = 'grabbing';
+            
+            // Get initial position
+            const pt = svg.createSVGPoint();
+            if (evt.type === 'mousedown') {
+                pt.x = evt.clientX;
+                pt.y = evt.clientY;
+            } else {
+                pt.x = evt.touches[0].clientX;
+                pt.y = evt.touches[0].clientY;
+            }
+            const svgPt = pt.matrixTransform(svg.getScreenCTM().inverse());
+            currentX = svgPt.x;
+            currentY = svgPt.y;
             
             // Highlight drop zones
             this.highlightDropZones();
         };
         
-        const onMouseMove = (e) => {
+        const drag = (evt) => {
             if (!isDragging) return;
+            evt.preventDefault();
             
-            const point = this.getSVGPoint(e);
-            token.setAttribute('x', point.x);
-            token.setAttribute('y', point.y);
+            const pt = svg.createSVGPoint();
+            if (evt.type === 'mousemove') {
+                pt.x = evt.clientX;
+                pt.y = evt.clientY;
+            } else {
+                pt.x = evt.touches[0].clientX;
+                pt.y = evt.touches[0].clientY;
+            }
+            const svgPt = pt.matrixTransform(svg.getScreenCTM().inverse());
+            currentX = svgPt.x;
+            currentY = svgPt.y;
             
-            // Check if hovering over valid drop zone
-            this.checkDropZoneHover(point);
+            // Update token position
+            token.setAttribute('x', currentX);
+            token.setAttribute('y', currentY);
+            
+            // Check hover
+            this.checkDropZoneHover({ x: currentX, y: currentY });
         };
         
-        const onMouseUp = (e) => {
+        const endDrag = (evt) => {
             if (!isDragging) return;
+            evt.preventDefault();
             isDragging = false;
             token.classList.remove('dragging');
+            token.style.cursor = 'grab';
             
             // Check if dropped on valid space
-            const point = this.getSVGPoint(e);
-            const droppedSpace = this.getSpaceAtPoint(point);
+            const droppedSpace = this.getSpaceAtPoint({ x: currentX, y: currentY });
             
-            if (droppedSpace && droppedSpace === player.position + 1 && this.remainingSteps > 0) {
+            const validSpace = player.position + 1;
+            if (droppedSpace !== null && droppedSpace === validSpace && this.remainingSteps > 0) {
                 // Valid drop!
                 this.handleValidDrop(player, droppedSpace);
             } else {
-                // Invalid drop - snap back
-                this.updatePlayerPositions();
+                // Invalid drop - snap back with animation
+                const coord = this.pathCoords[player.position];
+                const offset = (this.players.findIndex(p => p.id === player.id) - this.players.length / 2) * 30;
+                token.setAttribute('x', coord.x + offset);
+                token.setAttribute('y', coord.y + 18);
             }
             
             this.clearDropZones();
         };
         
-        token.addEventListener('mousedown', onMouseDown);
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
+        // Mouse events
+        token.addEventListener('mousedown', startDrag);
+        svg.addEventListener('mousemove', drag);
+        svg.addEventListener('mouseup', endDrag);
+        svg.addEventListener('mouseleave', endDrag);
         
-        // Store cleanup function
-        token._cleanup = () => {
-            token.removeEventListener('mousedown', onMouseDown);
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
-        };
-    }
-    
-    getSVGPoint(e) {
-        const svg = document.getElementById('gameBoard');
-        const pt = svg.createSVGPoint();
-        pt.x = e.clientX;
-        pt.y = e.clientY;
-        return pt.matrixTransform(svg.getScreenCTM().inverse());
+        // Touch events for mobile
+        token.addEventListener('touchstart', startDrag);
+        svg.addEventListener('touchmove', drag);
+        svg.addEventListener('touchend', endDrag);
     }
     
     getSpaceAtPoint(point) {
@@ -626,6 +652,11 @@ class DiceAdventureGame {
     }
     
     showTask() {
+        // Hide instruction and stop manual mode
+        document.getElementById('moveInstruction').classList.add('hidden');
+        this.remainingSteps = 0;
+        this.isManualMove = false;
+        
         const task = this.tasks[Math.floor(Math.random() * this.tasks.length)];
         
         document.getElementById('taskTitle').textContent = '🎯 Answer this!';
@@ -665,6 +696,12 @@ class DiceAdventureGame {
                 player.position = Math.min(player.position + 1, this.boardSpaces);
                 this.updatePlayerPositions();
                 this.updatePlayersDisplay();
+                
+                // Hide instruction if showing
+                document.getElementById('moveInstruction').classList.add('hidden');
+                this.remainingSteps = 0;
+                this.isManualMove = false;
+                
                 document.getElementById('taskDone').style.display = 'block';
             }, 1000);
         } else {
@@ -673,6 +710,12 @@ class DiceAdventureGame {
             setTimeout(() => {
                 const taskContent = document.getElementById('taskContent');
                 taskContent.innerHTML = `<div style="font-size: 2em;">😅 Oops! The answer was: ${correct}</div>`;
+                
+                // Hide instruction if showing
+                document.getElementById('moveInstruction').classList.add('hidden');
+                this.remainingSteps = 0;
+                this.isManualMove = false;
+                
                 document.getElementById('taskDone').style.display = 'block';
             }, 1000);
         }
@@ -680,6 +723,11 @@ class DiceAdventureGame {
     
     showBonus() {
         const player = this.players[this.currentPlayerIndex];
+        
+        // Hide instruction and stop manual mode
+        document.getElementById('moveInstruction').classList.add('hidden');
+        this.remainingSteps = 0;
+        this.isManualMove = false;
         
         document.getElementById('taskTitle').textContent = '✨ Lucky Space! ✨';
         document.getElementById('taskContent').innerHTML = `
@@ -696,6 +744,11 @@ class DiceAdventureGame {
     showSuperBonus() {
         const player = this.players[this.currentPlayerIndex];
         
+        // Hide instruction and stop manual mode
+        document.getElementById('moveInstruction').classList.add('hidden');
+        this.remainingSteps = 0;
+        this.isManualMove = false;
+        
         document.getElementById('taskTitle').textContent = '🌟 SUPER LUCKY! 🌟';
         document.getElementById('taskContent').innerHTML = `
             <div style="font-size: 3em;">🚀 ZOOM forward 3 spaces! 🚀</div>
@@ -710,6 +763,11 @@ class DiceAdventureGame {
     
     showPenalty() {
         const player = this.players[this.currentPlayerIndex];
+        
+        // Hide instruction and stop manual mode
+        document.getElementById('moveInstruction').classList.add('hidden');
+        this.remainingSteps = 0;
+        this.isManualMove = false;
         
         document.getElementById('taskTitle').textContent = '😮 Oops!';
         document.getElementById('taskContent').innerHTML = `
