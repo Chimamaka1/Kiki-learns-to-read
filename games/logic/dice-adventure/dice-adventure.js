@@ -2,7 +2,9 @@ class DiceAdventureGame {
     constructor() {
         this.players = [];
         this.currentPlayerIndex = 0;
-        this.boardSpaces = 20; // Number of spaces on the board
+        this.boardSpaces = 35; // Longer board!
+        this.remainingSteps = 0;
+        this.isManualMove = false;
         this.tasks = [
             {
                 type: 'count',
@@ -23,6 +25,18 @@ class DiceAdventureGame {
                 correct: 'Blue'
             },
             {
+                type: 'color',
+                question: 'What color is this? 🟢',
+                answers: ['Red', 'Blue', 'Green', 'Yellow'],
+                correct: 'Green'
+            },
+            {
+                type: 'color',
+                question: 'What color is this? 🟡',
+                answers: ['Red', 'Blue', 'Green', 'Yellow'],
+                correct: 'Yellow'
+            },
+            {
                 type: 'shape',
                 question: 'What shape is this? ⭕',
                 answers: ['Circle', 'Square', 'Triangle', 'Star'],
@@ -35,10 +49,22 @@ class DiceAdventureGame {
                 correct: 'Square'
             },
             {
+                type: 'shape',
+                question: 'What shape is this? 🔺',
+                answers: ['Circle', 'Square', 'Triangle', 'Star'],
+                correct: 'Triangle'
+            },
+            {
                 type: 'count',
                 question: 'How many hearts? ❤️❤️❤️❤️❤️',
                 answers: ['3', '4', '5', '6'],
                 correct: '5'
+            },
+            {
+                type: 'count',
+                question: 'Count the flowers! 🌸🌸🌸🌸',
+                answers: ['2', '3', '4', '5'],
+                correct: '4'
             },
             {
                 type: 'animal',
@@ -53,16 +79,70 @@ class DiceAdventureGame {
                 correct: 'Woof'
             },
             {
+                type: 'animal',
+                question: 'What sound does a cow make?',
+                answers: ['Woof', 'Meow', 'Moo', 'Quack'],
+                correct: 'Moo'
+            },
+            {
+                type: 'animal',
+                question: 'What sound does a duck make?',
+                answers: ['Woof', 'Meow', 'Moo', 'Quack'],
+                correct: 'Quack'
+            },
+            {
                 type: 'count',
                 question: 'Count the apples! 🍎🍎',
                 answers: ['1', '2', '3', '4'],
                 correct: '2'
             },
             {
+                type: 'count',
+                question: 'How many balloons? 🎈🎈🎈🎈🎈🎈',
+                answers: ['4', '5', '6', '7'],
+                correct: '6'
+            },
+            {
                 type: 'size',
                 question: 'Which is bigger? 🐘 vs 🐭',
                 answers: ['Elephant', 'Mouse', 'Same', 'Not sure'],
                 correct: 'Elephant'
+            },
+            {
+                type: 'action',
+                question: 'Can you jump 3 times? 🤸',
+                answers: ['Yes! (Jump 3 times)', 'Done!', 'Ready!', 'I did it!'],
+                correct: 'Yes! (Jump 3 times)'
+            },
+            {
+                type: 'action',
+                question: 'Can you clap your hands 5 times? 👏',
+                answers: ['Yes! (Clap 5 times)', 'Done!', 'Ready!', 'I did it!'],
+                correct: 'Yes! (Clap 5 times)'
+            },
+            {
+                type: 'action',
+                question: 'Touch your nose! 👃',
+                answers: ['Done!', 'I did it!', 'Ready!', 'Yes!'],
+                correct: 'Done!'
+            },
+            {
+                type: 'rhyme',
+                question: 'What rhymes with CAT? 🐱',
+                answers: ['Hat', 'Dog', 'Sun', 'Car'],
+                correct: 'Hat'
+            },
+            {
+                type: 'opposite',
+                question: 'What\'s the opposite of BIG?',
+                answers: ['Small', 'Large', 'Huge', 'Tall'],
+                correct: 'Small'
+            },
+            {
+                type: 'opposite',
+                question: 'What\'s the opposite of HOT? 🔥',
+                answers: ['Warm', 'Cold', 'Cool', 'Freezing'],
+                correct: 'Cold'
             }
         ];
         
@@ -73,9 +153,10 @@ class DiceAdventureGame {
             { emoji: '🐻', name: 'Bear', color: '#ffd93d' }
         ];
         
-        this.specialSpaces = [5, 10, 15]; // Task spaces
-        this.bonusSpaces = [7, 14]; // Skip ahead spaces
-        this.penaltySpaces = [3, 12, 18]; // Go back spaces
+        this.specialSpaces = [5, 10, 15, 20, 25, 30]; // More task spaces
+        this.bonusSpaces = [7, 14, 22, 28]; // More bonus spaces
+        this.penaltySpaces = [3, 12, 18, 24, 32]; // More penalty spaces
+        this.superBonusSpaces = [17, 27]; // Extra special spaces
         
         this.init();
     }
@@ -141,9 +222,10 @@ class DiceAdventureGame {
                 line.setAttribute('y1', pathCoords[index - 1].y);
                 line.setAttribute('x2', coord.x);
                 line.setAttribute('y2', coord.y);
-                line.setAttribute('stroke', '#666');
-                line.setAttribute('stroke-width', '8');
-                line.setAttribute('stroke-dasharray', '10,5');
+                line.setAttribute('stroke', '#8B4513');
+                line.setAttribute('stroke-width', '10');
+                line.setAttribute('stroke-dasharray', '15,10');
+                line.setAttribute('opacity', '0.6');
                 board.appendChild(line);
             }
             
@@ -151,7 +233,7 @@ class DiceAdventureGame {
             const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
             circle.setAttribute('cx', coord.x);
             circle.setAttribute('cy', coord.y);
-            circle.setAttribute('r', '30');
+            circle.setAttribute('r', '35');
             circle.classList.add('board-space');
             circle.setAttribute('data-space', index);
             
@@ -160,24 +242,29 @@ class DiceAdventureGame {
                 circle.setAttribute('fill', '#51cf66'); // Start
             } else if (index === this.boardSpaces) {
                 circle.setAttribute('fill', '#ffd93d'); // Finish
+            } else if (this.superBonusSpaces && this.superBonusSpaces.includes(index)) {
+                circle.setAttribute('fill', '#a29bfe'); // Super bonus
+                circle.classList.add('special');
             } else if (this.specialSpaces.includes(index)) {
                 circle.setAttribute('fill', '#ff6b6b'); // Task
+                circle.classList.add('special');
             } else if (this.bonusSpaces.includes(index)) {
                 circle.setAttribute('fill', '#4ecdc4'); // Bonus
+                circle.classList.add('special');
             } else if (this.penaltySpaces.includes(index)) {
                 circle.setAttribute('fill', '#ff8787'); // Penalty
             } else {
-                circle.setAttribute('fill', '#f8f9fa'); // Regular
+                circle.setAttribute('fill', '#ffffff'); // Regular
             }
             
             circle.setAttribute('stroke', '#333');
-            circle.setAttribute('stroke-width', '3');
+            circle.setAttribute('stroke-width', '4');
             board.appendChild(circle);
             
             // Add number
             const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             text.setAttribute('x', coord.x);
-            text.setAttribute('y', coord.y + 6);
+            text.setAttribute('y', coord.y + 8);
             text.setAttribute('text-anchor', 'middle');
             text.classList.add('space-number');
             text.textContent = index;
@@ -187,18 +274,26 @@ class DiceAdventureGame {
             if (index === 0) {
                 const icon = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                 icon.setAttribute('x', coord.x);
-                icon.setAttribute('y', coord.y - 45);
+                icon.setAttribute('y', coord.y - 50);
                 icon.setAttribute('text-anchor', 'middle');
-                icon.setAttribute('font-size', '30');
+                icon.setAttribute('font-size', '35');
                 icon.textContent = '🏁';
                 board.appendChild(icon);
             } else if (index === this.boardSpaces) {
                 const icon = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                 icon.setAttribute('x', coord.x);
-                icon.setAttribute('y', coord.y - 45);
+                icon.setAttribute('y', coord.y - 50);
                 icon.setAttribute('text-anchor', 'middle');
-                icon.setAttribute('font-size', '30');
+                icon.setAttribute('font-size', '35');
                 icon.textContent = '🏆';
+                board.appendChild(icon);
+            } else if (this.superBonusSpaces && this.superBonusSpaces.includes(index)) {
+                const icon = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                icon.setAttribute('x', coord.x);
+                icon.setAttribute('y', coord.y - 50);
+                icon.setAttribute('text-anchor', 'middle');
+                icon.setAttribute('font-size', '25');
+                icon.textContent = '✨';
                 board.appendChild(icon);
             }
         });
@@ -214,7 +309,7 @@ class DiceAdventureGame {
         const height = 600 - 2 * margin;
         
         // Create a winding path
-        const spacesPerRow = 5;
+        const spacesPerRow = 6;
         const rows = Math.ceil((this.boardSpaces + 1) / spacesPerRow);
         const xSpacing = width / (spacesPerRow - 1);
         const ySpacing = height / (rows - 1);
@@ -250,15 +345,22 @@ class DiceAdventureGame {
         
         this.players.forEach((player, index) => {
             const coord = this.pathCoords[player.position];
-            const offset = (index - this.players.length / 2) * 25; // Offset players on same space
+            const offset = (index - this.players.length / 2) * 30; // Offset players on same space
             
             const token = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             token.setAttribute('x', coord.x + offset);
-            token.setAttribute('y', coord.y + 15);
+            token.setAttribute('y', coord.y + 18);
             token.setAttribute('text-anchor', 'middle');
             token.classList.add('player-token');
             token.textContent = player.emoji;
             token.setAttribute('data-player', player.id);
+            
+            // Add click handler for manual movement
+            if (this.isManualMove && index === this.currentPlayerIndex) {
+                token.classList.add('clickable');
+                token.style.cursor = 'pointer';
+                token.addEventListener('click', () => this.handlePlayerClick());
+            }
             
             board.appendChild(token);
         });
@@ -311,12 +413,68 @@ class DiceAdventureGame {
                 diceElement.textContent = finalRoll;
                 diceElement.classList.remove('rolling');
                 
-                this.movePlayer(finalRoll);
+                // Enable manual movement
+                this.remainingSteps = finalRoll;
+                this.isManualMove = true;
+                
+                // Show instruction
+                const instruction = document.getElementById('moveInstruction');
+                const stepsText = document.getElementById('stepsRemaining');
+                stepsText.textContent = this.remainingSteps;
+                instruction.classList.remove('hidden');
+                
+                // Update player tokens to be clickable
+                this.updatePlayerPositions();
             }
         }, 100);
     }
     
+    async handlePlayerClick() {
+        if (!this.isManualMove || this.remainingSteps <= 0) return;
+        
+        const player = this.players[this.currentPlayerIndex];
+        const newPosition = Math.min(player.position + 1, this.boardSpaces);
+        
+        // Animate single step movement
+        player.position = newPosition;
+        const tokens = document.querySelectorAll('.player-token');
+        tokens.forEach(t => {
+            if (parseInt(t.getAttribute('data-player')) === player.id) {
+                t.classList.add('moving');
+            }
+        });
+        
+        this.updatePlayerPositions();
+        await this.sleep(300);
+        
+        this.remainingSteps--;
+        document.getElementById('stepsRemaining').textContent = this.remainingSteps;
+        
+        // Check if movement is complete
+        if (this.remainingSteps === 0 || player.position === this.boardSpaces) {
+            this.isManualMove = false;
+            document.getElementById('moveInstruction').classList.add('hidden');
+            this.updatePlayerPositions();
+            
+            // Check for special space
+            if (player.position === this.boardSpaces) {
+                this.showWinner(player);
+            } else if (this.specialSpaces.includes(player.position)) {
+                this.showTask();
+            } else if (this.superBonusSpaces && this.superBonusSpaces.includes(player.position)) {
+                this.showSuperBonus();
+            } else if (this.bonusSpaces.includes(player.position)) {
+                this.showBonus();
+            } else if (this.penaltySpaces.includes(player.position)) {
+                this.showPenalty();
+            } else {
+                this.nextTurn();
+            }
+        }
+    }
+    
     async movePlayer(steps) {
+        // This method is kept for compatibility but now we use manual movement
         const player = this.players[this.currentPlayerIndex];
         const newPosition = Math.min(player.position + steps, this.boardSpaces);
         
@@ -411,6 +569,21 @@ class DiceAdventureGame {
         this.updatePlayersDisplay();
     }
     
+    showSuperBonus() {
+        const player = this.players[this.currentPlayerIndex];
+        
+        document.getElementById('taskTitle').textContent = '🌟 SUPER LUCKY! 🌟';
+        document.getElementById('taskContent').innerHTML = `
+            <div style="font-size: 3em;">🚀 ZOOM forward 3 spaces! 🚀</div>
+        `;
+        document.getElementById('taskModal').classList.remove('hidden');
+        document.getElementById('taskDone').style.display = 'block';
+        
+        player.position = Math.min(player.position + 3, this.boardSpaces);
+        this.updatePlayerPositions();
+        this.updatePlayersDisplay();
+    }
+    
     showPenalty() {
         const player = this.players[this.currentPlayerIndex];
         
@@ -481,6 +654,9 @@ class DiceAdventureGame {
         this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
         this.updateCurrentPlayer();
         this.updatePlayersDisplay();
+        this.remainingSteps = 0;
+        this.isManualMove = false;
+        document.getElementById('moveInstruction').classList.add('hidden');
         document.getElementById('rollDice').disabled = false;
     }
     
@@ -488,9 +664,12 @@ class DiceAdventureGame {
         document.getElementById('winModal').classList.add('hidden');
         document.getElementById('gameScreen').classList.add('hidden');
         document.getElementById('setupScreen').classList.remove('hidden');
+        document.getElementById('moveInstruction').classList.add('hidden');
         
         this.players = [];
         this.currentPlayerIndex = 0;
+        this.remainingSteps = 0;
+        this.isManualMove = false;
     }
     
     sleep(ms) {

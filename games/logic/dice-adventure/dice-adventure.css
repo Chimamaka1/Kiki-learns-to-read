@@ -6,12 +6,20 @@
 
 body {
     font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', cursive, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #4facfe);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .game-container {
@@ -21,6 +29,69 @@ body {
     border-radius: 30px;
     padding: 30px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Decorative Elements */
+.decorative-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.cloud {
+    position: absolute;
+    font-size: 3em;
+    animation: floatCloud 20s infinite linear;
+    opacity: 0.6;
+}
+
+.cloud-1 {
+    top: 10%;
+    left: -10%;
+    animation-duration: 25s;
+}
+
+.cloud-2 {
+    top: 30%;
+    left: -15%;
+    animation-duration: 30s;
+    animation-delay: 5s;
+}
+
+.cloud-3 {
+    top: 50%;
+    left: -10%;
+    animation-duration: 35s;
+    animation-delay: 10s;
+}
+
+@keyframes floatCloud {
+    from { transform: translateX(0); }
+    to { transform: translateX(120vw); }
+}
+
+.sun {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 4em;
+    animation: rotateSun 10s infinite linear, pulseSun 2s infinite;
+}
+
+@keyframes rotateSun {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulseSun {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
 }
 
 .header {
@@ -28,12 +99,23 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
+    position: relative;
+    z-index: 1;
 }
 
 .header h1 {
     font-size: 2.5em;
-    color: #ff6b6b;
-    text-shadow: 3px 3px 0 #ffd93d;
+    background: linear-gradient(45deg, #ff6b6b, #ffd93d, #51cf66, #4ecdc4, #a29bfe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: rainbowShift 3s infinite;
+    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+}
+
+@keyframes rainbowShift {
+    0%, 100% { filter: hue-rotate(0deg); }
+    50% { filter: hue-rotate(20deg); }
 }
 
 .back-btn {
@@ -169,6 +251,23 @@ body {
     font-size: 1.3em;
 }
 
+.move-instruction {
+    background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+    color: white;
+    padding: 15px;
+    border-radius: 15px;
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-top: 15px;
+    animation: pulse 1.5s infinite;
+    box-shadow: 0 4px 15px rgba(81, 207, 102, 0.4);
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
 .dice-container {
     margin-top: 30px;
 }
@@ -226,10 +325,12 @@ body {
 
 /* Board */
 .board-container {
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-    padding: 20px;
+    background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 60%, #90EE90 60%, #228B22 100%);
+    padding: 30px;
     border-radius: 20px;
     position: relative;
+    box-shadow: inset 0 4px 20px rgba(0,0,0,0.1);
+    border: 5px solid #8B4513;
 }
 
 .game-board {
@@ -246,6 +347,15 @@ body {
     opacity: 0.8;
 }
 
+.board-space.special {
+    animation: sparkle 2s infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.5) drop-shadow(0 0 10px currentColor); }
+}
+
 .space-number {
     font-size: 18px;
     font-weight: bold;
@@ -253,9 +363,29 @@ body {
 }
 
 .player-token {
-    font-size: 40px;
-    transition: all 0.5s ease-in-out;
-    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+    font-size: 50px;
+    transition: all 0.3s ease-in-out;
+    filter: drop-shadow(3px 3px 6px rgba(0, 0, 0, 0.4));
+    cursor: pointer;
+}
+
+.player-token:hover {
+    transform: scale(1.3);
+    filter: drop-shadow(4px 4px 8px rgba(0, 0, 0, 0.6));
+}
+
+.player-token.clickable {
+    animation: bounce 0.8s infinite;
+    cursor: pointer;
+}
+
+.player-token.moving {
+    animation: jump 0.5s;
+}
+
+@keyframes jump {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-30px) scale(1.2); }
 }
 
 /* Players Info */

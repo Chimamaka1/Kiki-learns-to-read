@@ -8,6 +8,12 @@
 </head>
 <body>
     <div class="game-container">
+        <div class="decorative-elements">
+            <div class="cloud cloud-1">☁️</div>
+            <div class="cloud cloud-2">☁️</div>
+            <div class="cloud cloud-3">☁️</div>
+            <div class="sun">☀️</div>
+        </div>
         <div class="header">
             <h1>🎲 Dice Adventure Race! 🏆</h1>
             <button id="backBtn" class="back-btn">← Back</button>
@@ -54,6 +60,9 @@
             <div class="game-info">
                 <div class="current-turn">
                     <h2>Turn: <span id="currentPlayer"></span></h2>
+                    <div id="moveInstruction" class="move-instruction hidden">
+                        👆 Click your character to move <span id="stepsRemaining"></span> spaces!
+                    </div>
                 </div>
                 <div class="dice-container">
                     <div id="dice" class="dice">?</div>
