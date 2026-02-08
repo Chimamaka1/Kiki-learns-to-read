@@ -260,8 +260,8 @@ class DiceAdventureGame {
             circle.setAttribute('stroke', '#333');
             circle.setAttribute('stroke-width', '4');
             
-            // Add click handler to space
-            circle.addEventListener('click', () => this.handleSpaceClick(index));
+            // Store space index for drag and drop
+            circle.spaceIndex = index;
             
             board.appendChild(circle);
             
@@ -359,6 +359,12 @@ class DiceAdventureGame {
             token.textContent = player.emoji;
             token.setAttribute('data-player', player.id);
             
+            // Add drag functionality for current player
+            if (this.isManualMove && index === this.currentPlayerIndex) {
+                token.classList.add('draggable');
+                this.makeDraggable(token, player);
+            }
+            
             board.appendChild(token);
         });
     }
@@ -420,33 +426,100 @@ class DiceAdventureGame {
                 stepsText.textContent = this.remainingSteps;
                 instruction.classList.remove('hidden');
                 
-                // Highlight clickable spaces
-                this.highlightClickableSpaces();
+                // Update tokens to make current player draggable
+                this.updatePlayerPositions();
+                
+                // Highlight drop zones
+                this.highlightDropZones();
             }
         }, 100);
     }
     
-    async handleSpaceClick(spaceIndex) {
-        if (!this.isManualMove || this.remainingSteps <= 0) return;
+    makeDraggable(token, player) {
+        let isDragging = false;
+        let startX, startY;
         
-        const player = this.players[this.currentPlayerIndex];
+        const onMouseDown = (e) => {
+            isDragging = true;
+            token.classList.add('dragging');
+            const point = this.getSVGPoint(e);
+            startX = point.x;
+            startY = point.y;
+            
+            // Highlight drop zones
+            this.highlightDropZones();
+        };
         
-        // Check if this is the next valid space
-        if (spaceIndex !== player.position + 1) {
-            return; // Not the next space
-        }
+        const onMouseMove = (e) => {
+            if (!isDragging) return;
+            
+            const point = this.getSVGPoint(e);
+            token.setAttribute('x', point.x);
+            token.setAttribute('y', point.y);
+            
+            // Check if hovering over valid drop zone
+            this.checkDropZoneHover(point);
+        };
         
-        // Animate single step movement
-        player.position = spaceIndex;
-        const tokens = document.querySelectorAll('.player-token');
-        tokens.forEach(t => {
-            if (parseInt(t.getAttribute('data-player')) === player.id) {
-                t.classList.add('moving');
+        const onMouseUp = (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            token.classList.remove('dragging');
+            
+            // Check if dropped on valid space
+            const point = this.getSVGPoint(e);
+            const droppedSpace = this.getSpaceAtPoint(point);
+            
+            if (droppedSpace && droppedSpace === player.position + 1 && this.remainingSteps > 0) {
+                // Valid drop!
+                this.handleValidDrop(player, droppedSpace);
+            } else {
+                // Invalid drop - snap back
+                this.updatePlayerPositions();
             }
-        });
+            
+            this.clearDropZones();
+        };
+        
+        token.addEventListener('mousedown', onMouseDown);
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+        
+        // Store cleanup function
+        token._cleanup = () => {
+            token.removeEventListener('mousedown', onMouseDown);
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        };
+    }
+    
+    getSVGPoint(e) {
+        const svg = document.getElementById('gameBoard');
+        const pt = svg.createSVGPoint();
+        pt.x = e.clientX;
+        pt.y = e.clientY;
+        return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+    
+    getSpaceAtPoint(point) {
+        const spaces = document.querySelectorAll('.board-space');
+        for (let space of spaces) {
+            const cx = parseFloat(space.getAttribute('cx'));
+            const cy = parseFloat(space.getAttribute('cy'));
+            const r = parseFloat(space.getAttribute('r'));
+            
+            const distance = Math.sqrt(Math.pow(point.x - cx, 2) + Math.pow(point.y - cy, 2));
+            if (distance <= r) {
+                return space.spaceIndex;
+            }
+        }
+        return null;
+    }
+    
+    async handleValidDrop(player, spaceIndex) {
+        player.position = spaceIndex;
         
         this.updatePlayerPositions();
-        this.highlightClickableSpaces(); // Update which spaces are clickable
         await this.sleep(300);
         
         this.remainingSteps--;
@@ -473,30 +546,55 @@ class DiceAdventureGame {
             } else {
                 this.nextTurn();
             }
+        } else {
+            // Still have moves left, highlight next drop zone
+            this.highlightDropZones();
         }
     }
     
-    highlightClickableSpaces() {
+    highlightDropZones() {
         const player = this.players[this.currentPlayerIndex];
         const nextSpace = player.position + 1;
         
         // Clear previous highlights
-        this.clearClickableSpaces();
+        this.clearDropZones();
         
         // Highlight next valid space
         if (this.isManualMove && nextSpace <= this.boardSpaces) {
             const spaces = document.querySelectorAll('.board-space');
             spaces.forEach(space => {
-                if (parseInt(space.getAttribute('data-space')) === nextSpace) {
-                    space.classList.add('clickable-space');
+                if (space.spaceIndex === nextSpace) {
+                    space.classList.add('drop-zone');
                 }
             });
         }
     }
     
-    clearClickableSpaces() {
+    checkDropZoneHover(point) {
         const spaces = document.querySelectorAll('.board-space');
-        spaces.forEach(space => space.classList.remove('clickable-space'));
+        spaces.forEach(space => {
+            const cx = parseFloat(space.getAttribute('cx'));
+            const cy = parseFloat(space.getAttribute('cy'));
+            const r = parseFloat(space.getAttribute('r'));
+            
+            const distance = Math.sqrt(Math.pow(point.x - cx, 2) + Math.pow(point.y - cy, 2));
+            if (distance <= r && space.classList.contains('drop-zone')) {
+                space.classList.add('drop-zone-hover');
+            } else {
+                space.classList.remove('drop-zone-hover');
+            }
+        });
+    }
+    
+    clearDropZones() {
+        const spaces = document.querySelectorAll('.board-space');
+        spaces.forEach(space => {
+            space.classList.remove('drop-zone', 'drop-zone-hover', 'clickable-space');
+        });
+    }
+    
+    clearClickableSpaces() {
+        this.clearDropZones();
     }
     
     async movePlayer(steps) {
@@ -629,7 +727,7 @@ class DiceAdventureGame {
         document.getElementById('taskModal').classList.add('hidden');
         
         const player = this.players[this.currentPlayerIndex];
-        this.clearClickableSpaces();
+        this.clearDropZones();
         
         if (player.position === this.boardSpaces) {
             this.showWinner(player);
@@ -684,7 +782,7 @@ class DiceAdventureGame {
         this.updatePlayersDisplay();
         this.remainingSteps = 0;
         this.isManualMove = false;
-        this.clearClickableSpaces();
+        this.clearDropZones();
         document.getElementById('moveInstruction').classList.add('hidden');
         document.getElementById('rollDice').disabled = false;
     }
