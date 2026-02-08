@@ -174,8 +174,21 @@ class DiceAdventureGame {
     }
     
     setupEventListeners() {
-        document.getElementById('startGame').addEventListener('click', () => this.startGame());
-        document.getElementById('rollDice').addEventListener('click', () => this.rollDice());
+        const startBtn = document.getElementById('startGame');
+        const rollBtn = document.getElementById('rollDice');
+
+        startBtn.addEventListener('click', () => this.startGame());
+        rollBtn.addEventListener('click', () => this.rollDice());
+
+        // iPad Safari touch support
+        startBtn.addEventListener('touchstart', (evt) => {
+            evt.preventDefault();
+            this.startGame();
+        }, { passive: false });
+        rollBtn.addEventListener('touchstart', (evt) => {
+            evt.preventDefault();
+            this.rollDice();
+        }, { passive: false });
         document.getElementById('taskDone').addEventListener('click', () => this.closeTask());
         document.getElementById('playAgain').addEventListener('click', () => this.resetGame());
         document.getElementById('backBtn').addEventListener('click', () => {
