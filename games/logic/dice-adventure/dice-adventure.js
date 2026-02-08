@@ -260,7 +260,7 @@ class DiceAdventureGame {
             circle.setAttribute('stroke', '#333');
             circle.setAttribute('stroke-width', '4');
             
-            // Store space index for drag and drop
+            // Store space index
             circle.spaceIndex = index;
             
             board.appendChild(circle);
@@ -349,7 +349,7 @@ class DiceAdventureGame {
         
         this.players.forEach((player, index) => {
             const coord = this.pathCoords[player.position];
-            const offset = (index - this.players.length / 2) * 30; // Offset players on same space
+            const offset = (index - this.players.length / 2) * 30;
             
             const token = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             token.setAttribute('x', coord.x + offset);
@@ -358,11 +358,13 @@ class DiceAdventureGame {
             token.classList.add('player-token');
             token.textContent = player.emoji;
             token.setAttribute('data-player', player.id);
+            token.setAttribute('data-original-x', coord.x + offset);
+            token.setAttribute('data-original-y', coord.y + 18);
             
-            // Add drag functionality for current player
+            // Make current player's token draggable
             if (this.isManualMove && index === this.currentPlayerIndex) {
                 token.classList.add('draggable');
-                this.makeDraggable(token, player);
+                this.attachDragHandlers(token, player);
             }
             
             board.appendChild(token);
@@ -426,68 +428,49 @@ class DiceAdventureGame {
                 stepsText.textContent = this.remainingSteps;
                 instruction.classList.remove('hidden');
                 
-                // Update tokens to make current player draggable
-                this.updatePlayerPositions();
-                
-                // Highlight drop zones
+                // Highlight the next space to click
                 this.highlightDropZones();
             }
         }, 100);
     }
     
-    makeDraggable(token, player) {
+    attachDragHandlers(token, player) {
         const svg = document.getElementById('gameBoard');
         let isDragging = false;
-        let currentX, currentY;
+        let offsetX = 0;
+        let offsetY = 0;
         
-        // Make it work for both mouse and touch
-        token.style.cursor = 'grab';
+        const getMousePosition = (evt) => {
+            const CTM = svg.getScreenCTM();
+            return {
+                x: (evt.clientX - CTM.e) / CTM.a,
+                y: (evt.clientY - CTM.f) / CTM.d
+            };
+        };
         
         const startDrag = (evt) => {
             evt.preventDefault();
             isDragging = true;
             token.classList.add('dragging');
-            token.style.cursor = 'grabbing';
             
-            // Get initial position
-            const pt = svg.createSVGPoint();
-            if (evt.type === 'mousedown') {
-                pt.x = evt.clientX;
-                pt.y = evt.clientY;
-            } else {
-                pt.x = evt.touches[0].clientX;
-                pt.y = evt.touches[0].clientY;
-            }
-            const svgPt = pt.matrixTransform(svg.getScreenCTM().inverse());
-            currentX = svgPt.x;
-            currentY = svgPt.y;
+            const coord = getMousePosition(evt);
+            const tokenX = parseFloat(token.getAttribute('x'));
+            const tokenY = parseFloat(token.getAttribute('y'));
             
-            // Highlight drop zones
-            this.highlightDropZones();
+            offsetX = coord.x - tokenX;
+            offsetY = coord.y - tokenY;
+            
+            // Bring token to front
+            token.style.zIndex = '1000';
         };
         
         const drag = (evt) => {
             if (!isDragging) return;
             evt.preventDefault();
             
-            const pt = svg.createSVGPoint();
-            if (evt.type === 'mousemove') {
-                pt.x = evt.clientX;
-                pt.y = evt.clientY;
-            } else {
-                pt.x = evt.touches[0].clientX;
-                pt.y = evt.touches[0].clientY;
-            }
-            const svgPt = pt.matrixTransform(svg.getScreenCTM().inverse());
-            currentX = svgPt.x;
-            currentY = svgPt.y;
-            
-            // Update token position
-            token.setAttribute('x', currentX);
-            token.setAttribute('y', currentY);
-            
-            // Check hover
-            this.checkDropZoneHover({ x: currentX, y: currentY });
+            const coord = getMousePosition(evt);
+            token.setAttribute('x', coord.x - offsetX);
+            token.setAttribute('y', coord.y - offsetY);
         };
         
         const endDrag = (evt) => {
@@ -495,54 +478,41 @@ class DiceAdventureGame {
             evt.preventDefault();
             isDragging = false;
             token.classList.remove('dragging');
-            token.style.cursor = 'grab';
+            token.style.zIndex = '';
             
-            // Check if dropped on valid space
-            const droppedSpace = this.getSpaceAtPoint({ x: currentX, y: currentY });
+            const coord = getMousePosition(evt);
+            const droppedSpace = this.findSpaceAtCoordinates(coord.x, coord.y);
             
             const validSpace = player.position + 1;
-            if (droppedSpace !== null && droppedSpace === validSpace && this.remainingSteps > 0) {
-                // Valid drop!
-                this.handleValidDrop(player, droppedSpace);
-            } else {
-                // Invalid drop - snap back with animation
-                const coord = this.pathCoords[player.position];
-                const offset = (this.players.findIndex(p => p.id === player.id) - this.players.length / 2) * 30;
-                token.setAttribute('x', coord.x + offset);
-                token.setAttribute('y', coord.y + 18);
-            }
             
-            this.clearDropZones();
+            if (droppedSpace === validSpace && this.remainingSteps > 0) {
+                // Valid drop!
+                this.handleSuccessfulDrop(player, droppedSpace);
+            } else {
+                // Snap back to original position
+                token.setAttribute('x', token.getAttribute('data-original-x'));
+                token.setAttribute('y', token.getAttribute('data-original-y'));
+            }
         };
         
-        // Mouse events
         token.addEventListener('mousedown', startDrag);
         svg.addEventListener('mousemove', drag);
         svg.addEventListener('mouseup', endDrag);
         svg.addEventListener('mouseleave', endDrag);
-        
-        // Touch events for mobile
-        token.addEventListener('touchstart', startDrag);
-        svg.addEventListener('touchmove', drag);
-        svg.addEventListener('touchend', endDrag);
     }
     
-    getSpaceAtPoint(point) {
-        const spaces = document.querySelectorAll('.board-space');
-        for (let space of spaces) {
-            const cx = parseFloat(space.getAttribute('cx'));
-            const cy = parseFloat(space.getAttribute('cy'));
-            const r = parseFloat(space.getAttribute('r'));
-            
-            const distance = Math.sqrt(Math.pow(point.x - cx, 2) + Math.pow(point.y - cy, 2));
-            if (distance <= r) {
-                return space.spaceIndex;
+    findSpaceAtCoordinates(x, y) {
+        for (let i = 0; i < this.pathCoords.length; i++) {
+            const coord = this.pathCoords[i];
+            const distance = Math.sqrt(Math.pow(x - coord.x, 2) + Math.pow(y - coord.y, 2));
+            if (distance <= 40) { // Within 40 units of the space center
+                return i;
             }
         }
         return null;
     }
     
-    async handleValidDrop(player, spaceIndex) {
+    async handleSuccessfulDrop(player, spaceIndex) {
         player.position = spaceIndex;
         
         this.updatePlayerPositions();
@@ -555,8 +525,9 @@ class DiceAdventureGame {
         if (this.remainingSteps === 0 || player.position === this.boardSpaces) {
             this.isManualMove = false;
             document.getElementById('moveInstruction').classList.add('hidden');
-            this.clearClickableSpaces();
+            this.clearDropZones();
             this.updatePlayerPositions();
+            this.updatePlayersDisplay();
             
             // Check for special space
             if (player.position === this.boardSpaces) {
@@ -573,7 +544,7 @@ class DiceAdventureGame {
                 this.nextTurn();
             }
         } else {
-            // Still have moves left, highlight next drop zone
+            // Update which space is highlighted
             this.highlightDropZones();
         }
     }
@@ -594,33 +565,6 @@ class DiceAdventureGame {
                 }
             });
         }
-    }
-    
-    checkDropZoneHover(point) {
-        const spaces = document.querySelectorAll('.board-space');
-        spaces.forEach(space => {
-            const cx = parseFloat(space.getAttribute('cx'));
-            const cy = parseFloat(space.getAttribute('cy'));
-            const r = parseFloat(space.getAttribute('r'));
-            
-            const distance = Math.sqrt(Math.pow(point.x - cx, 2) + Math.pow(point.y - cy, 2));
-            if (distance <= r && space.classList.contains('drop-zone')) {
-                space.classList.add('drop-zone-hover');
-            } else {
-                space.classList.remove('drop-zone-hover');
-            }
-        });
-    }
-    
-    clearDropZones() {
-        const spaces = document.querySelectorAll('.board-space');
-        spaces.forEach(space => {
-            space.classList.remove('drop-zone', 'drop-zone-hover', 'clickable-space');
-        });
-    }
-    
-    clearClickableSpaces() {
-        this.clearDropZones();
     }
     
     async movePlayer(steps) {
