@@ -9,7 +9,8 @@ class DiceAdventureGame {
         this.dragState = {
             active: false,
             offsetX: 0,
-            offsetY: 0
+            offsetY: 0,
+            lastPoint: null
         };
         this.tasks = [
             {
@@ -291,6 +292,10 @@ class DiceAdventureGame {
 
             // Click-to-move fallback (also helps on touch)
             circle.addEventListener('click', () => this.handleSpaceClick(index));
+            circle.addEventListener('touchstart', (evt) => {
+                evt.preventDefault();
+                this.handleSpaceClick(index);
+            }, { passive: false });
             
             board.appendChild(circle);
             
@@ -402,14 +407,19 @@ class DiceAdventureGame {
 
     getEventPoint(evt) {
         const svg = document.getElementById('gameBoard');
-        const CTM = svg.getScreenCTM();
-        const touch = evt.touches && evt.touches[0];
+        const touch = (evt.touches && evt.touches[0]) || (evt.changedTouches && evt.changedTouches[0]);
         const clientX = evt.clientX ?? touch?.clientX;
         const clientY = evt.clientY ?? touch?.clientY;
-        return {
-            x: (clientX - CTM.e) / CTM.a,
-            y: (clientY - CTM.f) / CTM.d
-        };
+
+        if (clientX == null || clientY == null) return null;
+
+        const rect = svg.getBoundingClientRect();
+        const viewBox = svg.viewBox.baseVal;
+
+        const x = ((clientX - rect.left) / rect.width) * viewBox.width + viewBox.x;
+        const y = ((clientY - rect.top) / rect.height) * viewBox.height + viewBox.y;
+
+        return { x, y };
     }
 
     getPlayerTokenPosition(player) {
@@ -425,6 +435,7 @@ class DiceAdventureGame {
         if (!player) return;
 
         const point = this.getEventPoint(evt);
+        if (!point) return;
         const tokenPos = this.getPlayerTokenPosition(player);
         const distance = Math.sqrt(Math.pow(point.x - tokenPos.x, 2) + Math.pow(point.y - tokenPos.y, 2));
 
@@ -451,6 +462,8 @@ class DiceAdventureGame {
         if (!player) return;
 
         const point = this.getEventPoint(evt);
+        if (!point) return;
+        this.dragState.lastPoint = point;
         const token = document.querySelector(`.player-token[data-player='${player.id}']`);
         if (token) {
             token.setAttribute('x', point.x - this.dragState.offsetX);
@@ -466,7 +479,8 @@ class DiceAdventureGame {
         const player = this.players[this.currentPlayerIndex];
         if (!player) return;
 
-        const point = this.getEventPoint(evt);
+        const point = this.getEventPoint(evt) || this.dragState.lastPoint;
+        if (!point) return;
         const droppedSpace = this.findSpaceAtCoordinates(point.x, point.y);
         const validSpace = player.position + 1;
 
