@@ -485,8 +485,9 @@ class DiceAdventureGame {
 
         const getEventPoint = (evt) => {
             const CTM = svg.getScreenCTM();
-            const clientX = evt.clientX ?? (evt.touches && evt.touches[0]?.clientX);
-            const clientY = evt.clientY ?? (evt.touches && evt.touches[0]?.clientY);
+            const touch = evt.touches && evt.touches[0];
+            const clientX = evt.clientX ?? touch?.clientX;
+            const clientY = evt.clientY ?? touch?.clientY;
             return {
                 x: (clientX - CTM.e) / CTM.a,
                 y: (clientY - CTM.f) / CTM.d
@@ -537,10 +538,17 @@ class DiceAdventureGame {
             }
         };
 
-        token.addEventListener('pointerdown', startDrag);
-        svg.addEventListener('pointermove', drag);
-        window.addEventListener('pointerup', endDrag);
-        svg.addEventListener('pointerleave', endDrag);
+        // Pointer events (modern browsers)
+        token.addEventListener('pointerdown', startDrag, { passive: false });
+        svg.addEventListener('pointermove', drag, { passive: false });
+        window.addEventListener('pointerup', endDrag, { passive: false });
+        svg.addEventListener('pointerleave', endDrag, { passive: false });
+
+        // Touch events (iPad Safari)
+        token.addEventListener('touchstart', startDrag, { passive: false });
+        svg.addEventListener('touchmove', drag, { passive: false });
+        window.addEventListener('touchend', endDrag, { passive: false });
+        window.addEventListener('touchcancel', endDrag, { passive: false });
     }
     
     findSpaceAtCoordinates(x, y) {
